@@ -2728,23 +2728,24 @@ kbd {
 /* Smoke particles */
 .smoke-particles {
   position: absolute;
-  top: -60px;
+  top: -120px;
   left: 30%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 80px;
+  width: 200px;
+  height: 160px;
   pointer-events: none;
 }
 .smoke-puff {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200,200,220,0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(210,210,230,0.55) 0%, rgba(180,180,210,0.2) 50%, transparent 70%);
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
-  0%   { transform: translateY(0) scale(0.3); opacity: 0.7; }
-  60%  { opacity: 0.4; }
-  100% { transform: translateY(-80px) scale(2.5); opacity: 0; }
+  0%   { transform: translateY(0) scale(0.2) translateX(0px); opacity: 0.9; }
+  30%  { opacity: 0.75; }
+  70%  { opacity: 0.4; transform: translateY(-100px) scale(2) translateX(var(--drift, 8px)); }
+  100% { transform: translateY(-160px) scale(3.5) translateX(var(--drift, 12px)); opacity: 0; }
 }
 
 /* ── NOTES MODAL ── */
