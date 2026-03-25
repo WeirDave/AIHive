@@ -1635,6 +1635,7 @@ RULES:
 - Do not introduce new content that changes the intended meaning of the document.
 - Keep each suggestion to one sentence maximum — no explanations, no justifications.
 - Give your TOP 3 most impactful suggestions only. If you have more, choose the three that matter most.
+- HIGH BAR FOR SUGGESTIONS: Only suggest a change if it meaningfully improves the document. Do not suggest cosmetic synonyms or minor rephrasing that leaves meaning unchanged. If the current wording is clear and correct, leave it alone.
 - If you believe the text needs no further changes, return exactly this and nothing else: NO CHANGES NEEDED
 
 ⚠️ IMPORTANT: Any response that contains a full rewritten document, large continuous blocks of revised text, or anything other than a numbered suggestion list will be considered non-compliant and discarded.`,
@@ -1668,11 +1669,18 @@ All reviewer suggestions are included above. Your task: produce the complete upd
 A valid suggestion is one that improves clarity, accuracy, consistency, logic, or readability without changing the document's intended meaning or scope.
 
 MAJORITY RULES — CONFLICT DECISION LOGIC:
-Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change):
-- 4 or more reviewers agree → apply it automatically. Do not flag this as a conflict.
-- Exactly 3 reviewers agree vs 3 who disagree or suggest an alternative → flag it as a USER DECISION conflict.
-- 2 or fewer reviewers suggest something that conflicts with another suggestion → use your best judgment, apply the stronger choice, flag it as a BUILDER DECISION conflict.
-- Only 1 reviewer suggests something → apply it if valid, skip it if not. Do not flag solo suggestions as conflicts.
+Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change). Base thresholds on the number of active reviewers this round:
+
+- STRICT MAJORITY (more than half agree) → apply it automatically. Do not flag this as a conflict.
+- EXACTLY SPLIT (half vs half, or near-equal disagreement) → flag it as a USER DECISION conflict.
+- MINORITY (2 or fewer out of 5+, or 1 out of any count) → use your best judgment, apply the stronger choice, flag as a BUILDER DECISION only if genuinely ambiguous.
+- Solo suggestion (only 1 reviewer) → apply if clearly valid, skip if not. Do not flag.
+
+CONVERGENCE RULES — READ CAREFULLY:
+- If the PREVIOUSLY RESOLVED DECISIONS block is present above, those decisions are FINAL. Do not raise them as conflicts again under any circumstances. Do not suggest alternatives to resolved text.
+- If reviewers are suggesting changes to text that was already resolved in a prior round, IGNORE those suggestions entirely.
+- If all reviewers say NO CHANGES NEEDED, write NO CONFLICTS and return the document unchanged.
+- Prefer stability: if a change is minor and the document already reads well, apply it silently rather than flagging it.
 
 RULES:
 - Return the FULL document — every section, complete. Do not use ellipses or placeholders.
@@ -2552,24 +2560,43 @@ function showSmokerOverlay(label = 'Smoking…') {
 
   if (labelEl) labelEl.textContent = label;
 
-  // Generate smoke puffs
+  // Clear any existing spawner
+  if (window._smokeInterval) { clearInterval(window._smokeInterval); window._smokeInterval = null; }
+
+  function spawnPuff() {
+    if (!particles) return;
+    const puff = document.createElement('div');
+    puff.className = 'smoke-puff';
+    const size = 40 + Math.random() * 60;
+    const drift = (Math.random() - 0.5) * 40;
+    puff.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${25 + Math.random() * 50}%;
+      bottom: 0;
+      --dur: ${1.8 + Math.random() * 1.8}s;
+      --delay: ${Math.random() * 0.3}s;
+      --drift: ${drift}px;
+    `;
+    particles.appendChild(puff);
+    // Remove after animation completes to avoid DOM bloat
+    setTimeout(() => puff.remove(), 4200);
+  }
+
+  // Initial burst of puffs
   if (particles) {
     particles.innerHTML = '';
-    for (let i = 0; i < 6; i++) {
-      const puff = document.createElement('div');
-      puff.className = 'smoke-puff';
-      const size = 30 + Math.random() * 40;
-      puff.style.cssText = `
-        width: ${size}px;
-        height: ${size}px;
-        left: ${20 + Math.random() * 60}%;
-        bottom: 0;
-        --dur: ${2 + Math.random() * 1.5}s;
-        --delay: ${Math.random() * 2}s;
-      `;
-      particles.appendChild(puff);
+    for (let i = 0; i < 14; i++) {
+      setTimeout(spawnPuff, i * 80);
     }
   }
+
+  // Keep spawning continuously while running
+  window._smokeInterval = setInterval(() => {
+    for (let i = 0; i < 3; i++) {
+      setTimeout(spawnPuff, i * 120);
+    }
+  }, 500);
 
   overlay.classList.add('active');
 }
@@ -2577,6 +2604,9 @@ function showSmokerOverlay(label = 'Smoking…') {
 function hideSmokerOverlay() {
   const overlay = document.getElementById('smokerOverlay');
   if (overlay) overlay.classList.remove('active');
+  if (window._smokeInterval) { clearInterval(window._smokeInterval); window._smokeInterval = null; }
+  const particles = document.getElementById('smokeParticles');
+  if (particles) particles.innerHTML = '';
 }
 
 function openNotesModal() {
