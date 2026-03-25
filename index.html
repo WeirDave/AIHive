@@ -399,14 +399,13 @@
         <div class="work-doc-editor">
           <div class="work-doc-scroll">
             <div class="work-line-numbers" id="lineNumbers"></div>
-            <div class="work-doc-inner">
+            <div class="work-doc-inner" onscroll="syncLineNumberScroll()">
               <div class="work-doc-rules" id="docRules"></div>
               <textarea
                 id="workDocument"
                 class="work-doc-ta"
                 placeholder="Your document appears here."
                 oninput="handleWorkDocumentInput()"
-                onscroll="syncLineNumberScroll()"
               ></textarea>
             </div>
           </div>
@@ -431,12 +430,22 @@
 
         <!-- 3D Digital Clock -->
         <div class="console-clock-3d">
-          <div class="clock-bezel">
-            <div class="clock-screen">
-              <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
+          <div class="clock-bezel clock-bezel-split">
+            <div class="clock-half">
+              <div class="clock-screen">
+                <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
+              </div>
+              <div class="clock-label" id="roundTimerLabel">ROUND</div>
             </div>
-            <div class="clock-label" id="roundTimerLabel">READY</div>
+            <div class="clock-split-divider"></div>
+            <div class="clock-half">
+              <div class="clock-screen">
+                <span class="clock-digit-group" id="projectTimerDisplay">00:00</span>
+              </div>
+              <div class="clock-label">PROJECT</div>
+            </div>
           </div>
+          <button class="clock-pause-btn" id="projectPauseBtn" onclick="toggleProjectTimer()" title="Pause/resume project timer">⏸</button>
         </div>
 
         <!-- Console -->

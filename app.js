@@ -236,9 +236,60 @@ function setStatus(msg) {
 }
 
 // ── ROUND TIMER ──
-let _roundTimerInterval = null;
-let _roundTimerStart    = null;
-let _clockInterval      = null; // reserved for future use
+let _roundTimerInterval   = null;
+let _roundTimerStart      = null;
+let _projectTimerInterval = null;
+let _projectTimerStart    = null;
+let _projectTimerElapsed  = 0;     // accumulated ms before pause
+let _projectTimerPaused   = false;
+let _clockInterval        = null; // reserved for future use
+
+function startProjectTimer() {
+  if (_projectTimerInterval) return; // already running — keep ticking across rounds
+  if (_projectTimerPaused) return;   // don't auto-resume if user paused
+  _projectTimerStart = Date.now() - _projectTimerElapsed;
+  _updateProjectTimerDisplay();
+  _projectTimerInterval = setInterval(_updateProjectTimerDisplay, 1000);
+}
+
+function _updateProjectTimerDisplay() {
+  const el = document.getElementById('projectTimerDisplay');
+  if (!el) return;
+  const secs = Math.floor((Date.now() - _projectTimerStart) / 1000);
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  el.textContent = `${m}:${s}`;
+}
+
+function toggleProjectTimer() {
+  const btn = document.getElementById('projectPauseBtn');
+  if (_projectTimerPaused) {
+    // Resume
+    _projectTimerPaused = false;
+    _projectTimerStart = Date.now() - _projectTimerElapsed;
+    _projectTimerInterval = setInterval(_updateProjectTimerDisplay, 1000);
+    if (btn) { btn.textContent = '⏸'; btn.title = 'Pause project timer'; btn.classList.remove('paused'); }
+  } else {
+    // Pause
+    _projectTimerPaused = true;
+    _projectTimerElapsed = Date.now() - (_projectTimerStart || Date.now());
+    clearInterval(_projectTimerInterval);
+    _projectTimerInterval = null;
+    if (btn) { btn.textContent = '▶'; btn.title = 'Resume project timer'; btn.classList.add('paused'); }
+  }
+}
+
+function resetProjectTimer() {
+  clearInterval(_projectTimerInterval);
+  _projectTimerInterval = null;
+  _projectTimerStart    = null;
+  _projectTimerElapsed  = 0;
+  _projectTimerPaused   = false;
+  const el  = document.getElementById('projectTimerDisplay');
+  const btn = document.getElementById('projectPauseBtn');
+  if (el)  el.textContent = '00:00';
+  if (btn) { btn.textContent = '⏸'; btn.title = 'Pause project timer'; btn.classList.remove('paused'); }
+}
 
 function startRoundTimer(btn, baseLabel) {
   _roundTimerStart = Date.now();
@@ -1345,11 +1396,10 @@ function initWorkScreen(isNewSession = false) {
   updateLicenseBadge();
   setStatus('Standing by — toggle bees above, then Smoke the Hive');
 
-  // Wire up scroll sync and input handler directly on the textarea
-  const ta = document.getElementById('workDocument');
-  const ln = document.getElementById('lineNumbers');
-  if (ta && ln) {
-    ta.addEventListener('scroll', syncLineNumberScroll);
+  // Wire up scroll sync on the paper div (which now owns the scrollbar)
+  const inner = document.querySelector('.work-doc-inner');
+  if (inner) {
+    inner.addEventListener('scroll', syncLineNumberScroll);
   }
 
   // Keep line numbers filled on resize
@@ -1385,14 +1435,14 @@ function updateLineNumbers() {
   const ln = document.getElementById('lineNumbers');
   if (!ta || !ln) return;
 
+  // Keep textarea height in sync with content (enables .work-doc-inner scrollbar)
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+
   const text = (ta.value || '');
   const logicalLines = text.split('\n');
 
-  let visualCount = 0;
-  for (let line of logicalLines) {
-    visualCount += (line === '' ? 1 : Math.ceil(line.length / 80));
-  }
-  if (visualCount === 0) visualCount = 1;
+  const visualCount = Math.max(1, logicalLines.length);
 
   let html = '';
   for (let i = 1; i <= visualCount; i++) {
@@ -1411,18 +1461,20 @@ function updateLineNumbers() {
 }
 
 function syncLineNumberScroll() {
-  const ta = document.getElementById('workDocument');
-  const ln = document.getElementById('lineNumbers');
   const inner = document.querySelector('.work-doc-inner');
-  if (!ta || !ln || !inner) return;
-  ln.scrollTop = ta.scrollTop;
-  inner.style.backgroundPosition = `0 ${4 - ta.scrollTop}px`;
+  const ln = document.getElementById('lineNumbers');
+  if (!inner || !ln) return;
+  ln.scrollTop = inner.scrollTop;
+  inner.style.backgroundPosition = `0 ${4 - inner.scrollTop % 21}px`;
 }
 
 function handleWorkDocumentInput() {
   const ta = document.getElementById('workDocument');
   if (!ta) return;
   docText = ta.value;
+  // Auto-grow textarea so .work-doc-inner overflows and shows its scrollbar
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
   clearTimeout(_lineNumDebounce);
   _lineNumDebounce = setTimeout(updateLineNumbers, 50);
   clearTimeout(workDocSaveTimer);
@@ -1461,6 +1513,7 @@ function finishAndExport() {
 function finishAndNew() {
   hideFinishModal();
   clearProject();
+  resetProjectTimer();
   goToScreen('screen-project');
 }
 
@@ -1793,7 +1846,7 @@ async function runBuilderOnly() {
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Building…';
   showSmokerOverlay('Building…');
   startRoundTimer(smokeBtn, 'Building…');
-  setStatus(`🏗️ Sending directly to ${builderAI.name}…`);
+  startProjectTimer();
   consoleLog(`═══ Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
   consoleLog(`📝 Notes: ${notes}`, 'info');
   setBeeStatus(builderAI.id, 'sending', 'Building…');
@@ -1933,6 +1986,7 @@ async function runRound() {
   if (btn) btn.querySelector('.shake-wide-label').textContent = 'Smoking…';
   showSmokerOverlay('Smoking…');
   startRoundTimer(btn, 'Smoking…');
+  startProjectTimer();
   if (hiveStatus) hiveStatus.textContent = 'Working…';
   setStatus(`⚡ Round ${round} in progress — AI Hive is thinking…`);
   consoleLog(`═══ Round ${round} · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
