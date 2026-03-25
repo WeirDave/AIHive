@@ -236,60 +236,9 @@ function setStatus(msg) {
 }
 
 // ── ROUND TIMER ──
-let _roundTimerInterval   = null;
-let _roundTimerStart      = null;
-let _projectTimerInterval = null;
-let _projectTimerStart    = null;
-let _projectTimerElapsed  = 0;     // accumulated ms before pause
-let _projectTimerPaused   = false;
-let _clockInterval        = null; // reserved for future use
-
-function startProjectTimer() {
-  if (_projectTimerInterval) return; // already running — keep ticking across rounds
-  if (_projectTimerPaused) return;   // don't auto-resume if user paused
-  _projectTimerStart = Date.now() - _projectTimerElapsed;
-  _updateProjectTimerDisplay();
-  _projectTimerInterval = setInterval(_updateProjectTimerDisplay, 1000);
-}
-
-function _updateProjectTimerDisplay() {
-  const el = document.getElementById('projectTimerDisplay');
-  if (!el) return;
-  const secs = Math.floor((Date.now() - _projectTimerStart) / 1000);
-  const m = String(Math.floor(secs / 60)).padStart(2, '0');
-  const s = String(secs % 60).padStart(2, '0');
-  el.textContent = `${m}:${s}`;
-}
-
-function toggleProjectTimer() {
-  const btn = document.getElementById('projectPauseBtn');
-  if (_projectTimerPaused) {
-    // Resume
-    _projectTimerPaused = false;
-    _projectTimerStart = Date.now() - _projectTimerElapsed;
-    _projectTimerInterval = setInterval(_updateProjectTimerDisplay, 1000);
-    if (btn) { btn.textContent = '⏸'; btn.title = 'Pause project timer'; btn.classList.remove('paused'); }
-  } else {
-    // Pause
-    _projectTimerPaused = true;
-    _projectTimerElapsed = Date.now() - (_projectTimerStart || Date.now());
-    clearInterval(_projectTimerInterval);
-    _projectTimerInterval = null;
-    if (btn) { btn.textContent = '▶'; btn.title = 'Resume project timer'; btn.classList.add('paused'); }
-  }
-}
-
-function resetProjectTimer() {
-  clearInterval(_projectTimerInterval);
-  _projectTimerInterval = null;
-  _projectTimerStart    = null;
-  _projectTimerElapsed  = 0;
-  _projectTimerPaused   = false;
-  const el  = document.getElementById('projectTimerDisplay');
-  const btn = document.getElementById('projectPauseBtn');
-  if (el)  el.textContent = '00:00';
-  if (btn) { btn.textContent = '⏸'; btn.title = 'Pause project timer'; btn.classList.remove('paused'); }
-}
+let _roundTimerInterval = null;
+let _roundTimerStart    = null;
+let _clockInterval      = null; // reserved for future use
 
 function startRoundTimer(btn, baseLabel) {
   _roundTimerStart = Date.now();
@@ -604,7 +553,8 @@ function updateSetupRequirements() {
 function updateLaunchRequirements() {
   const name    = document.getElementById('projectName')?.value.trim()  || '';
   const goal    = document.getElementById('projectGoal')?.value.trim()  || '';
-  const hasDoc  = docText || docTab === 'scratch';
+  const pasteVal = document.getElementById('pasteText')?.value.trim() || '';
+  const hasDoc  = docText || docTab === 'scratch' || (docTab === 'paste' && pasteVal);
 
   const reqName = document.getElementById('req-name');
   const reqGoal = document.getElementById('req-goal');
@@ -731,8 +681,7 @@ function saveSession() {
   const consoleHTML = consoleEl ? consoleEl.innerHTML : '';
   const notesEl = document.getElementById('workNotes');
   const notes = notesEl ? notesEl.value : '';
-  const sessionAIIds = window.sessionAIs ? [...window.sessionAIs] : activeAIs.map(a => a.id);
-  const session = { round, phase, history, docText, consoleHTML, notes, sessionAIIds };
+  const session = { round, phase, history, docText, consoleHTML, notes };
   try { localStorage.setItem(LS_SESSION, JSON.stringify(session)); } catch(e) {}
   saveProject(); // keep project fields in sync
 }
@@ -746,10 +695,6 @@ function loadSession() {
     phase   = s.phase   || 'draft';
     history = s.history || [];
     docText = s.docText || '';
-    // Restore which bees were toggled on/off in the work screen
-    if (s.sessionAIIds && s.sessionAIIds.length > 0) {
-      window.sessionAIs = new Set(s.sessionAIIds);
-    }
     if (s.consoleHTML) {
       const el = document.getElementById('liveConsole');
       if (el) el.innerHTML = s.consoleHTML;
@@ -1390,11 +1335,8 @@ function initWorkScreen(isNewSession = false) {
     if (notesTa) notesTa.value = `Project goal: ${goal}`;
   }
 
-  // Reset per-session bee selection only on a genuinely new session
-  // On reload/restore, sessionAIs was already populated by loadSession()
-  if (isNewSession || !window.sessionAIs || window.sessionAIs.size === 0) {
-    window.sessionAIs = new Set(activeAIs.map(a => a.id));
-  }
+  // Reset per-session bee selection to all active AIs
+  window.sessionAIs = new Set(activeAIs.map(a => a.id));
 
   renderWorkPhaseBar();
   renderBeeStatusGrid();
@@ -1403,12 +1345,6 @@ function initWorkScreen(isNewSession = false) {
   updateRoundBadge();
   updateLicenseBadge();
   setStatus('Standing by — toggle bees above, then Smoke the Hive');
-
-  // Wire up scroll sync on the paper div (which now owns the scrollbar)
-  const inner = document.querySelector('.work-doc-inner');
-  if (inner) {
-    inner.addEventListener('scroll', syncLineNumberScroll);
-  }
 
   // Keep line numbers filled on resize
   if (window._lineNumObserver) window._lineNumObserver.disconnect();
@@ -1433,9 +1369,13 @@ function updateGoalCounter() {
 function updateProjLineNums(numsId, ta) {
   const ln = document.getElementById(numsId);
   if (!ln || !ta) return;
-  const lines = Math.max(ta.value.split('\n').length, 20);
-  ln.innerHTML = Array.from({length: lines}, (_, i) => `<div>${i + 1}</div>`).join('');
-  ln.style.transform = `translateY(-${ta.scrollTop}px)`;
+  // Auto-grow textarea so scrollHeight reflects full content (Gemini method)
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+  // Use scrollHeight / line-height for accurate visual line count
+  const LINE_HEIGHT = 21;
+  const visualCount = Math.max(1, Math.round(ta.scrollHeight / LINE_HEIGHT));
+  ln.innerHTML = Array.from({length: visualCount}, (_, i) => `<div>${i + 1}</div>`).join('');
 }
 
 function updateLineNumbers() {
@@ -1450,7 +1390,10 @@ function updateLineNumbers() {
   const text = (ta.value || '');
   const logicalLines = text.split('\n');
 
-  const visualCount = Math.max(1, logicalLines.length);
+  // Use scrollHeight / line-height to count actual rendered visual lines
+  // (Gemini method — measures what the browser painted, not character estimates)
+  const LINE_HEIGHT = 21; // matches CSS line-height on .work-doc-ta
+  const visualCount = Math.max(1, Math.round(ta.scrollHeight / LINE_HEIGHT));
 
   let html = '';
   for (let i = 1; i <= visualCount; i++) {
@@ -1461,20 +1404,13 @@ function updateLineNumbers() {
   const stats = document.getElementById('docStats');
   if (stats && text.trim()) {
     const words = text.trim().split(/\s+/).filter(Boolean).length;
-    const lines = logicalLines.length;
-    stats.textContent = `${lines} lines · ${words.toLocaleString()} words`;
+    const chars = text.length;
+    stats.textContent = `${visualCount} lines · ${words.toLocaleString()} words · ${chars.toLocaleString()} chars`;
   } else if (stats) {
     stats.textContent = '';
   }
 }
 
-function syncLineNumberScroll() {
-  const inner = document.querySelector('.work-doc-inner');
-  const ln = document.getElementById('lineNumbers');
-  if (!inner || !ln) return;
-  ln.scrollTop = inner.scrollTop;
-  inner.style.backgroundPosition = `0 ${4 - inner.scrollTop % 21}px`;
-}
 
 function handleWorkDocumentInput() {
   const ta = document.getElementById('workDocument');
@@ -1521,9 +1457,6 @@ function finishAndExport() {
 function finishAndNew() {
   hideFinishModal();
   clearProject();
-  resetProjectTimer();
-  window._resolvedDecisions = [];
-  window._decisionChoices   = {};
   goToScreen('screen-project');
 }
 
@@ -1574,7 +1507,6 @@ function toggleSessionBee(id, on) {
     card.classList.toggle('is-active', on);
     card.classList.toggle('is-inactive', !on);
   }
-  saveSession();
 }
 
 function setBeeStatus(id, state, summary) {
@@ -1635,7 +1567,6 @@ RULES:
 - Do not introduce new content that changes the intended meaning of the document.
 - Keep each suggestion to one sentence maximum — no explanations, no justifications.
 - Give your TOP 3 most impactful suggestions only. If you have more, choose the three that matter most.
-- HIGH BAR FOR SUGGESTIONS: Only suggest a change if it meaningfully improves the document. Do not suggest cosmetic synonyms or minor rephrasing that leaves meaning unchanged. If the current wording is clear and correct, leave it alone.
 - If you believe the text needs no further changes, return exactly this and nothing else: NO CHANGES NEEDED
 
 ⚠️ IMPORTANT: Any response that contains a full rewritten document, large continuous blocks of revised text, or anything other than a numbered suggestion list will be considered non-compliant and discarded.`,
@@ -1669,18 +1600,11 @@ All reviewer suggestions are included above. Your task: produce the complete upd
 A valid suggestion is one that improves clarity, accuracy, consistency, logic, or readability without changing the document's intended meaning or scope.
 
 MAJORITY RULES — CONFLICT DECISION LOGIC:
-Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change). Base thresholds on the number of active reviewers this round:
-
-- STRICT MAJORITY (more than half agree) → apply it automatically. Do not flag this as a conflict.
-- EXACTLY SPLIT (half vs half, or near-equal disagreement) → flag it as a USER DECISION conflict.
-- MINORITY (2 or fewer out of 5+, or 1 out of any count) → use your best judgment, apply the stronger choice, flag as a BUILDER DECISION only if genuinely ambiguous.
-- Solo suggestion (only 1 reviewer) → apply if clearly valid, skip if not. Do not flag.
-
-CONVERGENCE RULES — READ CAREFULLY:
-- If the PREVIOUSLY RESOLVED DECISIONS block is present above, those decisions are FINAL. Do not raise them as conflicts again under any circumstances. Do not suggest alternatives to resolved text.
-- If reviewers are suggesting changes to text that was already resolved in a prior round, IGNORE those suggestions entirely.
-- If all reviewers say NO CHANGES NEEDED, write NO CONFLICTS and return the document unchanged.
-- Prefer stability: if a change is minor and the document already reads well, apply it silently rather than flagging it.
+Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change):
+- 4 or more reviewers agree → apply it automatically. Do not flag this as a conflict.
+- Exactly 3 reviewers agree vs 3 who disagree or suggest an alternative → flag it as a USER DECISION conflict.
+- 2 or fewer reviewers suggest something that conflicts with another suggestion → use your best judgment, apply the stronger choice, flag it as a BUILDER DECISION conflict.
+- Only 1 reviewer suggests something → apply it if valid, skip it if not. Do not flag solo suggestions as conflicts.
 
 RULES:
 - Return the FULL document — every section, complete. Do not use ellipses or placeholders.
@@ -1810,14 +1734,6 @@ function buildPromptForAI(ai, reviewerResponses) {
 
   if (isBuilder && hasResponses) {
     prompt += doc ? `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n` : '';
-    // Inject previously resolved decisions so Builder doesn't re-raise them
-    if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
-      prompt += `PREVIOUSLY RESOLVED DECISIONS — DO NOT raise these as conflicts again:\n${sep}\n`;
-      window._resolvedDecisions.forEach((rd, i) => {
-        prompt += `${i + 1}. "${rd.current}" → User chose: "${rd.chosen}"\n`;
-      });
-      prompt += `\n`;
-    }
     reviewerResponses.forEach(r => {
       prompt += `${sep}\nFROM ${r.name.toUpperCase()}:\n${sep}\n${r.response}\n\n`;
     });
@@ -1873,7 +1789,7 @@ async function runBuilderOnly() {
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Building…';
   showSmokerOverlay('Building…');
   startRoundTimer(smokeBtn, 'Building…');
-  startProjectTimer();
+  setStatus(`🏗️ Sending directly to ${builderAI.name}…`);
   consoleLog(`═══ Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
   consoleLog(`📝 Notes: ${notes}`, 'info');
   setBeeStatus(builderAI.id, 'sending', 'Building…');
@@ -2013,7 +1929,6 @@ async function runRound() {
   if (btn) btn.querySelector('.shake-wide-label').textContent = 'Smoking…';
   showSmokerOverlay('Smoking…');
   startRoundTimer(btn, 'Smoking…');
-  startProjectTimer();
   if (hiveStatus) hiveStatus.textContent = 'Working…';
   setStatus(`⚡ Round ${round} in progress — AI Hive is thinking…`);
   consoleLog(`═══ Round ${round} · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
@@ -2308,9 +2223,7 @@ function extractDocument(text) {
 }
 
 // Track user's choices for current conflict set
-window._decisionChoices   = {};
-// Track all decisions resolved this session so Builder won't re-raise them
-window._resolvedDecisions = [];
+window._decisionChoices = {};
 
 function renderConflicts() {
   const el    = document.getElementById('conflictsPanel');
@@ -2488,23 +2401,6 @@ function applyDecisions() {
     return;
   }
 
-  // Record resolved decisions so Builder won't re-raise them
-  Object.keys(window._decisionChoices).forEach(di => {
-    const d = decisions[parseInt(di)];
-    const choice = window._decisionChoices[di];
-    if (!d || !choice) return;
-    let chosenText = '';
-    if (choice.type === 'option') chosenText = d.options[choice.idx]?.text || '';
-    else if (choice.type === 'custom') chosenText = choice.text;
-    if (d.current && chosenText) {
-      // Avoid exact duplicates
-      const alreadyTracked = window._resolvedDecisions.some(r => r.current === d.current);
-      if (!alreadyTracked) {
-        window._resolvedDecisions.push({ current: d.current, chosen: chosenText });
-      }
-    }
-  });
-
   const notesTa = document.getElementById('workNotes');
   if (notesTa) {
     notesTa.value = 'Apply these user decisions:\n' + lines.map((l, i) => `${i + 1}. ${l}`).join('\n');
@@ -2560,43 +2456,24 @@ function showSmokerOverlay(label = 'Smoking…') {
 
   if (labelEl) labelEl.textContent = label;
 
-  // Clear any existing spawner
-  if (window._smokeInterval) { clearInterval(window._smokeInterval); window._smokeInterval = null; }
-
-  function spawnPuff() {
-    if (!particles) return;
-    const puff = document.createElement('div');
-    puff.className = 'smoke-puff';
-    const size = 40 + Math.random() * 60;
-    const drift = (Math.random() - 0.5) * 40;
-    puff.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      left: ${25 + Math.random() * 50}%;
-      bottom: 0;
-      --dur: ${1.8 + Math.random() * 1.8}s;
-      --delay: ${Math.random() * 0.3}s;
-      --drift: ${drift}px;
-    `;
-    particles.appendChild(puff);
-    // Remove after animation completes to avoid DOM bloat
-    setTimeout(() => puff.remove(), 4200);
-  }
-
-  // Initial burst of puffs
+  // Generate smoke puffs
   if (particles) {
     particles.innerHTML = '';
-    for (let i = 0; i < 14; i++) {
-      setTimeout(spawnPuff, i * 80);
+    for (let i = 0; i < 6; i++) {
+      const puff = document.createElement('div');
+      puff.className = 'smoke-puff';
+      const size = 30 + Math.random() * 40;
+      puff.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${20 + Math.random() * 60}%;
+        bottom: 0;
+        --dur: ${2 + Math.random() * 1.5}s;
+        --delay: ${Math.random() * 2}s;
+      `;
+      particles.appendChild(puff);
     }
   }
-
-  // Keep spawning continuously while running
-  window._smokeInterval = setInterval(() => {
-    for (let i = 0; i < 3; i++) {
-      setTimeout(spawnPuff, i * 120);
-    }
-  }, 500);
 
   overlay.classList.add('active');
 }
@@ -2604,9 +2481,6 @@ function showSmokerOverlay(label = 'Smoking…') {
 function hideSmokerOverlay() {
   const overlay = document.getElementById('smokerOverlay');
   if (overlay) overlay.classList.remove('active');
-  if (window._smokeInterval) { clearInterval(window._smokeInterval); window._smokeInterval = null; }
-  const particles = document.getElementById('smokeParticles');
-  if (particles) particles.innerHTML = '';
 }
 
 function openNotesModal() {

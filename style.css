@@ -39,7 +39,7 @@ input, textarea, select { font-family: inherit; }
   --line-stripe:  rgba(255,255,255,0.04);
   --font:         'DM Sans', system-ui, sans-serif;
   --font-display: 'Syne', system-ui, sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
+  --font-mono:    'Courier New', Courier, monospace;
   --radius-sm:    8px;
   --radius-md:    14px;
   --radius-lg:    20px;
@@ -1024,44 +1024,63 @@ html, body {
   [data-theme="auto"] .work-panel-header .work-section-title { color: var(--text); }
 }
 /* ══ DOC EDITOR ══ */
+/* ══ DOC EDITOR — single scroll container, notebook paper background ══ */
 .work-doc-editor {
-  display: flex;
+  display: block;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   border-radius: 0 0 12px 12px;
-  background: #fdfdfb;
+  background: var(--surface);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
 }
+.work-doc-editor::-webkit-scrollbar { width: 8px; }
+.work-doc-editor::-webkit-scrollbar-track { background: transparent; }
+.work-doc-editor::-webkit-scrollbar-thumb { background: rgba(120,120,140,0.55); border-radius: 8px; }
 
+/* Flex row containing gutter + textarea — grows to content height, paper background lives here */
 .work-doc-scroll {
   display: flex;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-  align-items: stretch;
-  background: #fdfdfb;
+  align-items: flex-start;
+  min-height: 100%;
+  /* Notebook paper — on the content layer so it scrolls with text */
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(to right, transparent 44px, rgba(220,50,50,0.25) 44px, rgba(220,50,50,0.25) 46px, transparent 46px),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 20px,
+      rgba(80,140,220,0.18) 20px,
+      rgba(80,140,220,0.18) 21px
+    );
+  background-position: 0 4px;
 }
 
+/* Gutter — sticky so it stays visible as paper scrolls */
 .work-line-numbers {
-  position: relative;
-  width: 56px;
-  flex: 0 0 56px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  font-family: 'JetBrains Mono', monospace;
+  position: sticky;
+  left: 0;
+  top: 0;
+  width: 44px;
+  flex: 0 0 44px;
+  align-self: stretch;
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 21px;
   color: var(--muted);
   text-align: right;
-  padding: 4px 8px 0 0;
+  padding: 0 6px 0 0;
   user-select: none;
-  background: #ffffff;
-  border-right: 2px solid rgba(220,50,50,0.6);
+  background: transparent;
+  border-right: 1px solid var(--border2);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  overflow: visible;
+  z-index: 1;
 }
 .work-line-numbers::-webkit-scrollbar { display: none; }
 .work-line-numbers div {
@@ -1072,46 +1091,28 @@ html, body {
   padding-right: 6px;
 }
 
+/* Inner wrapper — no scroll, just sizes the textarea correctly */
 .work-doc-inner {
   flex: 0 0 auto;
   position: relative;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   /* ch must be computed from the same font as the textarea so 80ch is consistent */
-  font-family: "JetBrains Mono", monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 13px;
-  background-color: #ffffff;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 20px,
-    rgba(80,140,220,0.25) 20px,
-    rgba(80,140,220,0.25) 21px
-  );
-  background-size: 100% 21px;
-  background-position: 0 4px;
+  background: transparent;
   box-sizing: border-box;
-  /* text(80ch) + left-pad(8px) + right-pad(12px) + white-strip(28px) + scrollbar(12px) */
-  width: calc(80ch + 8px + 12px + 28px + 12px);
-  scrollbar-width: thin;
-  scrollbar-gutter: stable;
+  width: calc(80ch + 8px + 12px);
 }
-
-.work-doc-inner::-webkit-scrollbar { width: 12px; }
-.work-doc-inner::-webkit-scrollbar-track { background: transparent; }
-.work-doc-inner::-webkit-scrollbar-thumb { background: rgba(120,120,140,0.55); border-radius: 8px; }
 
 .work-doc-ta {
   position: relative;
   z-index: 1;
   display: block;
-  /* EXACT text box: 80ch + only left/right text padding — white strip lives in parent */
+  /* EXACT text box: 80ch + only left/right text padding */
   width: calc(80ch + 8px + 12px);
   min-width: calc(80ch + 8px + 12px);
   max-width: calc(80ch + 8px + 12px);
   height: auto;
-  min-height: 100%;
+  min-height: 0;
   margin: 0;
   padding: 4px 12px 0 8px;
   border: none;
@@ -1120,13 +1121,10 @@ html, body {
   overflow: hidden;
   box-sizing: border-box;
   background: transparent;
-  color: #1a1a2e;
-  font-family: "JetBrains Mono", monospace;
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
   font-size: 13px;
   line-height: 21px;
-  letter-spacing: 0;
-  font-variant-ligatures: none;
-  font-feature-settings: "liga" 0, "calt" 0;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -1214,26 +1212,6 @@ html, body {
   align-items: center;
   gap: 4px;
 }
-.clock-bezel-split {
-  flex-direction: row;
-  align-items: stretch;
-  gap: 0;
-  padding: 10px 12px 8px;
-}
-.clock-half {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  padding: 0 10px;
-}
-.clock-split-divider {
-  width: 1px;
-  background: rgba(255,255,255,0.06);
-  margin: 2px 0;
-  flex-shrink: 0;
-}
 .clock-screen {
   background: linear-gradient(180deg, #050608 0%, #0a0d14 100%);
   border-radius: 4px;
@@ -1247,7 +1225,7 @@ html, body {
   font-family: var(--font-mono);
   font-size: 28px;
   font-weight: 700;
-  color: #7a85a8;
+  color: #4a5270;
   letter-spacing: 0.12em;
   transition: color 0.3s, text-shadow 0.3s;
   display: block;
@@ -1260,99 +1238,11 @@ html, body {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.2em;
-  color: rgba(255,255,255,0.55);
+  color: #3a4060;
   text-transform: uppercase;
   transition: color 0.3s;
 }
 .clock-label.running { color: #34d399; }
-
-.clock-label-project {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.clock-pause-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 3px;
-  color: rgba(255,255,255,0.45);
-  font-size: 9px;
-  line-height: 1;
-  padding: 1px 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.clock-pause-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.clock-pause-btn.paused {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-dim);
-}
-
-/* ── CLOCK — Light theme overrides ── */
-[data-theme="light"] .console-clock-3d,
-[data-theme="light"] .clock-bezel {
-  background: linear-gradient(145deg, #ffffff, #f0f2f8);
-  border-color: #d0d4e8;
-  box-shadow:
-    inset 0 2px 4px rgba(0,0,0,0.08),
-    inset 0 -1px 2px rgba(255,255,255,0.9),
-    0 4px 12px rgba(0,0,0,0.12),
-    0 1px 0 rgba(255,255,255,0.9);
-}
-[data-theme="light"] .console-clock-3d {
-  background: #ffffff;
-  border-color: #d0d4e8;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-[data-theme="light"] .clock-screen {
-  background: linear-gradient(180deg, #f8f9fc 0%, #eef0f8 100%);
-  border-color: #d0d4e8;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
-}
-[data-theme="light"] .clock-digit-group {
-  color: #384060;
-}
-[data-theme="light"] .clock-label {
-  color: #7880a0;
-}
-[data-theme="light"] .clock-split-divider {
-  background: rgba(0,0,0,0.1);
-}
-[data-theme="light"] .clock-pause-btn {
-  border-color: rgba(0,0,0,0.15);
-  color: #7880a0;
-}
-
-/* ── CLOCK — Auto theme (light OS) overrides ── */
-@media (prefers-color-scheme: light) {
-  [data-theme="auto"] .console-clock-3d {
-    background: #ffffff;
-    border-color: #d0d4e8;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  }
-  [data-theme="auto"] .clock-bezel {
-    background: linear-gradient(145deg, #ffffff, #f0f2f8);
-    border-color: #d0d4e8;
-    box-shadow:
-      inset 0 2px 4px rgba(0,0,0,0.08),
-      inset 0 -1px 2px rgba(255,255,255,0.9),
-      0 4px 12px rgba(0,0,0,0.12),
-      0 1px 0 rgba(255,255,255,0.9);
-  }
-  [data-theme="auto"] .clock-screen {
-    background: linear-gradient(180deg, #f8f9fc 0%, #eef0f8 100%);
-    border-color: #d0d4e8;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
-  }
-  [data-theme="auto"] .clock-digit-group { color: #384060; }
-  [data-theme="auto"] .clock-label       { color: #7880a0; }
-  [data-theme="auto"] .clock-split-divider { background: rgba(0,0,0,0.1); }
-  [data-theme="auto"] .clock-pause-btn   { border-color: rgba(0,0,0,0.15); color: #7880a0; }
-}
 
 /* Right edge padding */
 .right-edge-margin {
@@ -1781,12 +1671,21 @@ kbd {
   text-align: right;
 }
 
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
 .bee-card.is-builder { border-color: var(--accent); background: var(--accent-dim); }
 .bee-card.is-active  { border-color: var(--border2); }
 .bee-card.is-inactive { opacity: 0.4; }
 .bee-card.is-working { border-color: var(--blue); background: var(--blue-dim); }
 .bee-card.is-done    { border-color: var(--green); background: var(--green-dim); }
 .bee-card.is-error   { border-color: var(--red); background: var(--red-dim); }
+
+.bee-card.is-working 
+.bee-card.is-done    
+.bee-card.is-error   
+.bee-card.is-builder 
 
 .work-notes-panel .work-panel-header {
   background: var(--surface2);
@@ -1857,6 +1756,7 @@ kbd {
 }
 
 .project-card-scroll > * { position: relative; z-index: 1; }
+.project-card 
 .project-card .fs-col-header {
   max-width: 680px;
   margin: 0 auto;
@@ -1885,7 +1785,8 @@ kbd {
   gap: 6px;
   padding: 0 0 6px 0;
 }
-
+.fs-col-left { }
+.fs-col-right { }
 
 /* Main content card */
 .fs-col-main {
@@ -1997,8 +1898,10 @@ kbd {
   display: flex;
   border: 1px solid var(--border2);
   border-radius: var(--radius-sm);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   min-height: 320px;
+  align-items: flex-start;
   /* Notebook paper: blue ruled lines + red margin */
   background-color: var(--surface);
   background-image:
@@ -2016,6 +1919,7 @@ kbd {
 .proj-notebook-nums {
   width: 44px;
   flex-shrink: 0;
+  align-self: flex-start;
   background: transparent;
   border-right: 1px solid var(--border2);
   font-family: var(--font-mono);
@@ -2030,6 +1934,7 @@ kbd {
 .proj-notebook-nums div { line-height: 21px; height: 21px; font-size: 13px; }
 .proj-notebook-ta {
   width: 80ch;
+  min-width: 80ch;
   max-width: 80ch;
   flex-shrink: 0;
   background: transparent;
@@ -2041,22 +1946,26 @@ kbd {
   padding: 0 12px;
   resize: none;
   outline: none;
-  overflow-y: auto;
+  overflow: hidden;
+  height: auto;
+  min-height: 100%;
 }
-/* Goal textarea — full width, regular font */
+/* Goal textarea — full width of container, monospace to match other editors */
 .proj-goal-ta {
   width: 100%;
+  min-width: unset;
   max-width: 100%;
-  font-family: var(--font);
-  font-size: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
   line-height: 21px;
 }
 .proj-notebook-goal {
   border: 1px solid var(--border2);
   border-radius: var(--radius-sm);
   min-height: 230px;
-  resize: vertical;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: flex-start;
 }
 .proj-notebook-scratch {
   align-items: center;
@@ -2093,6 +2002,7 @@ kbd {
 /* Make sure col content sits above the image */
 .fs-col > *:not(.setup-section-img) { position: relative; z-index: 1; }
 .fs-body-single > *:not(.setup-section-img) { position: relative; z-index: 1; }
+.fs-body-single 
 .fs-body-single .fs-col-header {
   max-width: 680px;
   padding: 0 20px;
@@ -2681,7 +2591,8 @@ kbd {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: transparent;
+  background: rgba(10, 12, 18, 0.75);
+  backdrop-filter: blur(3px);
   animation: smokerFadeIn 0.4s ease;
 }
 .smoker-overlay.active {
@@ -2728,24 +2639,23 @@ kbd {
 /* Smoke particles */
 .smoke-particles {
   position: absolute;
-  top: -120px;
-  left: 30%;
+  top: -60px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 200px;
-  height: 160px;
+  width: 120px;
+  height: 80px;
   pointer-events: none;
 }
 .smoke-puff {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(210,210,230,0.55) 0%, rgba(180,180,210,0.2) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(200,200,220,0.35) 0%, transparent 70%);
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
-  0%   { transform: translateY(0) scale(0.2) translateX(0px); opacity: 0.9; }
-  30%  { opacity: 0.75; }
-  70%  { opacity: 0.4; transform: translateY(-100px) scale(2) translateX(var(--drift, 8px)); }
-  100% { transform: translateY(-160px) scale(3.5) translateX(var(--drift, 12px)); opacity: 0; }
+  0%   { transform: translateY(0) scale(0.3); opacity: 0.7; }
+  60%  { opacity: 0.4; }
+  100% { transform: translateY(-80px) scale(2.5); opacity: 0; }
 }
 
 /* ── NOTES MODAL ── */
@@ -2795,9 +2705,9 @@ kbd {
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-family: var(--font);
+  font-family: var(--font-mono);
   font-size: 13px;
-  line-height: 1.7;
+  line-height: 21px;
   padding: 16px 20px;
   resize: none;
   outline: none;
@@ -3023,6 +2933,7 @@ kbd {
 }
 .license-badge:hover { background: #e01830; box-shadow: 0 0 12px rgba(192,21,42,0.7); }
 .license-badge.licensed {
+  border: none;
   background: var(--green-dim);
   border: 1px solid var(--green);
   color: var(--green);

@@ -232,7 +232,7 @@
             <div>
               <div class="proj-notebook proj-notebook-goal">
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
-                <textarea id="projectGoal" placeholder="Project goal — what are you trying to create or achieve? The more specific and detailed you are, the better your results will be." class="proj-notebook-ta proj-goal-ta" oninput="saveProject();updateProjLineNums('projGoalNums',this);updateGoalCounter()" onscroll="document.getElementById('projGoalNums').scrollTop=this.scrollTop"></textarea>
+                <textarea id="projectGoal" placeholder="Project goal — what are you trying to create or achieve? The more specific and detailed you are, the better your results will be." class="proj-notebook-ta proj-goal-ta" oninput="saveProject();updateProjLineNums('projGoalNums',this);updateGoalCounter()"></textarea>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
                 <button class="field-clear-btn" onclick="document.getElementById('projectGoal').value='';saveProject();updateProjLineNums('projGoalNums',document.getElementById('projectGoal'));updateGoalCounter();" title="Clear goal">✕ Clear Goal</button>
@@ -280,8 +280,7 @@
               <div class="proj-notebook">
                 <div class="proj-notebook-nums" id="projPasteNums"><div>1</div></div>
                 <textarea id="pasteText" class="proj-notebook-ta" placeholder="Paste your existing document text here…"
-                  oninput="updateProjLineNums('projPasteNums', this)"
-                  onscroll="document.getElementById('projPasteNums').scrollTop=this.scrollTop"></textarea>
+                  oninput="updateProjLineNums('projPasteNums', this); updateLaunchRequirements()"></textarea>
               </div>
             </div>
 
@@ -399,7 +398,7 @@
         <div class="work-doc-editor">
           <div class="work-doc-scroll">
             <div class="work-line-numbers" id="lineNumbers"></div>
-            <div class="work-doc-inner" onscroll="syncLineNumberScroll()">
+            <div class="work-doc-inner">
               <div class="work-doc-rules" id="docRules"></div>
               <textarea
                 id="workDocument"
@@ -430,23 +429,11 @@
 
         <!-- 3D Digital Clock -->
         <div class="console-clock-3d">
-          <div class="clock-bezel clock-bezel-split">
-            <div class="clock-half">
-              <div class="clock-screen">
-                <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
-              </div>
-              <div class="clock-label" id="roundTimerLabel">ROUND</div>
+          <div class="clock-bezel">
+            <div class="clock-screen">
+              <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
             </div>
-            <div class="clock-split-divider"></div>
-            <div class="clock-half">
-              <div class="clock-screen">
-                <span class="clock-digit-group" id="projectTimerDisplay">00:00</span>
-              </div>
-              <div class="clock-label clock-label-project">
-                PROJECT
-                <button class="clock-pause-btn" id="projectPauseBtn" onclick="toggleProjectTimer()" title="Pause project timer">⏸</button>
-              </div>
-            </div>
+            <div class="clock-label" id="roundTimerLabel">READY</div>
           </div>
         </div>
 
