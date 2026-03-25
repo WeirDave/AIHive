@@ -442,10 +442,12 @@
               <div class="clock-screen">
                 <span class="clock-digit-group" id="projectTimerDisplay">00:00</span>
               </div>
-              <div class="clock-label">PROJECT</div>
+              <div class="clock-label clock-label-project">
+                PROJECT
+                <button class="clock-pause-btn" id="projectPauseBtn" onclick="toggleProjectTimer()" title="Pause project timer">⏸</button>
+              </div>
             </div>
           </div>
-          <button class="clock-pause-btn" id="projectPauseBtn" onclick="toggleProjectTimer()" title="Pause/resume project timer">⏸</button>
         </div>
 
         <!-- Console -->

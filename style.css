@@ -1247,7 +1247,7 @@ html, body {
   font-family: var(--font-mono);
   font-size: 28px;
   font-weight: 700;
-  color: #4a5270;
+  color: #7a85a8;
   letter-spacing: 0.12em;
   transition: color 0.3s, text-shadow 0.3s;
   display: block;
@@ -1260,27 +1260,27 @@ html, body {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.2em;
-  color: #3a4060;
+  color: rgba(255,255,255,0.55);
   text-transform: uppercase;
   transition: color 0.3s;
 }
 .clock-label.running { color: #34d399; }
 
+.clock-label-project {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .clock-pause-btn {
-  display: block;
-  width: 100%;
-  margin-top: 6px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 4px;
-  color: #3a4060;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  padding: 3px 0;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 3px;
+  color: rgba(255,255,255,0.45);
+  font-size: 9px;
+  line-height: 1;
+  padding: 1px 4px;
   cursor: pointer;
   transition: all 0.15s;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
 }
 .clock-pause-btn:hover {
   border-color: var(--accent);
@@ -1290,6 +1290,68 @@ html, body {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
+}
+
+/* ── CLOCK — Light theme overrides ── */
+[data-theme="light"] .console-clock-3d,
+[data-theme="light"] .clock-bezel {
+  background: linear-gradient(145deg, #ffffff, #f0f2f8);
+  border-color: #d0d4e8;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.08),
+    inset 0 -1px 2px rgba(255,255,255,0.9),
+    0 4px 12px rgba(0,0,0,0.12),
+    0 1px 0 rgba(255,255,255,0.9);
+}
+[data-theme="light"] .console-clock-3d {
+  background: #ffffff;
+  border-color: #d0d4e8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+[data-theme="light"] .clock-screen {
+  background: linear-gradient(180deg, #f8f9fc 0%, #eef0f8 100%);
+  border-color: #d0d4e8;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .clock-digit-group {
+  color: #384060;
+}
+[data-theme="light"] .clock-label {
+  color: #7880a0;
+}
+[data-theme="light"] .clock-split-divider {
+  background: rgba(0,0,0,0.1);
+}
+[data-theme="light"] .clock-pause-btn {
+  border-color: rgba(0,0,0,0.15);
+  color: #7880a0;
+}
+
+/* ── CLOCK — Auto theme (light OS) overrides ── */
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .console-clock-3d {
+    background: #ffffff;
+    border-color: #d0d4e8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  [data-theme="auto"] .clock-bezel {
+    background: linear-gradient(145deg, #ffffff, #f0f2f8);
+    border-color: #d0d4e8;
+    box-shadow:
+      inset 0 2px 4px rgba(0,0,0,0.08),
+      inset 0 -1px 2px rgba(255,255,255,0.9),
+      0 4px 12px rgba(0,0,0,0.12),
+      0 1px 0 rgba(255,255,255,0.9);
+  }
+  [data-theme="auto"] .clock-screen {
+    background: linear-gradient(180deg, #f8f9fc 0%, #eef0f8 100%);
+    border-color: #d0d4e8;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+  }
+  [data-theme="auto"] .clock-digit-group { color: #384060; }
+  [data-theme="auto"] .clock-label       { color: #7880a0; }
+  [data-theme="auto"] .clock-split-divider { background: rgba(0,0,0,0.1); }
+  [data-theme="auto"] .clock-pause-btn   { border-color: rgba(0,0,0,0.15); color: #7880a0; }
 }
 
 /* Right edge padding */
@@ -2619,8 +2681,7 @@ kbd {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: rgba(10, 12, 18, 0.75);
-  backdrop-filter: blur(3px);
+  background: transparent;
   animation: smokerFadeIn 0.4s ease;
 }
 .smoker-overlay.active {
@@ -2668,7 +2729,7 @@ kbd {
 .smoke-particles {
   position: absolute;
   top: -60px;
-  left: 50%;
+  left: 30%;
   transform: translateX(-50%);
   width: 120px;
   height: 80px;
