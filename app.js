@@ -731,7 +731,8 @@ function saveSession() {
   const consoleHTML = consoleEl ? consoleEl.innerHTML : '';
   const notesEl = document.getElementById('workNotes');
   const notes = notesEl ? notesEl.value : '';
-  const session = { round, phase, history, docText, consoleHTML, notes };
+  const sessionAIIds = window.sessionAIs ? [...window.sessionAIs] : activeAIs.map(a => a.id);
+  const session = { round, phase, history, docText, consoleHTML, notes, sessionAIIds };
   try { localStorage.setItem(LS_SESSION, JSON.stringify(session)); } catch(e) {}
   saveProject(); // keep project fields in sync
 }
@@ -745,6 +746,10 @@ function loadSession() {
     phase   = s.phase   || 'draft';
     history = s.history || [];
     docText = s.docText || '';
+    // Restore which bees were toggled on/off in the work screen
+    if (s.sessionAIIds && s.sessionAIIds.length > 0) {
+      window.sessionAIs = new Set(s.sessionAIIds);
+    }
     if (s.consoleHTML) {
       const el = document.getElementById('liveConsole');
       if (el) el.innerHTML = s.consoleHTML;
@@ -1385,8 +1390,11 @@ function initWorkScreen(isNewSession = false) {
     if (notesTa) notesTa.value = `Project goal: ${goal}`;
   }
 
-  // Reset per-session bee selection to all active AIs
-  window.sessionAIs = new Set(activeAIs.map(a => a.id));
+  // Reset per-session bee selection only on a genuinely new session
+  // On reload/restore, sessionAIs was already populated by loadSession()
+  if (isNewSession || !window.sessionAIs || window.sessionAIs.size === 0) {
+    window.sessionAIs = new Set(activeAIs.map(a => a.id));
+  }
 
   renderWorkPhaseBar();
   renderBeeStatusGrid();
@@ -1566,6 +1574,7 @@ function toggleSessionBee(id, on) {
     card.classList.toggle('is-active', on);
     card.classList.toggle('is-inactive', !on);
   }
+  saveSession();
 }
 
 function setBeeStatus(id, state, summary) {
