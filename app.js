@@ -1345,10 +1345,11 @@ function initWorkScreen(isNewSession = false) {
   updateLicenseBadge();
   setStatus('Standing by — toggle bees above, then Smoke the Hive');
 
-  // Wire up scroll sync on the paper div (which now owns the scrollbar)
-  const inner = document.querySelector('.work-doc-inner');
-  if (inner) {
-    inner.addEventListener('scroll', syncLineNumberScroll);
+  // Wire up scroll sync and input handler directly on the textarea
+  const ta = document.getElementById('workDocument');
+  const ln = document.getElementById('lineNumbers');
+  if (ta && ln) {
+    ta.addEventListener('scroll', syncLineNumberScroll);
   }
 
   // Keep line numbers filled on resize
@@ -1384,10 +1385,6 @@ function updateLineNumbers() {
   const ln = document.getElementById('lineNumbers');
   if (!ta || !ln) return;
 
-  // Keep textarea height in sync with content (enables .work-doc-inner scrollbar)
-  ta.style.height = 'auto';
-  ta.style.height = ta.scrollHeight + 'px';
-
   const text = (ta.value || '');
   const logicalLines = text.split('\n');
 
@@ -1414,20 +1411,18 @@ function updateLineNumbers() {
 }
 
 function syncLineNumberScroll() {
-  const inner = document.querySelector('.work-doc-inner');
+  const ta = document.getElementById('workDocument');
   const ln = document.getElementById('lineNumbers');
-  if (!inner || !ln) return;
-  ln.scrollTop = inner.scrollTop;
-  inner.style.backgroundPosition = `0 ${4 - inner.scrollTop % 21}px`;
+  const inner = document.querySelector('.work-doc-inner');
+  if (!ta || !ln || !inner) return;
+  ln.scrollTop = ta.scrollTop;
+  inner.style.backgroundPosition = `0 ${4 - ta.scrollTop}px`;
 }
 
 function handleWorkDocumentInput() {
   const ta = document.getElementById('workDocument');
   if (!ta) return;
   docText = ta.value;
-  // Auto-grow textarea so .work-doc-inner overflows and shows its scrollbar
-  ta.style.height = 'auto';
-  ta.style.height = ta.scrollHeight + 'px';
   clearTimeout(_lineNumDebounce);
   _lineNumDebounce = setTimeout(updateLineNumbers, 50);
   clearTimeout(workDocSaveTimer);

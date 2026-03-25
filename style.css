@@ -1074,13 +1074,9 @@ html, body {
 
 .work-doc-inner {
   flex: 0 0 auto;
+  width: calc(80ch + 8px + 17px);
   position: relative;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* ch must be computed from the same font as the textarea so 80ch is consistent */
-  font-family: "JetBrains Mono", monospace;
-  font-size: 13px;
+  min-width: 0;
   background-color: #ffffff;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -1091,42 +1087,31 @@ html, body {
   );
   background-size: 100% 21px;
   background-position: 0 4px;
-  box-sizing: border-box;
-  /* text(80ch) + left-pad(8px) + right-pad(12px) + white-strip(28px) + scrollbar(12px) */
-  width: calc(80ch + 8px + 12px + 28px + 12px);
-  scrollbar-width: thin;
-  scrollbar-gutter: stable;
+  overflow: hidden;
 }
-
-.work-doc-inner::-webkit-scrollbar { width: 12px; }
-.work-doc-inner::-webkit-scrollbar-track { background: transparent; }
-.work-doc-inner::-webkit-scrollbar-thumb { background: rgba(120,120,140,0.55); border-radius: 8px; }
 
 .work-doc-ta {
   position: relative;
   z-index: 1;
   display: block;
-  /* EXACT text box: 80ch + only left/right text padding — white strip lives in parent */
-  width: calc(80ch + 8px + 12px);
-  min-width: calc(80ch + 8px + 12px);
-  max-width: calc(80ch + 8px + 12px);
-  height: auto;
-  min-height: 100%;
+  width: calc(80ch + 17px);
+  min-width: calc(80ch + 17px);
+  max-width: calc(80ch + 17px);
+  height: 100%;
+  min-height: 0;
   margin: 0;
-  padding: 4px 12px 0 8px;
+  padding: 4px 0 0 8px;
   border: none;
   outline: none;
   resize: none;
-  overflow: hidden;
-  box-sizing: border-box;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  box-sizing: content-box;
   background: transparent;
   color: #1a1a2e;
   font-family: "JetBrains Mono", monospace;
   font-size: 13px;
   line-height: 21px;
-  letter-spacing: 0;
-  font-variant-ligatures: none;
-  font-feature-settings: "liga" 0, "calt" 0;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -2579,14 +2564,15 @@ kbd {
 /* ── SMOKER OVERLAY ── */
 .smoker-overlay {
   position: fixed;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 8000;
   display: none;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: rgba(10, 12, 18, 0.75);
-  backdrop-filter: blur(3px);
+  background: transparent;
   animation: smokerFadeIn 0.4s ease;
 }
 .smoker-overlay.active {
