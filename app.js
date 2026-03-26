@@ -605,20 +605,23 @@ function updateSetupRequirements() {
 }
 
 function updateLaunchRequirements() {
-  const name    = document.getElementById('projectName')?.value.trim()  || '';
-  const goal    = document.getElementById('projectGoal')?.value.trim()  || '';
-  const pasteVal = document.getElementById('pasteText')?.value.trim() || '';
+  const name    = document.getElementById('projectName')?.value.trim()    || '';
+  const version = document.getElementById('projectVersion')?.value.trim() || '';
+  const goal    = document.getElementById('projectGoal')?.value.trim()    || '';
+  const pasteVal = document.getElementById('pasteText')?.value.trim()    || '';
   const hasDoc  = docText || docTab === 'scratch' || (docTab === 'paste' && pasteVal);
 
-  const reqName = document.getElementById('req-name');
-  const reqGoal = document.getElementById('req-goal');
-  const reqDoc  = document.getElementById('req-doc');
+  const reqName    = document.getElementById('req-name');
+  const reqVersion = document.getElementById('req-version');
+  const reqGoal    = document.getElementById('req-goal');
+  const reqDoc     = document.getElementById('req-doc');
 
-  if (reqName) { reqName.textContent = (name ? '✓' : '✗') + ' Project name';        reqName.classList.toggle('met', !!name); }
-  if (reqGoal) { reqGoal.textContent = (goal ? '✓' : '✗') + ' Project goal';        reqGoal.classList.toggle('met', !!goal); }
-  if (reqDoc)  { reqDoc.textContent  = (hasDoc ? '✓' : '✗') + ' Document — upload a file, paste text, or choose Start from Scratch'; reqDoc.classList.toggle('met', !!hasDoc); }
+  if (reqName)    { reqName.textContent    = (name    ? '✓' : '✗') + ' Project name';    reqName.classList.toggle('met', !!name); }
+  if (reqVersion) { reqVersion.textContent = (version ? '✓' : '✗') + ' Version number';  reqVersion.classList.toggle('met', !!version); }
+  if (reqGoal)    { reqGoal.textContent    = (goal    ? '✓' : '✗') + ' Project goal';    reqGoal.classList.toggle('met', !!goal); }
+  if (reqDoc)     { reqDoc.textContent     = (hasDoc  ? '✓' : '✗') + ' Document — upload a file, paste text, or choose Start from Scratch'; reqDoc.classList.toggle('met', !!hasDoc); }
 
-  const allMet = !!name && !!goal && !!hasDoc;
+  const allMet = !!name && !!version && !!goal && !!hasDoc;
   const btn = document.getElementById('launchBtn');
   if (btn) { btn.classList.toggle('btn-accent', allMet); }
 }
@@ -628,10 +631,12 @@ function saveProject() {
     projectName:    document.getElementById('projectName')?.value    || '',
     projectVersion: document.getElementById('projectVersion')?.value || '',
     projectGoal:    document.getElementById('projectGoal')?.value    || '',
+    exportMask:     document.getElementById('exportMask')?.value     || '',
     docTab,
   };
   try { localStorage.setItem(LS_PROJECT, JSON.stringify(proj)); } catch(e) {}
   updateLaunchRequirements();
+  updateMaskPreview();
 }
 
 // saveSettings — writes both (convenience wrapper)
@@ -727,6 +732,7 @@ function loadSettings() {
       if (p.projectName)    { const el = document.getElementById('projectName');    if (el) el.value = p.projectName; }
       if (p.projectVersion) { const el = document.getElementById('projectVersion'); if (el) el.value = p.projectVersion; }
       if (p.projectGoal)    { const el = document.getElementById('projectGoal');    if (el) { el.value = p.projectGoal; updateGoalCounter(); } }
+      if (p.exportMask)     { const el = document.getElementById('exportMask');     if (el) { el.value = p.exportMask; updateMaskPreview(); } }
       if (p.docTab) docTab = p.docTab;
     }
 
@@ -2657,25 +2663,59 @@ function restoreRound(idx) {
 }
 
 // ── EXPORT ──
+function updateMaskPreview() {
+  const preview = document.getElementById('exportMaskPreview');
+  if (!preview) return;
+  const name    = document.getElementById('projectName')?.value.trim()    || 'ProjectName';
+  const ver     = document.getElementById('projectVersion')?.value.trim() || 'v1';
+  const mask    = document.getElementById('exportMask')?.value.trim()     || '';
+  const safeName = name.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  const safeVer  = ver.replace(/[^a-z0-9._-]/gi, '');
+  let result;
+  if (mask) {
+    result = mask
+      .replace(/\{name\}/gi, safeName)
+      .replace(/\{version\}/gi, safeVer || 'v1');
+  } else {
+    result = safeVer ? `${safeName}_${safeVer}` : safeName;
+  }
+  preview.textContent = result ? `→ ${result}.txt` : '';
+}
+
+function buildExportName() {
+  const name    = document.getElementById('workProjectName')?.textContent?.trim() || 'document';
+  const ver     = document.getElementById('workProjectVersion')?.textContent?.trim() || '';
+  const mask    = (document.getElementById('exportMask')?.value?.trim()) ||
+                  ((() => { try { return JSON.parse(localStorage.getItem(LS_PROJECT) || '{}').exportMask || ''; } catch(e) { return ''; } })());
+  const safeName = name.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  const safeVer  = ver.replace(/[^a-z0-9._-]/gi, '');
+  if (mask) {
+    return mask
+      .replace(/\{name\}/gi, safeName)
+      .replace(/\{version\}/gi, safeVer || 'v1')
+      .replace(/[^a-z0-9._\-{}]/gi, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+  return safeVer ? `${safeName}_${safeVer}` : safeName;
+}
+
 function exportDocument() {
   const doc = document.getElementById('workDocument')?.value?.trim();
   if (!doc) { toast('⚠️ Nothing to export yet'); return; }
-  const name = document.getElementById('workProjectName')?.textContent || 'document';
-  const ver  = document.getElementById('workProjectVersion')?.textContent || '';
+  const filename = buildExportName();
   const blob = new Blob([doc], { type: 'text/plain' });
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
-  a.download = `${name}${ver ? ' ' + ver : ''}.txt`;
+  a.download = `${filename}.txt`;
   a.click();
   toast('💾 Document exported');
 }
 
 function exportSession() {
   const name    = document.getElementById('projectName')?.value.trim()    || 'AI-Hive';
-  const version = document.getElementById('projectVersion')?.value.trim() || '';
   const doc     = document.getElementById('workDocument')?.value.trim()   || '';
-  const safeName  = name.replace(/[^a-z0-9]/gi, '-').replace(/-+/g, '-').substring(0, 40);
-  const versionStr = version ? `-${version.replace(/[^a-z0-9.]/gi, '')}` : '';
+  const filename = buildExportName();
   const eq = '═'.repeat(30);
 
   if (history.length === 0 && !doc) { toast('⚠️ Nothing to export'); return; }
@@ -2696,7 +2736,7 @@ function exportSession() {
   const blob = new Blob([out], { type: 'text/plain' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = `AIHive-${safeName}${versionStr}-Transcript.txt`;
+  a.href = url; a.download = `${filename}_Transcript.txt`;
   a.click();
   URL.revokeObjectURL(url);
 
@@ -2705,7 +2745,7 @@ function exportSession() {
       const b2 = new Blob([doc], { type: 'text/plain' });
       const u2 = URL.createObjectURL(b2);
       const a2 = document.createElement('a');
-      a2.href = u2; a2.download = `AIHive-${safeName}${versionStr}-Document.txt`;
+      a2.href = u2; a2.download = `${filename}_Document.txt`;
       a2.click();
       URL.revokeObjectURL(u2);
     }, 400);

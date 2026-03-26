@@ -218,25 +218,22 @@
             </div>
 
             <div class="project-fields">
-              <div class="project-field-wrap">
-                <input type="text" id="projectName" placeholder="Project name — e.g. Q3 Executive Summary" class="field-lg" oninput="saveProject()">
-                <button class="field-clear-btn" onclick="document.getElementById('projectName').value='';saveProject();" title="Clear">✕</button>
+              <input type="text" id="projectName" placeholder="Project name — e.g. Q3 Executive Summary" class="field-lg proj-field-full" oninput="saveProject()">
+              <input type="text" id="projectVersion" placeholder="Version — e.g. v1" class="field-sm proj-field-ver" oninput="saveProject()">
+              <div class="proj-clear-row">
+                <button class="btn proj-clear-btn" onclick="document.getElementById('projectGoal').value='';saveProject();updateProjLineNums('projGoalNums',document.getElementById('projectGoal'));updateGoalCounter();">✕ Clear Goal</button>
+                <button class="btn proj-clear-btn" onclick="clearProject()" title="Clears this project — keeps your AI keys">🗑 Clear Project</button>
               </div>
-              <div class="project-field-wrap">
-                <input type="text" id="projectVersion" placeholder="Version — e.g. v1" class="field-sm" oninput="saveProject()">
-                <button class="field-clear-btn" onclick="document.getElementById('projectVersion').value='';saveProject();" title="Clear">✕</button>
-              </div>
-              <button class="btn" onclick="clearProject()" title="Clears this project — keeps your AI keys">🗑 Clear Project</button>
             </div>
 
             <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;width:100%;">
+                <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">Project Goal</span>
+                <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
+              </div>
               <div class="proj-notebook proj-notebook-goal">
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
                 <textarea id="projectGoal" placeholder="Project goal — what are you trying to create or achieve? The more specific and detailed you are, the better your results will be." class="proj-notebook-ta proj-goal-ta" oninput="saveProject();updateProjLineNums('projGoalNums',this);updateGoalCounter()"></textarea>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;width:calc(44px + 80ch + 91px);max-width:100%;margin-left:auto;margin-right:auto;">
-                <button class="field-clear-btn" onclick="document.getElementById('projectGoal').value='';saveProject();updateProjLineNums('projGoalNums',document.getElementById('projectGoal'));updateGoalCounter();" title="Clear goal">✕ Clear Goal</button>
-                <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
               </div>
             </div>
           </div>
@@ -263,6 +260,12 @@
               <button class="btn btn-sm btn-ghost doc-tab active" id="tab-upload" onclick="switchDocTab('upload')">📄 Upload File</button>
               <button class="btn btn-sm btn-ghost doc-tab" id="tab-paste" onclick="switchDocTab('paste')">📋 Paste Text</button>
               <button class="btn btn-sm btn-ghost doc-tab" id="tab-scratch" onclick="switchDocTab('scratch')">💡 Start from Scratch</button>
+            </div>
+
+            <div class="export-mask-row">
+              <label class="export-mask-label">💾 Export filename</label>
+              <input type="text" id="exportMask" class="export-mask-input" placeholder="{name}_{version}" oninput="saveProject();updateMaskPreview()" title="Use {name} and {version} as placeholders">
+              <span class="export-mask-preview" id="exportMaskPreview"></span>
             </div>
 
             <div class="doc-tab-panel active" id="panel-upload">
@@ -308,6 +311,7 @@
       <div class="launch-requirements">
         <span class="launch-req-title">To launch you need:</span>
         <span class="launch-req-item" id="req-name">✗ Project name</span>
+        <span class="launch-req-item" id="req-version">✗ Version number</span>
         <span class="launch-req-item" id="req-goal">✗ Project goal</span>
         <span class="launch-req-item" id="req-doc">✗ Document — upload a file, paste text, or choose Start from Scratch</span>
       </div>
