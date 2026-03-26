@@ -360,9 +360,7 @@ function copyConflicts() {
 
 function clearConflicts() {
   const el = document.getElementById('conflictsPanel');
-  const label = document.getElementById('conflictsRoundLabel');
   if (el) el.innerHTML = '<div class="conflicts-empty">No conflicts yet — run a round to see what the Builder couldn\'t resolve.</div>';
-  if (label) label.textContent = '';
 }
 
 function copyNotes() {
@@ -1355,8 +1353,6 @@ function initWorkScreen(isNewSession = false) {
     if (consoleEl) consoleEl.innerHTML = '<div class="console-entry console-info">Console ready — shake the hive to begin.</div>';
     const conflictsEl = document.getElementById('conflictsPanel');
     if (conflictsEl) conflictsEl.innerHTML = '<div class="conflicts-empty">No conflicts yet — run a round to see what the Builder couldn\'t resolve.</div>';
-    const conflictsLabel = document.getElementById('conflictsRoundLabel');
-    if (conflictsLabel) conflictsLabel.textContent = '';
     const notesEl = document.getElementById('workNotes');
     if (notesEl) notesEl.value = '';
   }
@@ -1384,7 +1380,6 @@ function initWorkScreen(isNewSession = false) {
     updateLineNumbers();
     // Also defer to catch after layout paint
     requestAnimationFrame(() => updateLineNumbers());
-    setTimeout(() => updateLineNumbers(), 100);
   }
 
   const ps = document.getElementById('phaseSelect');
@@ -2288,18 +2283,15 @@ function extractDocument(text) {
 window._decisionChoices = {};
 
 function renderConflicts() {
-  const el    = document.getElementById('conflictsPanel');
-  const label = document.getElementById('conflictsRoundLabel');
+  const el = document.getElementById('conflictsPanel');
   if (!el) return;
 
   const latest = history.length > 0 ? history[history.length - 1] : null;
   if (!latest) {
     el.innerHTML = '<div class="conflicts-empty">No conflicts yet — run a round to see what the Builder couldn\'t resolve.</div>';
-    if (label) label.textContent = '';
     return;
   }
 
-  if (label) label.textContent = `Round ${latest.round === 0 ? 'Original' : latest.round}`;
   const conflicts = latest.conflicts;
 
   if (!conflicts) {

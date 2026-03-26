@@ -330,6 +330,7 @@
     <!-- ── TOP BAR ── -->
     <div class="work-topbar">
       <div class="work-topbar-left">
+        <button class="btn" onclick="goToScreen('screen-welcome')">⌂ Home</button>
         <div class="work-project-info">
           <span class="work-project-name" id="workProjectName">Project</span>
           <span class="work-project-version" id="workProjectVersion"></span>
@@ -369,10 +370,9 @@
 
         <div class="left-panel-header left-panel-section-border">
           <span class="work-section-title">Conflicts</span>
-          <div class="flex-row-center">
-            <span class="work-history-hint" id="conflictsRoundLabel"></span>
-            <button class="btn" onclick="copyConflicts()">📋</button>
-            <button class="btn" onclick="clearConflicts()">✕</button>
+          <div class="flex-row-sm">
+            <button class="btn" onclick="copyConflicts()">📋 Copy</button>
+            <button class="btn" onclick="clearConflicts()">✕ Clear</button>
           </div>
         </div>
         <div class="conflicts-panel" id="conflictsPanel">
@@ -386,17 +386,13 @@
 
       <!-- ══ COL 3: Working Document ══ -->
       <div class="work-doc-panel">
-        <div class="work-panel-header work-doc-header">
-          <div class="work-doc-header-row1">
-            <span class="work-section-title">Working Document</span>
-            <div class="flex-row">
-              <button class="btn" onclick="exportDocument()">💾 Export</button>
-              <button class="btn" onclick="copyDocument()">📋 Copy</button>
-              <button class="btn" onclick="clearDocument()">✕ Clear</button>
-            </div>
-          </div>
-          <div class="work-doc-header-row2">
-            <span class="doc-stats" id="docStats"></span>
+        <div class="work-panel-header">
+          <span class="work-section-title">📄 Working Document</span>
+          <span class="doc-stats" id="docStats"></span>
+          <div class="flex-row">
+            <button class="btn" onclick="exportDocument()">💾 Export</button>
+            <button class="btn" onclick="copyDocument()">📋 Copy</button>
+            <button class="btn" onclick="clearDocument()">✕ Clear</button>
           </div>
         </div>
         <div class="work-doc-editor">
