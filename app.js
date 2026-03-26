@@ -493,7 +493,7 @@ function goToScreen(id) {
   }
   if (id === 'screen-setup') {
     renderBuilderPicker();
-    updateSetupRequirements();
+    setTimeout(updateSetupRequirements, 0);
   }
   if (id === 'screen-project') {
     switchDocTab(docTab);
@@ -548,6 +548,10 @@ function updateSetupRequirements() {
 
   if (reqKeys)    { reqKeys.textContent    = (keyedCount >= 2 ? '✓' : '✗') + ` At least 2 API keys saved (${keyedCount} saved)`; reqKeys.classList.toggle('met', keyedCount >= 2); }
   if (reqBuilder) { reqBuilder.textContent = (hasBuilder ? '✓' : '✗') + ' Builder selected';                                      reqBuilder.classList.toggle('met', hasBuilder); }
+
+  const allMet = keyedCount >= 2 && hasBuilder;
+  const btn = document.getElementById('setupContinueBtn');
+  if (btn) { btn.classList.toggle('btn-accent', allMet); }
 }
 
 function updateLaunchRequirements() {
@@ -563,6 +567,10 @@ function updateLaunchRequirements() {
   if (reqName) { reqName.textContent = (name ? '✓' : '✗') + ' Project name';        reqName.classList.toggle('met', !!name); }
   if (reqGoal) { reqGoal.textContent = (goal ? '✓' : '✗') + ' Project goal';        reqGoal.classList.toggle('met', !!goal); }
   if (reqDoc)  { reqDoc.textContent  = (hasDoc ? '✓' : '✗') + ' Document — upload a file, paste text, or choose Start from Scratch'; reqDoc.classList.toggle('met', !!hasDoc); }
+
+  const allMet = !!name && !!goal && !!hasDoc;
+  const btn = document.getElementById('launchBtn');
+  if (btn) { btn.classList.toggle('btn-accent', allMet); }
 }
 
 function saveProject() {
@@ -2694,6 +2702,7 @@ function initTheme() {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadSettings(); // always load hive (AI keys) silently
+  updateSetupRequirements();
 
   const hasSession = loadSession();
 

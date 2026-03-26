@@ -165,19 +165,18 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
   background: transparent;
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius-sm);
   color: var(--text-dim);
   font-size: 13px;
-  font-weight: 500;
   padding: 7px 14px;
   transition: all 0.12s;
-  white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
-.btn:hover { color: var(--accent); border-color: var(--accent); }
+.btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 /* Ghost — visible over honeycomb */
 .btn-ghost {
@@ -215,22 +214,6 @@ html, body {
 
 .btn-sm { font-size: 12px; padding: 5px 11px; }
 .btn-lg { font-size: 15px; padding: 12px 28px; border-radius: var(--radius-md); }
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px dashed var(--border2);
-  border-radius: var(--radius-sm);
-  color: var(--text-dim);
-  font-size: 13px;
-  padding: 7px 14px;
-  transition: all 0.12s;
-  text-decoration: none;
-  cursor: pointer;
-}
-.back-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 /* ── THEME TOGGLE ── */
 .theme-opt {
@@ -638,9 +621,13 @@ html, body {
 .project-fields {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 10px;
-  width: 100%;
+  width: calc(44px + 80ch + 91px);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .field-lg, .field-sm, .field-goal, 
 .field-sm { width: 180px; min-width: 0; }
@@ -652,11 +639,21 @@ html, body {
   gap: 6px;
   margin-bottom: 14px;
 }
-.doc-tab.active {
-  background: var(--accent-dim) !important;
+.doc-tab {
+  background: transparent !important;
+  border: 1px solid var(--border2) !important;
+  color: var(--text-dim) !important;
+}
+.doc-tab:hover {
   border-color: var(--accent) !important;
-  border-style: dashed !important;
   color: var(--accent) !important;
+  background: transparent !important;
+}
+.doc-tab.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  border-style: solid !important;
+  color: #0a0c12 !important;
   font-weight: 700 !important;
 }
 
@@ -1533,7 +1530,7 @@ kbd {
   gap: 4px;
   min-width: 0;
 }
-.project-field-wrap:first-child { flex: 0 1 55%; }
+.project-field-wrap:first-child { flex: 0 1 auto; width: 360px; max-width: 360px; }
 .project-field-wrap .field-lg { width: 100%; }
 .project-field-wrap:nth-child(2) { flex-shrink: 0; }
 .project-field-wrap:nth-child(2) .field-sm { width: 150px; }
@@ -1669,10 +1666,6 @@ kbd {
 }
 .work-logo-row .work-logo-text {
   text-align: right;
-}
-
-  gap: 6px;
-  margin-bottom: 6px;
 }
 
 .bee-card.is-builder { border-color: var(--accent); background: var(--accent-dim); }
@@ -1952,9 +1945,9 @@ kbd {
 }
 /* Goal textarea — full width of container, monospace to match other editors */
 .proj-goal-ta {
-  width: 100%;
-  min-width: unset;
-  max-width: 100%;
+  width: 80ch;
+  min-width: 80ch;
+  max-width: 80ch;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 21px;
@@ -1966,6 +1959,12 @@ kbd {
   overflow-y: auto;
   overflow-x: hidden;
   align-items: flex-start;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  width: calc(44px + 80ch + 91px);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .proj-notebook-scratch {
   align-items: center;

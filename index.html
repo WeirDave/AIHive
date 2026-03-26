@@ -54,8 +54,8 @@
       </div>
     </div>
     <div class="welcome-footer">
-      <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn btn-ghost btn-sm">⭐ GitHub</a>
-      <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn btn-ghost btn-sm">📄 AGPL-3.0</a>
+      <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
+      <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
     </div>
     <div class="theme-toggle">
       <button class="theme-opt" data-theme="light" onclick="setTheme('light')" title="Light mode">☀️ Light</button>
@@ -74,7 +74,7 @@
 
     <!-- ── Header bar ── -->
     <div class="fs-header">
-      <button class="back-btn" onclick="goToScreen('screen-welcome')">← Back</button>
+      <button class="btn" onclick="goToScreen('screen-welcome')">← Back</button>
       <div class="fs-header-brand">
         <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="fs-logo">
         <div>
@@ -98,10 +98,10 @@
               <p class="fs-col-sub">Each AI in your hive acts as a reviewer — reading your document and giving numbered suggestions each round. You need <strong>at least 2 AIs with saved API keys</strong> to run a round. You can add as many as you like. Only AIs with a saved key will run automatically — the rest are ignored. On the work screen you can toggle individual AIs on or off per session without losing their keys.</p>
             </div>
             <div class="bee-controls-row-setup">
-              <button class="btn btn-sm btn-ghost" onclick="resetBeesToDefaults()">↺ Reset to Defaults</button>
-              <button class="btn btn-sm btn-ghost" onclick="openAllConsoles()">Open All API Consoles</button>
-              <a class="btn btn-sm btn-ghost" href="api-details.html" target="_blank">API Key Guide</a>
-              <button class="btn btn-sm btn-ghost" onclick="showAddCustomAI()">＋ Add Custom AI</button>
+              <button class="btn" onclick="resetBeesToDefaults()">↺ Reset to Defaults</button>
+              <button class="btn" onclick="openAllConsoles()">Open All API Consoles</button>
+              <a class="btn" href="api-details.html" target="_blank">API Key Guide</a>
+              <button class="btn" onclick="showAddCustomAI()">＋ Add Custom AI</button>
             </div>
 
             <!-- ── Custom AI Form ── -->
@@ -132,7 +132,7 @@
                 </div>
               </div>
               <div class="custom-ai-form-footer">
-                <button class="btn btn-ghost btn-sm" onclick="showAddCustomAI()">Cancel</button>
+                <button class="btn" onclick="showAddCustomAI()">Cancel</button>
                 <button class="btn btn-accent btn-sm" onclick="addCustomAI()">Add to Hive</button>
               </div>
             </div>
@@ -175,7 +175,7 @@
         <span class="launch-req-item" id="req-keys">✗ At least 2 API keys saved</span>
         <span class="launch-req-item" id="req-builder">✗ Builder selected</span>
       </div>
-      <button class="btn btn-accent btn-lg" id="setupContinueBtn" onclick="validateAndContinue()">
+      <button class="btn btn-lg" id="setupContinueBtn" onclick="validateAndContinue()">
         <img src="images/AI_Hive_Project_Bee_v2.png" class="bee-btn-img">
         Continue to Project Setup →
       </button>
@@ -193,7 +193,7 @@
 
     <!-- ── Header bar ── -->
     <div class="fs-header">
-      <button class="back-btn" onclick="goToScreen('screen-setup')">← Back</button>
+      <button class="btn" onclick="goToScreen('screen-setup')">← Back</button>
       <div class="fs-header-brand">
         <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="fs-logo">
         <div>
@@ -226,7 +226,7 @@
                 <input type="text" id="projectVersion" placeholder="Version — e.g. v1" class="field-sm" oninput="saveProject()">
                 <button class="field-clear-btn" onclick="document.getElementById('projectVersion').value='';saveProject();" title="Clear">✕</button>
               </div>
-              <button class="btn btn-ghost" onclick="clearProject()" title="Clears this project — keeps your AI keys">🗑 Clear Project</button>
+              <button class="btn" onclick="clearProject()" title="Clears this project — keeps your AI keys">🗑 Clear Project</button>
             </div>
 
             <div>
@@ -311,7 +311,7 @@
         <span class="launch-req-item" id="req-goal">✗ Project goal</span>
         <span class="launch-req-item" id="req-doc">✗ Document — upload a file, paste text, or choose Start from Scratch</span>
       </div>
-      <button class="btn btn-accent btn-lg" onclick="startSession()">
+      <button class="btn btn-lg" id="launchBtn" onclick="startSession()">
         <img src="images/AI_Hive_Logo_v4.png" class="bee-btn-img">
         Launch AI Hive →
       </button>
@@ -341,10 +341,10 @@
         <span class="work-round-badge" id="workRoundBadge">Round 1</span>
       </div>
       <div class="work-topbar-right">
-        <button class="btn btn-ghost btn-sm" onclick="openNotesModal()">📝 Notes</button>
-        <button class="btn btn-ghost btn-sm" onclick="openRoundHistoryModal()">📖 History</button>
-        <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙️ API Keys</button>
-        <a class="btn btn-ghost btn-sm" href="prompt-editor.html" target="_blank">✏️ Prompts</a>
+        <button class="btn" onclick="openNotesModal()">📝 Notes</button>
+        <button class="btn" onclick="openRoundHistoryModal()">📖 History</button>
+        <button class="btn" onclick="openSettings()">⚙️ API Keys</button>
+        <a class="btn" href="prompt-editor.html" target="_blank">✏️ Prompts</a>
         <span class="license-badge" id="licenseBadge" title="License status"></span>
       </div>
     </div>
@@ -362,7 +362,7 @@
 
         <div class="left-panel-header">
           <span class="work-section-title">The Hive</span>
-          <button class="btn btn-ghost btn-sm" onclick="openChangeBuilder()">Change Builder</button>
+          <button class="btn" onclick="openChangeBuilder()">Change Builder</button>
         </div>
 
         <div class="hex-grid" id="beeStatusGrid"></div>
@@ -371,8 +371,8 @@
           <span class="work-section-title">Conflicts</span>
           <div class="flex-row-center">
             <span class="work-history-hint" id="conflictsRoundLabel"></span>
-            <button class="btn btn-ghost btn-sm" onclick="copyConflicts()">📋</button>
-            <button class="btn btn-ghost btn-sm" onclick="clearConflicts()">✕</button>
+            <button class="btn" onclick="copyConflicts()">📋</button>
+            <button class="btn" onclick="clearConflicts()">✕</button>
           </div>
         </div>
         <div class="conflicts-panel" id="conflictsPanel">
@@ -390,9 +390,9 @@
           <span class="work-section-title">📄 Working Document</span>
           <span class="doc-stats" id="docStats"></span>
           <div class="flex-row">
-            <button class="btn btn-ghost btn-sm" onclick="exportDocument()">💾 Export</button>
-            <button class="btn btn-ghost btn-sm" onclick="copyDocument()">📋 Copy</button>
-            <button class="btn btn-ghost btn-sm" onclick="clearDocument()">✕ Clear</button>
+            <button class="btn" onclick="exportDocument()">💾 Export</button>
+            <button class="btn" onclick="copyDocument()">📋 Copy</button>
+            <button class="btn" onclick="clearDocument()">✕ Clear</button>
           </div>
         </div>
         <div class="work-doc-editor">
@@ -441,8 +441,8 @@
         <div class="work-panel-header honeycomb-header">
           <span class="work-section-title">🖥️ Live Console</span>
           <div class="flex-row-sm">
-            <button class="btn btn-ghost btn-sm" onclick="copyConsole()">📋 Copy</button>
-            <button class="btn btn-ghost btn-sm" onclick="clearConsole()">✕ Clear</button>
+            <button class="btn" onclick="copyConsole()">📋 Copy</button>
+            <button class="btn" onclick="clearConsole()">✕ Clear</button>
           </div>
         </div>
         <div class="console-legend">
@@ -505,14 +505,14 @@
     <div class="notes-modal-hdr">
       <div class="notes-modal-title">📝 Notes for this Round</div>
       <div class="notes-modal-sub">Optional directions for the Builder. Reference line numbers if helpful.</div>
-      <button class="btn btn-ghost btn-sm" onclick="closeNotesModal()">✕ Close</button>
+      <button class="btn" onclick="closeNotesModal()">✕ Close</button>
     </div>
     <textarea id="workNotes" class="notes-modal-ta"
       oninput="saveSession()"
       placeholder="e.g. Line 5: change tone to be more formal&#10;Line 12–15: expand this section&#10;Overall: make it more concise"></textarea>
     <div class="notes-modal-footer">
-      <button class="btn btn-ghost btn-sm" onclick="copyNotes()">📋 Copy</button>
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('workNotes').value='';saveSession()">✕ Clear</button>
+      <button class="btn" onclick="copyNotes()">📋 Copy</button>
+      <button class="btn" onclick="document.getElementById('workNotes').value='';saveSession()">✕ Clear</button>
       <button class="btn btn-accent" onclick="closeNotesModal()">Done →</button>
     </div>
   </div>
@@ -532,7 +532,7 @@
           <div class="hist-modal-sub">Click any round to restore that version of the document</div>
         </div>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="closeRoundHistoryModal()">✕ Close</button>
+      <button class="btn" onclick="closeRoundHistoryModal()">✕ Close</button>
     </div>
     <div class="round-history" id="roundHistory">
       <div class="round-history-empty">No completed rounds yet. Each round is saved here automatically.</div>
