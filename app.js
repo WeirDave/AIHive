@@ -651,6 +651,9 @@ function clearProject() {
   document.getElementById('projectName').value    = '';
   document.getElementById('projectVersion').value = '';
   document.getElementById('projectGoal').value    = '';
+  updateProjLineNums('projGoalNums', document.getElementById('projectGoal'));
+  updateGoalCounter();
+  updateMaskPreview();
   // Clear live work screen fields so the goToScreen auto-save can't resurrect them
   const workDoc = document.getElementById('workDocument');
   if (workDoc) workDoc.value = '';
