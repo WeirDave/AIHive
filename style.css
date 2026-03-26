@@ -301,15 +301,23 @@ html, body {
   filter: drop-shadow(0 3px 8px rgba(0,0,0,0.5));
 }
 .screen#screen-welcome.active .welcome-bee-fly {
-  animation: beeExit 4s ease-in-out infinite;
+  animation: beeExit 5s ease-in-out infinite;
 }
 @keyframes beeExit {
-  0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg);    opacity: 0; }
-  10%  { transform: translate(-50%, -50%) scale(0.8) rotate(-10deg); opacity: 1; }
-  35%  { transform: translate(-20%, -120%) scale(1.1) rotate(15deg); opacity: 1; }
-  60%  { transform: translate(40%, -180%) scale(1.0) rotate(-8deg);  opacity: 1; }
-  80%  { transform: translate(80%, -120%) scale(0.9) rotate(10deg);  opacity: 0.6; }
-  100% { transform: translate(120%, -60%) scale(0.5) rotate(5deg);   opacity: 0; }
+  /* Start hidden in the hive */
+  0%   { transform: translate(-50%, -50%) scale(0) scaleX(1);     opacity: 0; }
+  /* Pop out of hive */
+  8%   { transform: translate(-50%, -50%) scale(1) scaleX(1);     opacity: 1; }
+  /* Fly straight right to end of title */
+  42%  { transform: translate(370px, -50%) scale(1) scaleX(1);    opacity: 1; }
+  /* Pause at the end */
+  52%  { transform: translate(380px, -50%) scale(1) scaleX(1);    opacity: 1; }
+  /* Flip to face left */
+  55%  { transform: translate(380px, -50%) scale(1) scaleX(-1);   opacity: 1; }
+  /* Rocket up-left at 45 degrees off the top of the screen */
+  80%  { transform: translate(100px, -600px) scale(1) scaleX(-1); opacity: 0; }
+  /* Reset hidden for next loop */
+  100% { transform: translate(-50%, -50%) scale(0) scaleX(1);     opacity: 0; }
 }
 .welcome-version {
   font-size: 11px;
