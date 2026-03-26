@@ -1421,12 +1421,17 @@ function updateGoalCounter() {
   const ta = document.getElementById('projectGoal');
   const el = document.getElementById('goalCounter');
   if (!ta || !el) return;
-  const len = ta.value.length;
+  const len   = ta.value.length;
   const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
   const lines = ta.value ? ta.value.split('\n').length : 0;
   const truncated = len > 300;
-  el.textContent = `${lines} lines · ${words} words · ${len} chars${truncated ? ' — will be truncated to 300 chars in Refine phase' : ''}`;
-  el.style.color = truncated ? 'var(--amber)' : 'var(--muted)';
+  el.innerHTML =
+    `<span class="goal-stat">${lines} <span class="goal-stat-label">lines</span></span>` +
+    `<span class="goal-stat-sep">·</span>` +
+    `<span class="goal-stat">${words} <span class="goal-stat-label">words</span></span>` +
+    `<span class="goal-stat-sep">·</span>` +
+    `<span class="goal-stat ${truncated ? 'goal-stat-warn' : ''}">${len} <span class="goal-stat-label">chars</span></span>` +
+    (truncated ? `<span class="goal-trunc-note"> * truncated to 300 in Refine</span>` : '');
 }
 
 function updateProjLineNums(numsId, ta) {

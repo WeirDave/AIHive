@@ -228,8 +228,11 @@
 
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;width:100%;">
-                <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">Project Goal</span>
-                <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
+                <h3 class="proj-goal-heading">Project Goal</h3>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
+                  <button class="goal-info-btn" onclick="document.getElementById('goalInfoModal').classList.add('active')" title="About the 300 character limit">ⓘ</button>
+                </div>
               </div>
               <div class="proj-notebook proj-notebook-goal">
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
@@ -609,6 +612,29 @@
     <p class="finish-modal-msg">The Builder rewrites the document each round. Choose an AI with a paid API key and enough token capacity.</p>
     <div class="builder-pick-grid-large" id="changeBuilderGrid" ></div>
     <button class="finish-modal-cancel" onclick="closeChangeBuilder()">← Cancel</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     GOAL INFO MODAL
+     ============================================================ -->
+<div class="finish-modal-overlay" id="goalInfoModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div class="goal-info-icon">ⓘ</div>
+    <h2 class="finish-modal-title">About Your Project Goal</h2>
+    <div class="goal-info-body">
+      <p>Your project goal is used differently depending on which phase you're in:</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">1 · Draft</span>
+        <span class="goal-info-desc">The full goal is sent to every AI. This is when it matters most — the AIs are building your document from scratch and need all the context you can give them.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">2 · Refine Text</span>
+        <span class="goal-info-desc">Only the first <strong>300 characters</strong> are sent, labelled as <em>Project Context</em>. By this point your document exists — the AIs are refining it, not creating it. The full goal would consume tokens better spent on the document itself and the reviewer suggestions.</span>
+      </div>
+      <p class="goal-info-tip">💡 Keep your most important intent in the first 300 characters. The counter above turns amber when you exceed that threshold.</p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('goalInfoModal').classList.remove('active')">Got it →</button>
   </div>
 </div>
 
