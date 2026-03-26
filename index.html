@@ -234,7 +234,7 @@
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
                 <textarea id="projectGoal" placeholder="Project goal — what are you trying to create or achieve? The more specific and detailed you are, the better your results will be." class="proj-notebook-ta proj-goal-ta" oninput="saveProject();updateProjLineNums('projGoalNums',this);updateGoalCounter()"></textarea>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;width:calc(44px + 80ch + 91px);max-width:100%;margin-left:auto;margin-right:auto;">
                 <button class="field-clear-btn" onclick="document.getElementById('projectGoal').value='';saveProject();updateProjLineNums('projGoalNums',document.getElementById('projectGoal'));updateGoalCounter();" title="Clear goal">✕ Clear Goal</button>
                 <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
               </div>
@@ -386,13 +386,17 @@
 
       <!-- ══ COL 3: Working Document ══ -->
       <div class="work-doc-panel">
-        <div class="work-panel-header">
-          <span class="work-section-title">📄 Working Document</span>
-          <span class="doc-stats" id="docStats"></span>
-          <div class="flex-row">
-            <button class="btn" onclick="exportDocument()">💾 Export</button>
-            <button class="btn" onclick="copyDocument()">📋 Copy</button>
-            <button class="btn" onclick="clearDocument()">✕ Clear</button>
+        <div class="work-panel-header work-doc-header">
+          <div class="work-doc-header-row1">
+            <span class="work-section-title">Working Document</span>
+            <div class="flex-row">
+              <button class="btn" onclick="exportDocument()">💾 Export</button>
+              <button class="btn" onclick="copyDocument()">📋 Copy</button>
+              <button class="btn" onclick="clearDocument()">✕ Clear</button>
+            </div>
+          </div>
+          <div class="work-doc-header-row2">
+            <span class="doc-stats" id="docStats"></span>
           </div>
         </div>
         <div class="work-doc-editor">
@@ -427,13 +431,31 @@
           <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="work-right-logo-img">
         </div>
 
-        <!-- 3D Digital Clock -->
-        <div class="console-clock-3d">
-          <div class="clock-bezel">
-            <div class="clock-screen">
-              <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
+        <!-- Dual Clocks: Round + Project -->
+        <div class="dual-clocks">
+          <!-- Round Clock -->
+          <div class="console-clock-3d">
+            <div class="clock-bezel">
+              <div class="clock-label-top">ROUND</div>
+              <div class="clock-screen">
+                <span class="clock-digit-group" id="roundTimerDisplay">00:00</span>
+              </div>
+              <div class="clock-label" id="roundTimerLabel">READY</div>
             </div>
-            <div class="clock-label" id="roundTimerLabel">READY</div>
+          </div>
+          <!-- Project Clock -->
+          <div class="console-clock-3d project-clock-wrap">
+            <div class="clock-bezel">
+              <div class="clock-label-top">PROJECT</div>
+              <div class="clock-screen">
+                <span class="clock-digit-group" id="projectTimerDisplay">00:00:00</span>
+              </div>
+              <div class="clock-project-controls">
+                <button class="clock-ctrl-btn" id="projClockStartBtn" onclick="projectClockStart()" title="Start">&#9654;</button>
+                <button class="clock-ctrl-btn" id="projClockPauseBtn" onclick="projectClockPause()" title="Pause">&#9646;&#9646;</button>
+                <button class="clock-ctrl-btn" id="projClockResetBtn" onclick="projectClockReset()" title="Reset">&#8634;</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -445,21 +467,20 @@
             <button class="btn" onclick="clearConsole()">✕ Clear</button>
           </div>
         </div>
-        <div class="console-legend">
-          <span class="legend-item console-divider">■ Round</span>
-          <span class="legend-item console-send">■ Sending</span>
-          <span class="legend-item console-preview">■ Response</span>
-          <span class="legend-item console-success">■ Success</span>
-          <span class="legend-item console-warn">■ Warning</span>
-          <span class="legend-item console-error">■ Error</span>
-          <span class="legend-item console-info">■ Info</span>
-        </div>
-        <div class="live-console" id="liveConsole">
-          <div class="console-entry console-info">Console ready — shake the hive to begin.</div>
-        </div>
-
-        <!-- Right edge margin -->
-        <div class="right-edge-margin"></div>
+        <div class="console-body-wrap">
+          <div class="console-legend">
+            <span class="legend-item console-divider">■ Round</span>
+            <span class="legend-item console-send">■ Sending</span>
+            <span class="legend-item console-preview">■ Response</span>
+            <span class="legend-item console-success">■ Success</span>
+            <span class="legend-item console-warn">■ Warning</span>
+            <span class="legend-item console-error">■ Error</span>
+            <span class="legend-item console-info">■ Info</span>
+          </div>
+          <div class="live-console" id="liveConsole">
+            <div class="console-entry console-info">Console ready — shake the hive to begin.</div>
+          </div>
+        </div><!-- /console-body-wrap -->
 
       </div><!-- /work-right-panel -->
 

@@ -272,6 +272,58 @@ function stopRoundTimer() {
 }
 
 
+// ── Project Clock ──
+let _projClockInterval = null;
+let _projClockSeconds  = 0;
+let _projClockRunning  = false;
+
+function _projClockRender() {
+  const el = document.getElementById('projectTimerDisplay');
+  if (!el) return;
+  const h = Math.floor(_projClockSeconds / 3600);
+  const m = Math.floor((_projClockSeconds % 3600) / 60);
+  const s = _projClockSeconds % 60;
+  el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function _projClockUpdateButtons() {
+  const startBtn = document.getElementById('projClockStartBtn');
+  const pauseBtn = document.getElementById('projClockPauseBtn');
+  if (startBtn) startBtn.classList.toggle('active', _projClockRunning);
+  if (pauseBtn) pauseBtn.classList.toggle('active', !_projClockRunning && _projClockSeconds > 0);
+  const display = document.getElementById('projectTimerDisplay');
+  if (display) {
+    display.classList.toggle('running', _projClockRunning);
+  }
+}
+
+function projectClockStart() {
+  if (_projClockRunning) return;
+  _projClockRunning = true;
+  _projClockInterval = setInterval(() => {
+    _projClockSeconds++;
+    _projClockRender();
+  }, 1000);
+  _projClockUpdateButtons();
+}
+
+function projectClockPause() {
+  if (!_projClockRunning) return;
+  _projClockRunning = false;
+  clearInterval(_projClockInterval);
+  _projClockInterval = null;
+  _projClockUpdateButtons();
+}
+
+function projectClockReset() {
+  _projClockRunning = false;
+  clearInterval(_projClockInterval);
+  _projClockInterval = null;
+  _projClockSeconds = 0;
+  _projClockRender();
+  _projClockUpdateButtons();
+}
+
 function consoleLog(msg, type = 'info') {
   const el = document.getElementById('liveConsole');
   if (!el) return;
@@ -1332,6 +1384,7 @@ function initWorkScreen(isNewSession = false) {
     updateLineNumbers();
     // Also defer to catch after layout paint
     requestAnimationFrame(() => updateLineNumbers());
+    setTimeout(() => updateLineNumbers(), 100);
   }
 
   const ps = document.getElementById('phaseSelect');
@@ -1356,9 +1409,9 @@ function initWorkScreen(isNewSession = false) {
 
   // Keep line numbers filled on resize
   if (window._lineNumObserver) window._lineNumObserver.disconnect();
-  if (ta && window.ResizeObserver) {
+  if (docTa && window.ResizeObserver) {
     window._lineNumObserver = new ResizeObserver(() => updateLineNumbers());
-    window._lineNumObserver.observe(ta);
+    window._lineNumObserver.observe(docTa);
   }
   updateLineNumbers();
 }
@@ -1369,8 +1422,9 @@ function updateGoalCounter() {
   if (!ta || !el) return;
   const len = ta.value.length;
   const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+  const lines = ta.value ? ta.value.split('\n').length : 0;
   const truncated = len > 300;
-  el.textContent = `${words} words · ${len} chars${truncated ? ' — will be truncated to 300 chars in Refine phase' : ''}`;
+  el.textContent = `${lines} lines · ${words} words · ${len} chars${truncated ? ' — will be truncated to 300 chars in Refine phase' : ''}`;
   el.style.color = truncated ? 'var(--amber)' : 'var(--muted)';
 }
 
