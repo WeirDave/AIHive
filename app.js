@@ -2535,19 +2535,22 @@ function showSmokerOverlay(label = 'Smoking…') {
 
   if (labelEl) labelEl.textContent = label;
 
-  // Generate smoke puffs
+  // Generate smoke puffs — all originate from nozzle point, spread as they rise
   if (particles) {
     particles.innerHTML = '';
     for (let i = 0; i < 14; i++) {
       const puff = document.createElement('div');
       puff.className = 'smoke-puff';
       const size = 40 + Math.random() * 60;
+      const offsetX = (Math.random() - 0.5) * 40; // spread direction
       puff.style.cssText = `
         width: ${size}px;
         height: ${size}px;
-        left: ${10 + Math.random() * 50}%;
+        left: 50%;
         bottom: 0;
-        --dur: ${1.5 + Math.random() * 2}s;
+        margin-left: -${size/2}px;
+        --ox: ${offsetX}px;
+        --dur: ${1.8 + Math.random() * 2}s;
         --delay: ${Math.random() * 2.5}s;
       `;
       particles.appendChild(puff);

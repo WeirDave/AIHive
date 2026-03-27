@@ -2945,6 +2945,8 @@ kbd {
   gap: 16px;
 }
 .smoker-hero-img {
+  position: relative;
+  z-index: 1;
   width: 340px;
   height: 340px;
   object-fit: contain;
@@ -2974,12 +2976,13 @@ kbd {
 /* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
-  top: -120px;
+  top: 20px;
   left: 50%;
-  transform: translateX(-75%);
-  width: 160px;
-  height: 140px;
+  transform: translateX(-80%);
+  width: 180px;
+  height: 160px;
   pointer-events: none;
+  z-index: 2;
 }
 .smoke-puff {
   position: absolute;
@@ -2988,10 +2991,10 @@ kbd {
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
-  0%   { transform: translateY(0) scale(0.4); opacity: 1; }
-  40%  { opacity: 0.8; }
-  70%  { opacity: 0.5; }
-  100% { transform: translateY(-130px) scale(3.5); opacity: 0; }
+  0%   { transform: translate(var(--ox, 0px), 0px) scale(0.15); opacity: 1; }
+  30%  { transform: translate(calc(var(--ox, 0px) * 0.6), -40px) scale(0.6); opacity: 0.9; }
+  65%  { transform: translate(calc(var(--ox, 0px) * 0.3), -90px) scale(1.8); opacity: 0.5; }
+  100% { transform: translate(0px, -150px) scale(3.5); opacity: 0; }
 }
 
 /* ── NOTES DRAWER ── */
