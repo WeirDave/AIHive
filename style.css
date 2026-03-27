@@ -799,25 +799,7 @@ html, body {
 }
 
 /* Phase bar now in topbar — inline layout */
-.work-topbar-center .work-phase-bar {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  padding: 0;
-  border-bottom: none;
-  margin-bottom: 0;
-  flex-wrap: nowrap;
-}
-.work-phase-bar {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 0 10px;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 8px;
-}
+/* .work-phase-pill kept — used by history modal tabs */
 .work-phase-pill {
   font-size: 11px;
   font-weight: 600;
@@ -831,19 +813,6 @@ html, body {
   transition: all 0.12s;
 }
 .work-phase-pill:hover { border-color: var(--accent); color: var(--accent); }
-.work-phase-pill.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #0a0c12;
-  cursor: default;
-}
-.work-phase-pill.done {
-  border-color: var(--border2);
-  color: var(--text-dim);
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-.work-phase-arrow { color: var(--border2); font-size: 12px; margin: 0 2px; }
 .work-round-badge {
   font-family: var(--font-mono);
   font-size: 17px;
@@ -1924,15 +1893,6 @@ kbd {
 }
 
 /* ── PHASE BAR IN TOPBAR ── */
-.work-topbar .work-phase-bar {
-  border: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
 /* ── LOGO ROW (right-aligned, top of right panel) ── */
 .work-logo-row {
   display: flex;

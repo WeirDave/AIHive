@@ -1497,17 +1497,8 @@ function handleWorkDocumentInput() {
 }
 
 function renderWorkPhaseBar() {
-  const bar = document.getElementById('workPhaseBar');
-  if (!bar) return;
-  const idx = PHASES.findIndex(p => p.id === phase);
-  let html = PHASES.map((p, i) => {
-    const cls = i < idx ? 'work-phase-pill done' : i === idx ? 'work-phase-pill active' : 'work-phase-pill';
-    return (i > 0 ? '<span class="work-phase-arrow">›</span>' : '') +
-      `<span class="${cls}" onclick="setPhase('${p.id}')" title="Switch to ${p.label}">${p.label}</span>`;
-  }).join('');
-  html += '<span class="work-phase-arrow">›</span>';
-  html += '<span class="work-phase-pill work-phase-finish" onclick="showFinishModal()" title="Export and start a new project">3 · Finish</span>';
-  bar.innerHTML = html;
+  // Phase bar removed — phase is now shown in the round badge
+  updateRoundBadge();
 }
 
 function showFinishModal() {
@@ -1535,13 +1526,14 @@ function setPhase(id) {
   phase = id;
   const ps = document.getElementById('phaseSelect');
   if (ps) ps.value = id;
-  renderWorkPhaseBar();
-  toast(`📍 ${PHASES.find(p => p.id === id)?.label}`);
+  updateRoundBadge();
 }
 
 function updateRoundBadge() {
   const el = document.getElementById('workRoundBadge');
-  if (el) el.textContent = `Round ${round}`;
+  if (!el) return;
+  const phaseLabel = phase === 'draft' ? 'Draft' : 'Refine';
+  el.textContent = `Round ${round} — ${phaseLabel}`;
 }
 
 function renderBeeStatusGrid() {
@@ -2153,6 +2145,13 @@ async function runRound() {
   }
 
   round++;
+
+  // Auto-advance from Draft to Refine after first round completes
+  if (phase === 'draft') {
+    phase = 'refine';
+    consoleLog(`📍 Phase advanced to Refine Text`, 'info');
+  }
+
   updateRoundBadge();
   renderRoundHistory();
   renderWorkPhaseBar();
