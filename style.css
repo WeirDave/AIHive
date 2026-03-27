@@ -301,7 +301,7 @@ html, body {
   filter: drop-shadow(0 3px 8px rgba(0,0,0,0.5));
 }
 .screen#screen-welcome.active .welcome-bee-fly {
-  animation: beeExit 5s ease-in-out infinite;
+  animation: beeExit 7s ease-in-out infinite;
 }
 @keyframes beeExit {
   /* Start hidden in the hive */
@@ -309,13 +309,14 @@ html, body {
   /* Pop out of hive */
   8%   { transform: translate(-50%, -50%) scale(1) scaleX(1);     opacity: 1; }
   /* Fly straight right to end of title */
-  42%  { transform: translate(370px, -50%) scale(1) scaleX(1);    opacity: 1; }
-  /* Pause at the end */
-  52%  { transform: translate(380px, -50%) scale(1) scaleX(1);    opacity: 1; }
+  38%  { transform: translate(370px, -50%) scale(1) scaleX(1);    opacity: 1; }
+  /* Pause at the end — holds for ~2s */
+  40%  { transform: translate(380px, -50%) scale(1) scaleX(1);    opacity: 1; }
+  60%  { transform: translate(380px, -50%) scale(1) scaleX(1);    opacity: 1; }
   /* Flip to face left */
-  55%  { transform: translate(380px, -50%) scale(1) scaleX(-1);   opacity: 1; }
+  63%  { transform: translate(380px, -50%) scale(1) scaleX(-1);   opacity: 1; }
   /* Rocket up-left at 45 degrees off the top of the screen */
-  80%  { transform: translate(100px, -600px) scale(1) scaleX(-1); opacity: 0; }
+  85%  { transform: translate(100px, -600px) scale(1) scaleX(-1); opacity: 0; }
   /* Reset hidden for next loop */
   100% { transform: translate(-50%, -50%) scale(0) scaleX(1);     opacity: 0; }
 }
@@ -633,6 +634,7 @@ html, body {
   gap: 8px;
   margin-bottom: 12px;
   width: 100%;
+  max-width: 480px;
 }
 .proj-field-full {
   width: 100%;
@@ -1115,7 +1117,6 @@ html, body {
 .work-doc-inner {
   flex: 0 0 auto;
   position: relative;
-  /* ch must be computed from the same font as the textarea so 80ch is consistent */
   font-family: 'Courier New', Courier, monospace;
   font-size: 13px;
   background: transparent;
@@ -1134,7 +1135,7 @@ html, body {
   height: auto;
   min-height: 0;
   margin: 0;
-  padding: 4px 12px 0 8px;
+  padding: 0 12px 0 8px;
   border: none;
   outline: none;
   resize: none;
@@ -2893,18 +2894,15 @@ kbd {
 /* ── SMOKER OVERLAY ── */
 .smoker-overlay {
   position: fixed;
-  inset: 0;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 8000;
   display: none;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
-  background: rgba(10, 12, 18, 0.75);
-  backdrop-filter: blur(3px);
-  animation: smokerFadeIn 0.4s ease;
 }
 .smoker-overlay.active {
-  display: flex;
+  display: block;
 }
 @keyframes smokerFadeIn {
   from { opacity: 0; }
@@ -2915,11 +2913,11 @@ kbd {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 .smoker-hero-img {
-  width: 220px;
-  height: 220px;
+  width: 340px;
+  height: 340px;
   object-fit: contain;
   filter: drop-shadow(0 0 40px rgba(245,166,35,0.6));
   animation: smokerBob 2s ease-in-out infinite;
@@ -2944,26 +2942,26 @@ kbd {
   100% { opacity: 0.7; }
 }
 
-/* Smoke particles */
+/* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
-  top: -60px;
+  top: -80px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-20%);
   width: 120px;
-  height: 80px;
+  height: 100px;
   pointer-events: none;
 }
 .smoke-puff {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200,200,220,0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200,200,220,0.45) 0%, transparent 70%);
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
-  0%   { transform: translateY(0) scale(0.3); opacity: 0.7; }
+  0%   { transform: translateY(0) scale(0.3); opacity: 0.8; }
   60%  { opacity: 0.4; }
-  100% { transform: translateY(-80px) scale(2.5); opacity: 0; }
+  100% { transform: translateY(-100px) scale(3); opacity: 0; }
 }
 
 /* ── NOTES MODAL ── */
@@ -3356,6 +3354,18 @@ kbd {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 20px;
+}
+.doc-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px 4px;
+  min-height: 20px;
+  background: rgba(0,0,0,0.4);
+}
+[data-theme="light"] .doc-stats-row { background: #ffffff; }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .doc-stats-row { background: #ffffff; }
 }
 [data-theme="light"] .doc-stats {
   color: var(--accent);
