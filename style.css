@@ -1913,6 +1913,13 @@ kbd {
   align-items: center;
   flex-shrink: 0;
 }
+.legend-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-right: 2px;
+}
 .legend-item {
   white-space: nowrap;
   display: flex;

@@ -1511,7 +1511,6 @@ function renderWorkPhaseBar() {
 function showFinishModal() {
   const modal = document.getElementById('finishModal');
   if (modal) modal.classList.add('active');
-  projectClockPause();
 }
 
 function hideFinishModal() {
@@ -1520,31 +1519,8 @@ function hideFinishModal() {
 }
 
 function finishAndExport() {
-  const docTa = document.getElementById('workDocument');
-  const originalDoc = docTa?.value?.trim();
-  if (!originalDoc) { toast('⚠️ Nothing to export yet'); return; }
-
-  const totalRounds = round - 1;
-  const totalMins = Math.round(_projClockSeconds / 60);
-  const timeStr = totalMins < 1 ? 'less than a minute' : `${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
-  const byline = `\n\n---\nProduced by AI Hive in ${totalRounds} round${totalRounds !== 1 ? 's' : ''} and ${timeStr}.\nweirdave.github.io/AIHive`;
-
-  const exportDoc = originalDoc + byline;
-  const filename = buildExportName();
-  const blob = new Blob([exportDoc], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${filename}.txt`;
-  a.click();
-  toast('💾 Document exported');
-
-  // Swap button to confirm — stay in modal so user can start new project
-  const exportBtn = document.querySelector('.finish-modal-btn-export');
-  if (exportBtn) {
-    exportBtn.textContent = '✅ Exported!';
-    exportBtn.disabled = true;
-    exportBtn.style.opacity = '0.6';
-  }
+  exportDocument();
+  hideFinishModal();
 }
 
 function finishAndNew() {
@@ -2450,6 +2426,8 @@ function renderConflicts() {
 
   // Reset choices when new conflicts arrive
   window._decisionChoices = {};
+
+  let html = '';
 
   // USER DECISION cards
   if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
