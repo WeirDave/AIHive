@@ -1337,7 +1337,6 @@ function startSession() {
   saveSettings();
   goToScreen('screen-work');
   initWorkScreen(true);
-  projectClockStart(); // auto-start project timer on launch
   // Save original document as Round 0 — done AFTER initWorkScreen so notes are populated
   if (docText && history.length === 0) {
     history.push({
@@ -1506,6 +1505,19 @@ function handleWorkDocumentInput() {
 function renderWorkPhaseBar() {
   // Phase bar removed — phase is now shown in the round badge
   updateRoundBadge();
+}
+
+function showProjectGoalModal() {
+  const modal = document.getElementById('projectGoalModal');
+  if (!modal) return;
+  const goal = document.getElementById('projectGoal')?.value.trim() || '';
+  const name = document.getElementById('projectName')?.value.trim() || '';
+  const version = document.getElementById('projectVersion')?.value.trim() || '';
+  const metaEl = document.getElementById('projectGoalModalMeta');
+  const textEl = document.getElementById('projectGoalModalText');
+  if (metaEl) metaEl.textContent = [name, version].filter(Boolean).join(' · ');
+  if (textEl) textEl.textContent = goal || '(No project goal set)';
+  modal.classList.add('active');
 }
 
 function showFinishModal() {

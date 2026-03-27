@@ -335,7 +335,8 @@
     <div class="work-topbar">
       <div class="work-topbar-left">
         <button class="btn" onclick="goToScreen('screen-welcome')">⌂ Home</button>
-        <div class="work-project-info">
+        <div class="work-project-info" onclick="showProjectGoalModal()" title="Click to view project goal" style="cursor:pointer;">
+          <span class="work-project-label">Project:</span>
           <span class="work-project-name" id="workProjectName">Project</span>
           <span class="work-project-version" id="workProjectVersion"></span>
           <span class="work-start-mode" id="workStartMode"></span>
@@ -608,6 +609,18 @@
     <p class="finish-modal-msg">The Builder rewrites the document each round. Choose an AI with a paid API key and enough token capacity.</p>
     <div class="builder-pick-grid-large" id="changeBuilderGrid" ></div>
     <button class="finish-modal-cancel" onclick="closeChangeBuilder()">← Cancel</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     PROJECT GOAL VIEWER MODAL
+     ============================================================ -->
+<div class="finish-modal-overlay" id="projectGoalModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal" style="max-width:600px;text-align:left;">
+    <h2 class="finish-modal-title" style="margin-bottom:6px;">📋 Project Goal</h2>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="projectGoalModalMeta"></div>
+    <div id="projectGoalModalText" style="font-family:var(--font-mono);font-size:13px;line-height:1.7;color:var(--text);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;white-space:pre-wrap;max-height:400px;overflow-y:auto;"></div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('projectGoalModal').classList.remove('active')" style="margin-top:16px;">← Close</button>
   </div>
 </div>
 

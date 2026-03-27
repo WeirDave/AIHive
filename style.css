@@ -737,6 +737,20 @@ html, body {
   align-items: center;
   gap: 8px;
   min-width: 0;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+.work-project-info:hover {
+  background: var(--surface2);
+}
+.work-project-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .work-project-name {
   font-family: var(--font-display);
@@ -1707,7 +1721,7 @@ kbd {
   display: inline-flex;
   align-items: center;
   vertical-align: middle;
-  opacity: 0.85;
+  opacity: 0.9;
   transition: opacity 0.12s;
 }
 .goal-info-btn:hover { opacity: 1; }
