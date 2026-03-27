@@ -1366,7 +1366,7 @@ function initWorkScreen(isNewSession = false) {
   // Only clear transient panels on a brand new session — not on page refresh
   if (isNewSession) {
     const consoleEl = document.getElementById('liveConsole');
-    if (consoleEl) consoleEl.innerHTML = '<div class="console-entry console-info">Console ready — shake the hive to begin.</div>';
+    if (consoleEl) consoleEl.innerHTML = '<div class="console-entry console-info">Console ready — Smoke the hive to begin.</div>';
     const conflictsEl = document.getElementById('conflictsPanel');
     if (conflictsEl) conflictsEl.innerHTML = '<div class="conflicts-empty">No conflicts yet — run a round to see what the Builder couldn\'t resolve.</div>';
     const notesEl = document.getElementById('workNotes');
@@ -2066,6 +2066,9 @@ async function runRound() {
 
   const successfulReviews = reviewerResponses.filter(r => r.response);
   const noChangesCount = reviewerResponses.filter(r => r.noChanges).length;
+  const majorityThreshold = Math.ceil(successfulReviews.length / 2) + 1;
+  const hasMajorityConvergence = noChangesCount >= majorityThreshold;
+  const holdouts = successfulReviews.filter(r => !r.noChanges);
 
   // Phase 2: Builder compiles ALL reviews (including its own) into updated document
   const failedCount = allReviewers.length - successfulReviews.length;
@@ -2076,6 +2079,40 @@ async function runRound() {
   } else if (noChangesCount > 0) {
     consoleLog(`✓ ${noChangesCount} of ${successfulReviews.length} AIs had no further changes`, 'info');
   }
+
+  // ── MAJORITY CONVERGENCE: skip Builder, show holdouts for user review ──
+  if (hasMajorityConvergence && holdouts.length > 0) {
+    consoleLog(`🏁 Majority convergence — ${noChangesCount} of ${successfulReviews.length} AIs satisfied. Skipping Builder.`, 'success');
+    toast(`🏁 ${noChangesCount} of ${successfulReviews.length} AIs are done — review the holdout suggestions below`, 5000);
+
+    history.push({
+      round, phase,
+      projectName:    document.getElementById('projectName')?.value.trim()    || '',
+      projectVersion: document.getElementById('projectVersion')?.value.trim() || '',
+      doc:            docText,
+      notes:          document.getElementById('workNotes')?.value.trim()       || '',
+      conflicts:      { converged: true, holdouts: holdouts.map(r => ({ name: r.name, response: r.response })) },
+      responses:      Object.fromEntries(reviewerResponses.map(r => [r.id, r.response])),
+      timestamp:      new Date().toLocaleTimeString()
+    });
+    window._lastConflicts = null;
+    round++;
+    if (phase === 'draft') { phase = 'refine'; consoleLog(`📍 Phase advanced to Refine Text`, 'info'); }
+    updateRoundBadge();
+    renderRoundHistory();
+    renderWorkPhaseBar();
+    renderConflicts();
+    saveSession();
+    if (!isLicensed()) { const used = incrementTrialRound(); updateLicenseBadge(); }
+    // Reset bee statuses
+    activeAIs.forEach(a => setBeeStatus(a.id, 'idle', ''));
+    setStatus(`🏁 Hive converged — review holdout suggestions or finish the project`);
+    document.getElementById('runRoundBtn')?.classList.remove('running');
+    stopRoundTimer(document.getElementById('runRoundBtn'));
+    hideSmokerOverlay();
+    return;
+  }
+
   if (builderAI && successfulReviews.length > 0) {
     // Include all responses — Builder's own review is in there too
     const allForBuilder = successfulReviews;
@@ -2332,6 +2369,26 @@ function renderConflicts() {
     return;
   }
 
+  // ── CONVERGENCE PATH: majority agreed, show holdouts for optional review ──
+  if (conflicts.converged && conflicts.holdouts) {
+    let html = `<div class="conflicts-section-header convergence-header">
+      🏁 Hive Converged — majority satisfied. Here's what the holdouts still wanted:
+    </div>`;
+    conflicts.holdouts.forEach((h, i) => {
+      html += `<div class="builder-decision-item convergence-holdout">
+        <span class="decision-opt-ais">${esc(h.name)}</span>
+        <div style="margin-top:6px;white-space:pre-wrap">${esc(h.response)}</div>
+        <button class="btn btn-ghost convergence-apply-btn" style="margin-top:10px"
+          onclick="applyHoldout(${i})">Apply this suggestion</button>
+      </div>`;
+    });
+    html += `<div style="margin-top:16px;text-align:center">
+      <span style="color:var(--muted);font-size:13px">Or hit <strong>Finish</strong> to finalize the document as-is.</span>
+    </div>`;
+    el.innerHTML = html;
+    return;
+  }
+
   // Reset choices when new conflicts arrive
   window._decisionChoices = {};
 
@@ -2413,6 +2470,10 @@ function selectDecision(decisionIdx, optionIdx, total) {
     if (customWrap) customWrap.style.display = 'none';
     card.classList.add('resolved');
   }
+
+  // Auto-scroll to next unresolved card
+  const nextCard = document.querySelector('.decision-card:not(.resolved)');
+  if (nextCard) nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   checkAllDecisionsMade(total);
 }
@@ -2517,6 +2578,21 @@ function applyDecisions() {
   }
 
   toast('📋 Decisions queued — sending to Builder…');
+  runBuilderOnly();
+}
+
+function applyHoldout(holdoutIdx) {
+  const latest = history.length > 0 ? history[history.length - 1] : null;
+  if (!latest?.conflicts?.holdouts) return;
+  const h = latest.conflicts.holdouts[holdoutIdx];
+  if (!h) return;
+
+  const notesTa = document.getElementById('workNotes');
+  if (notesTa) {
+    notesTa.value = `Apply this suggestion from ${h.name}:\n${h.response}`;
+    saveSession();
+  }
+  toast(`📋 Sending ${h.name}'s suggestion to Builder…`);
   runBuilderOnly();
 }
 

@@ -2738,6 +2738,20 @@ kbd {
   color: var(--amber);
   border: 1px solid var(--amber);
 }
+.convergence-header {
+  background: rgba(100,200,120,0.1);
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+.convergence-holdout {
+  border-left: 3px solid var(--muted);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.convergence-apply-btn {
+  font-size: 12px;
+  padding: 4px 12px;
+}
 
 .conflicts-body {
   white-space: pre-wrap;
