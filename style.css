@@ -2713,6 +2713,25 @@ kbd {
   font-style: italic;
   padding: 4px 0;
 }
+.conflicts-section-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.builder-resolved-header {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+.user-decisions-header {
+  background: rgba(245,166,35,0.1);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+}
 
 .conflicts-body {
   white-space: pre-wrap;

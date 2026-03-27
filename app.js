@@ -2320,6 +2320,9 @@ function renderConflicts() {
 
   // USER DECISION cards
   if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
+    html += `<div class="conflicts-section-header user-decisions-header">
+      ⚡ Your Input Needed — the Builder couldn't resolve these
+    </div>`;
     conflicts.userDecisions.forEach((d, di) => {
       const total = conflicts.userDecisions.length;
       html += `<div class="decision-card" id="dcard-${di}">
@@ -2365,12 +2368,15 @@ function renderConflicts() {
     </div>`;
   }
 
-  // Fallback: if parser got nothing but there is raw text, show it
+  // Fallback: raw text — wrap in a resolution log header so it's clear this is already done
   if (!html && conflicts.raw) {
     const rawHtml = esc(conflicts.raw)
       .replace(/\[USER DECISION\]/g,    '<span style="color:var(--amber);font-weight:700">[USER DECISION]</span>')
       .replace(/\[BUILDER DECISION\]/g, '<span style="color:var(--blue);font-weight:700">[BUILDER DECISION]</span>');
-    html = `<div class="conflicts-body">${rawHtml}</div>`;
+    html = `<div class="conflicts-section-header builder-resolved-header">
+        ✅ Builder Resolution Log — already applied to your document
+      </div>
+      <div class="conflicts-body">${rawHtml}</div>`;
   }
 
   el.innerHTML = html;
