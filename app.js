@@ -667,6 +667,7 @@ function clearProject() {
   docTab = 'upload';
   switchDocTab('upload');
   round = 1; phase = 'draft'; history = []; docText = '';
+  window._resolvedDecisions = [];
   projectClockReset();
   toast('🗑 Project cleared — AI keys and settings kept');
 }
@@ -1803,6 +1804,16 @@ function buildPromptForAI(ai, reviewerResponses) {
 
   if (isBuilder && hasResponses) {
     prompt += doc ? `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n` : '';
+
+    // Inject previously resolved decisions so the Builder doesn't re-raise them
+    if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
+      prompt += `PREVIOUSLY RESOLVED DECISIONS (do NOT re-raise these as conflicts):\n${sep}\n`;
+      window._resolvedDecisions.forEach((rd, i) => {
+        prompt += `${i + 1}. "${rd.original}" → resolved as "${rd.chosen}"\n`;
+      });
+      prompt += `\n`;
+    }
+
     reviewerResponses.forEach(r => {
       prompt += `${sep}\nFROM ${r.name.toUpperCase()}:\n${sep}\n${r.response}\n\n`;
     });
@@ -2300,6 +2311,8 @@ function extractDocument(text) {
 
 // Track user's choices for current conflict set
 window._decisionChoices = {};
+// Track resolved USER DECISION conflicts to prevent Builder re-raising them
+window._resolvedDecisions = [];
 
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
@@ -2479,6 +2492,22 @@ function applyDecisions() {
     if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = '✅ Apply My Decisions to Document'; }
     return;
   }
+
+  // Record resolved decisions so the Builder won't re-raise them
+  Object.keys(window._decisionChoices).forEach(di => {
+    const d = decisions[parseInt(di)];
+    const choice = window._decisionChoices[di];
+    if (!d || !choice) return;
+    let chosenText = '';
+    if (choice.type === 'option') {
+      chosenText = d.options[choice.idx]?.text || '';
+    } else if (choice.type === 'custom') {
+      chosenText = choice.text;
+    }
+    if (d.current && chosenText) {
+      window._resolvedDecisions.push({ original: d.current, chosen: chosenText });
+    }
+  });
 
   const notesTa = document.getElementById('workNotes');
   if (notesTa) {
