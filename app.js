@@ -2392,12 +2392,12 @@ function renderConflicts() {
               <span class="decision-opt-num" style="background:rgba(52,211,153,0.15);color:#34d399">✓</span>
               <span class="decision-opt-text">Apply this suggestion</span>
             </button>
-            <button class="decision-opt-btn" id="hopt-${i}-decline"
+            <button class="decision-opt-btn decline-btn" id="hopt-${i}-decline"
               onclick="selectHoldout(${i}, 'decline', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✕</span>
-              <span class="decision-opt-text">Decline — finish as-is</span>
+              <span class="decision-opt-text">Decline — skip this one</span>
             </button>
-            <button class="decision-opt-btn decision-opt-custom" id="hopt-${i}-custom"
+            <button class="decision-opt-btn decision-opt-custom custom-btn" id="hopt-${i}-custom"
               onclick="selectHoldout(${i}, 'custom', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
               <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
@@ -2626,8 +2626,16 @@ function selectHoldout(idx, choice, total) {
     document.getElementById(`hopt-${idx}-${choice}`)?.classList.add('selected');
     const customWrap = document.getElementById(`hcustom-${idx}`);
     if (customWrap) customWrap.style.display = choice === 'custom' ? 'block' : 'none';
-    if (choice !== 'custom') card.classList.add('resolved');
-    else card.classList.remove('resolved');
+    if (choice === 'decline') {
+      card.classList.add('resolved', 'declined');
+      card.classList.remove('custom-selected');
+    } else if (choice === 'custom') {
+      card.classList.add('custom-selected');
+      card.classList.remove('resolved', 'declined');
+    } else {
+      card.classList.add('resolved');
+      card.classList.remove('declined', 'custom-selected');
+    }
   }
 
   // Auto-scroll to next unresolved

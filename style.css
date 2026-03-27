@@ -1913,13 +1913,6 @@ kbd {
   align-items: center;
   flex-shrink: 0;
 }
-.legend-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
-  margin-right: 2px;
-}
 .legend-item {
   white-space: nowrap;
   display: flex;
@@ -2753,6 +2746,31 @@ kbd {
 .convergence-card {
   border-color: #34d399 !important;
 }
+.convergence-card.declined {
+  border-color: #f87171 !important;
+}
+.convergence-card.declined .convergence-ai-badge {
+  color: var(--muted);
+}
+.convergence-card.custom-selected {
+  border-color: var(--amber) !important;
+}
+.decision-opt-btn.selected.decline-btn {
+  border-color: #f87171 !important;
+  background: rgba(248,113,113,0.08) !important;
+}
+.decision-opt-btn.selected.decline-btn .decision-opt-num {
+  background: rgba(248,113,113,0.15) !important;
+  color: #f87171 !important;
+}
+.decision-opt-btn.selected.custom-btn {
+  border-color: var(--amber) !important;
+  background: rgba(245,166,35,0.08) !important;
+}
+.decision-opt-btn.selected.custom-btn .decision-opt-num {
+  background: rgba(245,166,35,0.15) !important;
+  color: var(--amber) !important;
+}
 .convergence-ai-badge {
   font-size: 11px;
   font-weight: 700;
@@ -2888,6 +2906,14 @@ kbd {
 }
 .decision-opt-custom {
   border-style: dashed;
+}
+.decision-opt-custom.selected {
+  border-color: var(--amber) !important;
+  background: rgba(245,166,35,0.08) !important;
+}
+.decision-opt-custom.selected .decision-opt-num {
+  background: rgba(245,166,35,0.15) !important;
+  color: var(--amber) !important;
 }
 .decision-custom-wrap {
   margin-top: 8px;
