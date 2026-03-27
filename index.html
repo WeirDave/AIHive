@@ -213,7 +213,7 @@
           <img src="images/AI_Hive_Project_Bee_v2.png" class="setup-card-bee" alt="">
           <div class="fs-col-scroll">
             <div class="fs-col-header">
-              <h2 class="fs-col-title">Your Project</h2>
+              <h2 class="fs-col-title">Your Project <button class="goal-info-btn" onclick="document.getElementById('goalInfoModal').classList.add('active')" title="About the project goal"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Give your project a name, version, and a detailed goal. The goal frames your project — it tells every AI what this document is, what it's trying to achieve, and what direction to take. It is used when generating the first draft and as context throughout the session. The more specific and detailed your goal, the better your results will be from the very first round.</p>
             </div>
 
@@ -229,10 +229,7 @@
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;width:100%;">
                 <h3 class="proj-goal-heading">Project Goal</h3>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
-                  <button class="goal-info-btn" onclick="document.getElementById('goalInfoModal').classList.add('active')" title="About the 300 character limit">ⓘ</button>
-                </div>
+                <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
               </div>
               <div class="proj-notebook proj-notebook-goal">
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
@@ -619,10 +616,12 @@
      ============================================================ -->
 <div class="finish-modal-overlay" id="goalInfoModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="finish-modal goal-info-modal">
-    <div class="goal-info-icon">ⓘ</div>
+    <div style="text-align:center;margin-bottom:8px;">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:72px;height:72px;">
+    </div>
     <h2 class="finish-modal-title">About Your Project Goal</h2>
     <div class="goal-info-body">
-      <p>Your project goal is used differently depending on which phase you're in:</p>
+      <p>Below you'll fill out your project name, version, and goal. The goal is the most important part — it tells every AI what you're trying to create and what direction to take.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">1 · Draft</span>
         <span class="goal-info-desc">The full goal is sent to every AI. This is when it matters most — the AIs are building your document from scratch and need all the context you can give them.</span>
@@ -631,7 +630,7 @@
         <span class="goal-info-phase refine">2 · Refine Text</span>
         <span class="goal-info-desc">Only the first <strong>300 characters</strong> are sent, labelled as <em>Project Context</em>. By this point your document exists — the AIs are refining it, not creating it. The full goal would consume tokens better spent on the document itself and the reviewer suggestions.</span>
       </div>
-      <p class="goal-info-tip">💡 Keep your most important intent in the first 300 characters. The counter above turns amber when you exceed that threshold.</p>
+      <p class="goal-info-tip">💡 Keep your most important intent in the first 300 characters of your goal. A counter next to the goal field turns amber when you exceed that threshold.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('goalInfoModal').classList.remove('active')">Got it →</button>
   </div>
@@ -641,5 +640,35 @@
 <div id="toast"></div>
 
 <script src="app.js?v=2.1"></script>
+<!-- AI Hive Finish Animation -->
+<div id="hiveFinishOverlay" class="hive-finish-overlay" aria-hidden="true">
+  <div class="hive-finish-backdrop"></div>
+  <div class="hive-finish-stage">
+    <div class="hive-finish-hex-grid">
+      <span class="hex-cell"></span>
+      <span class="hex-cell"></span>
+      <span class="hex-cell"></span>
+      <span class="hex-cell"></span>
+      <span class="hex-cell"></span>
+      <span class="hex-cell"></span>
+    </div>
+    <div class="hive-finish-smoke" id="hiveFinishSmoke"></div>
+    <div class="hive-finish-bee" aria-hidden="true">
+      <span class="bee-body"></span>
+      <span class="bee-wing bee-wing-left"></span>
+      <span class="bee-wing bee-wing-right"></span>
+    </div>
+    <div class="hive-finish-badge">
+      <div class="badge-hex"></div>
+      <div class="badge-ring"></div>
+      <div class="badge-inner">
+        <div class="badge-kicker">AI HIVE</div>
+        <div class="badge-title" id="hiveFinishText">HIVE APPROVED</div>
+        <div class="badge-sub">Final draft sealed</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

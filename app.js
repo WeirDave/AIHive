@@ -1511,14 +1511,6 @@ function renderWorkPhaseBar() {
 function showFinishModal() {
   const modal = document.getElementById('finishModal');
   if (modal) modal.classList.add('active');
-  projectClockPause();
-  // Reset export button in case it was previously clicked
-  const exportBtn = document.querySelector('.finish-modal-btn-export');
-  if (exportBtn) {
-    exportBtn.textContent = '💾 Export Document';
-    exportBtn.disabled = false;
-    exportBtn.style.opacity = '';
-  }
 }
 
 function hideFinishModal() {
@@ -1527,37 +1519,60 @@ function hideFinishModal() {
 }
 
 function finishAndExport() {
-  const docTa = document.getElementById('workDocument');
-  const originalDoc = docTa?.value?.trim();
-  if (!originalDoc) { toast('⚠️ Nothing to export yet'); return; }
-
-  const totalRounds = round - 1;
-  const totalMins = Math.round(_projClockSeconds / 60);
-  const timeStr = totalMins < 1 ? 'less than a minute' : `${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
-  const byline = `\n\n---\nProduced by AI Hive in ${totalRounds} round${totalRounds !== 1 ? 's' : ''} and ${timeStr}.\nweirdave.github.io/AIHive`;
-
-  const exportDoc = originalDoc + byline;
-  const filename = buildExportName();
-  const blob = new Blob([exportDoc], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${filename}.txt`;
-  a.click();
-  toast('💾 Document exported');
-
-  // Stay in modal — swap button to confirm
-  const exportBtn = document.querySelector('.finish-modal-btn-export');
-  if (exportBtn) {
-    exportBtn.textContent = '✅ Exported!';
-    exportBtn.disabled = true;
-    exportBtn.style.opacity = '0.6';
-  }
+  exportDocument();
+  hideFinishModal();
 }
 
 function finishAndNew() {
   hideFinishModal();
-  clearProject();
-  goToScreen('screen-project');
+  showHiveFinish({ text: 'HIVE APPROVED', subtext: 'Final draft sealed', duration: 2400, smokeBursts: 14 });
+  setTimeout(() => {
+    clearProject();
+    goToScreen('screen-project');
+  }, 2500);
+}
+
+/* =========================================
+   AI HIVE FINISH ANIMATION — Bee Fly-In
+   ========================================= */
+
+let hiveFinishTimer = null;
+
+function showHiveFinish(options = {}) {
+  const { duration = 4000, smokeBursts = 10 } = options;
+  const overlay = document.getElementById('hiveFinishOverlay');
+  const smokeWrap = document.getElementById('hiveFinishSmoke');
+  if (!overlay) return;
+  clearTimeout(hiveFinishTimer);
+  if (smokeWrap) {
+    smokeWrap.innerHTML = '';
+    for (let i = 0; i < smokeBursts; i++) {
+      const puff = document.createElement('span');
+      puff.className = 'hive-smoke-particle';
+      puff.style.setProperty('--size', `${hiveRand(30, 80)}px`);
+      puff.style.setProperty('--x', `${hiveRand(-150, 150)}px`);
+      puff.style.setProperty('--y', `${hiveRand(-150, -300)}px`);
+      puff.style.setProperty('--dur', `${hiveRand(1500, 2800)}ms`);
+      puff.style.setProperty('--opacity', (Math.random() * 0.3 + 0.15).toFixed(2));
+      puff.style.left = `${50 + hiveRand(-8, 8)}%`;
+      puff.style.animationDelay = `${hiveRand(0, 600)}ms`;
+      smokeWrap.appendChild(puff);
+    }
+  }
+  overlay.setAttribute('aria-hidden', 'false');
+  overlay.classList.add('is-active');
+  hiveFinishTimer = setTimeout(() => hideHiveFinish(), duration);
+}
+
+function hideHiveFinish() {
+  const overlay = document.getElementById('hiveFinishOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('is-active');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function hiveRand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function setPhase(id) {
