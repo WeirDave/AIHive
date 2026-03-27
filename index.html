@@ -524,24 +524,21 @@
 </div>
 
 <!-- ============================================================
-     NOTES MODAL
+     NOTES DRAWER — slides up from above footer, no overlay
      ============================================================ -->
-<div class="notes-modal-overlay" id="notesModal" onclick="if(event.target===this)closeNotesModal()">
-  <div class="notes-modal">
-    <div class="notes-modal-hdr">
-      <div class="notes-modal-title">📝 Notes for this Round</div>
-      <div class="notes-modal-sub">Optional directions for the Builder. Reference line numbers if helpful.</div>
-      <button class="btn" onclick="closeNotesModal()">✕ Close</button>
-    </div>
-    <textarea id="workNotes" class="notes-modal-ta"
-      oninput="saveSession()"
-      placeholder="e.g. Line 5: change tone to be more formal&#10;Line 12–15: expand this section&#10;Overall: make it more concise"></textarea>
-    <div class="notes-modal-footer">
+<div class="notes-drawer" id="notesModal">
+  <div class="notes-drawer-hdr">
+    <span class="notes-drawer-title">📝 Notes for this Round</span>
+    <span class="notes-drawer-sub">Optional directions for the Builder — reference line numbers if helpful.</span>
+    <div class="notes-drawer-actions">
       <button class="btn" onclick="copyNotes()">📋 Copy</button>
       <button class="btn" onclick="document.getElementById('workNotes').value='';saveSession()">✕ Clear</button>
-      <button class="btn btn-accent" onclick="closeNotesModal()">Done →</button>
+      <button class="btn btn-accent" onclick="closeNotesModal()">✕ Close</button>
     </div>
   </div>
+  <textarea id="workNotes" class="notes-drawer-ta"
+    oninput="saveSession()"
+    placeholder="e.g. Line 5: change tone to be more formal&#10;Line 12–15: expand this section&#10;Overall: make it more concise"></textarea>
 </div>
 
 
