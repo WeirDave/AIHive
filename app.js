@@ -667,6 +667,7 @@ function clearProject() {
   docTab = 'upload';
   switchDocTab('upload');
   round = 1; phase = 'draft'; history = []; docText = '';
+  projectClockReset();
   toast('🗑 Project cleared — AI keys and settings kept');
 }
 
@@ -748,7 +749,7 @@ function saveSession() {
   const consoleHTML = consoleEl ? consoleEl.innerHTML : '';
   const notesEl = document.getElementById('workNotes');
   const notes = notesEl ? notesEl.value : '';
-  const session = { round, phase, history, docText, consoleHTML, notes };
+  const session = { round, phase, history, docText, consoleHTML, notes, projClockSeconds: _projClockSeconds };
   try { localStorage.setItem(LS_SESSION, JSON.stringify(session)); } catch(e) {}
   saveProject(); // keep project fields in sync
 }
@@ -762,11 +763,10 @@ function loadSession() {
     phase   = s.phase   || 'draft';
     history = s.history || [];
     docText = s.docText || '';
+    // Restore project clock elapsed time
+    if (s.projClockSeconds) _projClockSeconds = s.projClockSeconds;
     // If a document exists and we're still in draft, advance to refine
-    // (handles sessions created before auto-advance was implemented)
-    if (docText && phase === 'draft' && round > 1) {
-      phase = 'refine';
-    }
+    if (docText && phase === 'draft' && round > 1) phase = 'refine';
     if (s.consoleHTML) {
       const el = document.getElementById('liveConsole');
       if (el) el.innerHTML = s.consoleHTML;
@@ -1336,6 +1336,7 @@ function startSession() {
   saveSettings();
   goToScreen('screen-work');
   initWorkScreen(true);
+  projectClockStart(); // auto-start project timer on launch
   // Save original document as Round 0 — done AFTER initWorkScreen so notes are populated
   if (docText && history.length === 0) {
     history.push({
@@ -2821,6 +2822,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Active session with document — resume work screen
     goToScreen('screen-work');
     initWorkScreen();
+    _projClockRender(); // restore display
+    projectClockStart(); // resume counting
   } else if (projectName) {
     // Named project in progress — resume at project setup
     goToScreen('screen-project');
