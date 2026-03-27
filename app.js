@@ -762,6 +762,11 @@ function loadSession() {
     phase   = s.phase   || 'draft';
     history = s.history || [];
     docText = s.docText || '';
+    // If a document exists and we're still in draft, advance to refine
+    // (handles sessions created before auto-advance was implemented)
+    if (docText && phase === 'draft' && round > 1) {
+      phase = 'refine';
+    }
     if (s.consoleHTML) {
       const el = document.getElementById('liveConsole');
       if (el) el.innerHTML = s.consoleHTML;
