@@ -2537,17 +2537,17 @@ function showSmokerOverlay(label = 'Smoking…') {
   // Generate smoke puffs
   if (particles) {
     particles.innerHTML = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 14; i++) {
       const puff = document.createElement('div');
       puff.className = 'smoke-puff';
-      const size = 30 + Math.random() * 40;
+      const size = 40 + Math.random() * 60;
       puff.style.cssText = `
         width: ${size}px;
         height: ${size}px;
-        left: ${20 + Math.random() * 60}%;
+        left: ${10 + Math.random() * 50}%;
         bottom: 0;
-        --dur: ${2 + Math.random() * 1.5}s;
-        --delay: ${Math.random() * 2}s;
+        --dur: ${1.5 + Math.random() * 2}s;
+        --delay: ${Math.random() * 2.5}s;
       `;
       particles.appendChild(puff);
     }
