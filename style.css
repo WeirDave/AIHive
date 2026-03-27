@@ -2976,9 +2976,9 @@ kbd {
 /* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
-  top: 20px;
+  top: -42px;
   left: 50%;
-  transform: translateX(-80%);
+  transform: translateX(-74%);
   width: 180px;
   height: 160px;
   pointer-events: none;
@@ -2988,6 +2988,7 @@ kbd {
   position: absolute;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(210,210,230,0.85) 0%, rgba(190,190,210,0.5) 40%, transparent 70%);
+  opacity: 0;
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
