@@ -1511,6 +1511,14 @@ function renderWorkPhaseBar() {
 function showFinishModal() {
   const modal = document.getElementById('finishModal');
   if (modal) modal.classList.add('active');
+  projectClockPause();
+  // Reset export button in case it was previously clicked
+  const exportBtn = document.querySelector('.finish-modal-btn-export');
+  if (exportBtn) {
+    exportBtn.textContent = '💾 Export Document';
+    exportBtn.disabled = false;
+    exportBtn.style.opacity = '';
+  }
 }
 
 function hideFinishModal() {
@@ -1519,8 +1527,31 @@ function hideFinishModal() {
 }
 
 function finishAndExport() {
-  exportDocument();
-  hideFinishModal();
+  const docTa = document.getElementById('workDocument');
+  const originalDoc = docTa?.value?.trim();
+  if (!originalDoc) { toast('⚠️ Nothing to export yet'); return; }
+
+  const totalRounds = round - 1;
+  const totalMins = Math.round(_projClockSeconds / 60);
+  const timeStr = totalMins < 1 ? 'less than a minute' : `${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
+  const byline = `\n\n---\nProduced by AI Hive in ${totalRounds} round${totalRounds !== 1 ? 's' : ''} and ${timeStr}.\nweirdave.github.io/AIHive`;
+
+  const exportDoc = originalDoc + byline;
+  const filename = buildExportName();
+  const blob = new Blob([exportDoc], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${filename}.txt`;
+  a.click();
+  toast('💾 Document exported');
+
+  // Stay in modal — swap button to confirm
+  const exportBtn = document.querySelector('.finish-modal-btn-export');
+  if (exportBtn) {
+    exportBtn.textContent = '✅ Exported!';
+    exportBtn.disabled = true;
+    exportBtn.style.opacity = '0.6';
+  }
 }
 
 function finishAndNew() {
@@ -2370,44 +2401,35 @@ function renderConflicts() {
 
   // ── CONVERGENCE PATH: majority agreed, show holdouts for optional review ──
   if (conflicts.converged && conflicts.holdouts) {
-    window._holdoutChoices = {};
-
-    // Parse each holdout response into individual numbered suggestions
-    const suggestions = [];
-    conflicts.holdouts.forEach(h => {
-      const parts = h.response.split(/(?=\n\d+\.\s)/);
-      parts.forEach(part => {
-        const trimmed = part.trim();
-        if (trimmed) suggestions.push({ name: h.name, text: trimmed });
-      });
-    });
-    const total = suggestions.length;
-    window._holdoutSuggestions = suggestions;
+    const count = conflicts.holdouts.length;
+    // per-holdout state: 'apply' | 'decline' | 'custom'
+    window._holdoutChoices = window._holdoutChoices || {};
 
     let html = `<div class="conflicts-section-header convergence-header">
-      🏁 Hive Converged — ${total} suggestion${total!==1?'s':''} from holdout${conflicts.holdouts.length!==1?'s':''} — review each below:
+      🏁 Hive Converged — ${count > 0 ? `${count} holdout${count!==1?' still had suggestions':'still had a suggestion'} — review below:` : 'document is ready.'}
     </div>`;
 
-    suggestions.forEach((s, i) => {
-      html += `<div class="decision-card convergence-card" id="hcard-${i}">
+    if (count > 0) {
+      conflicts.holdouts.forEach((h, i) => {
+        html += `<div class="decision-card convergence-card" id="hcard-${i}">
           <div class="decision-card-header">
-            <span class="convergence-ai-badge">🐝 ${esc(s.name)}</span>
-            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Suggestion ${i+1} of ${total}:</span>
+            <span class="convergence-ai-badge">🐝 ${esc(h.name)}</span>
+            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Their suggestion:</span>
           </div>
-          <div class="convergence-suggestion">${esc(s.text)}</div>
+          <div class="convergence-suggestion">${esc(h.response)}</div>
           <div class="decision-options">
             <button class="decision-opt-btn" id="hopt-${i}-apply"
-              onclick="selectHoldout(${i}, 'apply', ${total})">
+              onclick="selectHoldout(${i}, 'apply', ${count})">
               <span class="decision-opt-num" style="background:rgba(52,211,153,0.15);color:#34d399">✓</span>
               <span class="decision-opt-text">Apply this suggestion</span>
             </button>
             <button class="decision-opt-btn decline-btn" id="hopt-${i}-decline"
-              onclick="selectHoldout(${i}, 'decline', ${total})">
+              onclick="selectHoldout(${i}, 'decline', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✕</span>
               <span class="decision-opt-text">Decline — skip this one</span>
             </button>
             <button class="decision-opt-btn decision-opt-custom custom-btn" id="hopt-${i}-custom"
-              onclick="selectHoldout(${i}, 'custom', ${total})">
+              onclick="selectHoldout(${i}, 'custom', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
               <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
             </button>
@@ -2415,15 +2437,16 @@ function renderConflicts() {
           <div class="decision-custom-wrap" id="hcustom-${i}" style="display:none">
             <textarea class="decision-custom-ta" id="hcustom-ta-${i}"
               placeholder="Type your custom text here..."
-              oninput="updateHoldoutCustom(${i}, ${total})"></textarea>
+              oninput="updateHoldoutCustom(${i}, ${count})"></textarea>
           </div>
         </div>`;
-    });
+      });
 
-    html += `<button class="btn-apply-decisions" id="applyHoldoutsBtn"
-      onclick="applyHoldouts()" disabled>
-      ✅ Apply Selections &amp; Continue
-    </button>`;
+      html += `<button class="btn-apply-decisions" id="applyHoldoutsBtn"
+        onclick="applyHoldouts()" disabled>
+        ✅ Apply Selections &amp; Continue
+      </button>`;
+    }
 
     html += `<div class="convergence-footer">
       The hive is satisfied. Make your selections above, or hit <strong>Finish</strong> to finalize the document as-is.
@@ -2683,19 +2706,23 @@ function checkAllHoldoutsDone(total) {
 }
 
 function applyHoldouts() {
-  const suggestions = window._holdoutSuggestions || [];
+  const latest = history.length > 0 ? history[history.length - 1] : null;
+  if (!latest?.conflicts?.holdouts) return;
+  const holdouts = latest.conflicts.holdouts;
   const choices = window._holdoutChoices || {};
   const lines = [];
 
   Object.keys(choices).forEach(i => {
-    const s = suggestions[parseInt(i)];
+    const h = holdouts[parseInt(i)];
     const c = choices[i];
-    if (!s || !c || c.type === 'decline') return;
-    const text = c.type === 'custom' ? c.text : s.text;
-    if (text) lines.push(`From ${s.name}: ${text}`);
+    if (!h || !c) return;
+    if (c.type === 'decline') return; // skip declined
+    const text = c.type === 'custom' ? c.text : h.response;
+    if (text) lines.push(`From ${h.name}: ${text}`);
   });
 
   if (lines.length === 0) {
+    // All declined — open finish modal
     window._holdoutChoices = {};
     showFinishModal();
     return;

@@ -46,8 +46,8 @@ If you started from scratch, run one Draft round. Every AI writes an independent
 **4. Switch to Refine Text**
 After your first draft exists, switch the phase selector to **Refine Text**. This is where you'll spend most of your time. Reviewers now send targeted numbered suggestions instead of full rewrites, and your Builder applies the best ones each round.
 
-**5. Iterate**
-Add notes before each round to guide the hive. Keep shaking. Watch the document sharpen round by round.
+**5. Iterate — but you're in charge**
+Add notes before each round to guide the hive. Keep smoking. Watch the document sharpen round by round. There's no magic number of rounds — when *you* think the document is good, it's done. Hit **Finish** at any time. The hive works for you, not the other way around.
 
 **6. Export**
 When you're done, export the clean final document and the full session transcript.
@@ -86,6 +86,8 @@ Three columns keep everything in view:
 - **Notes for this Round** — optional direction for the Builder before each round. Reference line numbers.
 
 Hit **Smoke the Hive** to run a round. Watch the Live Console as each AI responds in real time.
+
+> **You're always in charge.** There's no required number of rounds. When the document looks good to you, hit **Finish** — you don't need the hive's permission. The AIs are here to help, not to decide when you're done.
 
 ### Phases
 
