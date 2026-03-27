@@ -2044,7 +2044,7 @@ async function runRound() {
       if (noChanges) {
         consoleLog(`✓ ${ai.name} — no changes needed`, 'success');
       } else {
-        const preview = response.trim().substring(0, 80).replace(/\n/g, ' ');
+        const preview = response.trim().substring(0, 160).replace(/\n/g, ' ');
         consoleLog(`📋 ${ai.name}: ${preview}…`, 'preview');
       }
       reviewerResponses.push({ id: ai.id, name: ai.name, response, noChanges });
@@ -2104,7 +2104,6 @@ async function runRound() {
     renderConflicts();
     saveSession();
     if (!isLicensed()) { const used = incrementTrialRound(); updateLicenseBadge(); }
-    // Reset bee statuses
     activeAIs.forEach(a => setBeeStatus(a.id, 'idle', ''));
     setStatus(`🏁 Hive converged — review holdout suggestions or finish the project`);
     document.getElementById('runRoundBtn')?.classList.remove('running');
@@ -2371,19 +2370,55 @@ function renderConflicts() {
 
   // ── CONVERGENCE PATH: majority agreed, show holdouts for optional review ──
   if (conflicts.converged && conflicts.holdouts) {
+    const count = conflicts.holdouts.length;
+    // per-holdout state: 'apply' | 'decline' | 'custom'
+    window._holdoutChoices = window._holdoutChoices || {};
+
     let html = `<div class="conflicts-section-header convergence-header">
-      🏁 Hive Converged — majority satisfied. Here's what the holdouts still wanted:
+      🏁 Hive Converged — ${count > 0 ? `${count} holdout${count!==1?' still had suggestions':'still had a suggestion'} — review below:` : 'document is ready.'}
     </div>`;
-    conflicts.holdouts.forEach((h, i) => {
-      html += `<div class="builder-decision-item convergence-holdout">
-        <span class="decision-opt-ais">${esc(h.name)}</span>
-        <div style="margin-top:6px;white-space:pre-wrap">${esc(h.response)}</div>
-        <button class="btn btn-ghost convergence-apply-btn" style="margin-top:10px"
-          onclick="applyHoldout(${i})">Apply this suggestion</button>
-      </div>`;
-    });
-    html += `<div style="margin-top:16px;text-align:center">
-      <span style="color:var(--muted);font-size:13px">Or hit <strong>Finish</strong> to finalize the document as-is.</span>
+
+    if (count > 0) {
+      conflicts.holdouts.forEach((h, i) => {
+        html += `<div class="decision-card convergence-card" id="hcard-${i}">
+          <div class="decision-card-header">
+            <span class="convergence-ai-badge">🐝 ${esc(h.name)}</span>
+            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Their suggestion:</span>
+          </div>
+          <div class="convergence-suggestion">${esc(h.response)}</div>
+          <div class="decision-options">
+            <button class="decision-opt-btn" id="hopt-${i}-apply"
+              onclick="selectHoldout(${i}, 'apply', ${count})">
+              <span class="decision-opt-num" style="background:rgba(52,211,153,0.15);color:#34d399">✓</span>
+              <span class="decision-opt-text">Apply this suggestion</span>
+            </button>
+            <button class="decision-opt-btn" id="hopt-${i}-decline"
+              onclick="selectHoldout(${i}, 'decline', ${count})">
+              <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✕</span>
+              <span class="decision-opt-text">Decline — finish as-is</span>
+            </button>
+            <button class="decision-opt-btn decision-opt-custom" id="hopt-${i}-custom"
+              onclick="selectHoldout(${i}, 'custom', ${count})">
+              <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
+              <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
+            </button>
+          </div>
+          <div class="decision-custom-wrap" id="hcustom-${i}" style="display:none">
+            <textarea class="decision-custom-ta" id="hcustom-ta-${i}"
+              placeholder="Type your custom text here..."
+              oninput="updateHoldoutCustom(${i}, ${count})"></textarea>
+          </div>
+        </div>`;
+      });
+
+      html += `<button class="btn-apply-decisions" id="applyHoldoutsBtn"
+        onclick="applyHoldouts()" disabled>
+        ✅ Apply Selections &amp; Continue
+      </button>`;
+    }
+
+    html += `<div class="convergence-footer">
+      The hive is satisfied. Make your selections above, or hit <strong>Finish</strong> to finalize the document as-is.
     </div>`;
     el.innerHTML = html;
     return;
@@ -2391,8 +2426,6 @@ function renderConflicts() {
 
   // Reset choices when new conflicts arrive
   window._decisionChoices = {};
-
-  let html = '';
 
   // USER DECISION cards
   if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
@@ -2581,18 +2614,86 @@ function applyDecisions() {
   runBuilderOnly();
 }
 
-function applyHoldout(holdoutIdx) {
+function selectHoldout(idx, choice, total) {
+  window._holdoutChoices = window._holdoutChoices || {};
+  window._holdoutChoices[idx] = { type: choice, text: '' };
+
+  const card = document.getElementById(`hcard-${idx}`);
+  if (card) {
+    card.querySelectorAll('.decision-opt-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById(`hopt-${idx}-${choice}`)?.classList.add('selected');
+    const customWrap = document.getElementById(`hcustom-${idx}`);
+    if (customWrap) customWrap.style.display = choice === 'custom' ? 'block' : 'none';
+    if (choice !== 'custom') card.classList.add('resolved');
+    else card.classList.remove('resolved');
+  }
+
+  // Auto-scroll to next unresolved
+  const next = document.querySelector('.convergence-card:not(.resolved)');
+  if (next) next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // If all holdouts are now resolved and everything is declined → auto-finish
+  const allResolved = Object.keys(window._holdoutChoices).length === total;
+  const allDeclined = allResolved && Object.values(window._holdoutChoices).every(c => c.type === 'decline');
+  if (allDeclined) {
+    setTimeout(() => showFinishModal(), 400);
+    return;
+  }
+
+  checkAllHoldoutsDone(total);
+}
+
+function updateHoldoutCustom(idx, total) {
+  const ta = document.getElementById(`hcustom-ta-${idx}`);
+  const text = ta?.value.trim() || '';
+  window._holdoutChoices = window._holdoutChoices || {};
+  const card = document.getElementById(`hcard-${idx}`);
+  if (text) {
+    window._holdoutChoices[idx] = { type: 'custom', text };
+    card?.classList.add('resolved');
+  } else {
+    if (window._holdoutChoices[idx]?.type === 'custom') delete window._holdoutChoices[idx];
+    card?.classList.remove('resolved');
+  }
+  checkAllHoldoutsDone(total);
+}
+
+function checkAllHoldoutsDone(total) {
+  const allDone = Object.keys(window._holdoutChoices || {}).length === total;
+  const btn = document.getElementById('applyHoldoutsBtn');
+  if (btn) btn.disabled = !allDone;
+}
+
+function applyHoldouts() {
   const latest = history.length > 0 ? history[history.length - 1] : null;
   if (!latest?.conflicts?.holdouts) return;
-  const h = latest.conflicts.holdouts[holdoutIdx];
-  if (!h) return;
+  const holdouts = latest.conflicts.holdouts;
+  const choices = window._holdoutChoices || {};
+  const lines = [];
+
+  Object.keys(choices).forEach(i => {
+    const h = holdouts[parseInt(i)];
+    const c = choices[i];
+    if (!h || !c) return;
+    if (c.type === 'decline') return; // skip declined
+    const text = c.type === 'custom' ? c.text : h.response;
+    if (text) lines.push(`From ${h.name}: ${text}`);
+  });
+
+  if (lines.length === 0) {
+    // All declined — open finish modal
+    window._holdoutChoices = {};
+    showFinishModal();
+    return;
+  }
 
   const notesTa = document.getElementById('workNotes');
   if (notesTa) {
-    notesTa.value = `Apply this suggestion from ${h.name}:\n${h.response}`;
+    notesTa.value = 'Apply these holdout suggestions:\n' + lines.map((l, i) => `${i+1}. ${l}`).join('\n');
     saveSession();
   }
-  toast(`📋 Sending ${h.name}'s suggestion to Builder…`);
+  window._holdoutChoices = {};
+  toast('📋 Sending to Builder…');
   runBuilderOnly();
 }
 
@@ -2600,7 +2701,7 @@ function extractSummary(text) {
   // Get first meaningful line as summary
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const first = lines[0] || '';
-  return first.length > 80 ? first.substring(0, 80) + '…' : first;
+  return first.length > 160 ? first.substring(0, 160) + '…' : first;
 }
 
 // ── ROUND HISTORY ──

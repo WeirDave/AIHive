@@ -2739,18 +2739,44 @@ kbd {
   border: 1px solid var(--amber);
 }
 .convergence-header {
-  background: rgba(100,200,120,0.1);
-  color: var(--green);
-  border: 1px solid var(--green);
+  background: rgba(52,211,153,0.08);
+  color: #34d399;
+  border: 1px solid #34d399;
 }
-.convergence-holdout {
-  border-left: 3px solid var(--muted);
-  padding: 10px 12px;
-  margin-bottom: 10px;
+.convergence-card {
+  border-color: #34d399 !important;
 }
-.convergence-apply-btn {
+.convergence-ai-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.convergence-suggestion {
   font-size: 12px;
-  padding: 4px 12px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 8px 0 12px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+}
+.convergence-footer {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+}
+.convergence-footer strong {
+  color: var(--text);
 }
 
 .conflicts-body {
