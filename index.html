@@ -759,16 +759,20 @@
     <div class="goal-info-icon"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img"></div>
     <h2 class="finish-modal-title">Live Console</h2>
     <div class="goal-info-body">
-      <p>The console shows everything happening in real time — which AIs are sending, responding, succeeding, or failing, and what each one said.</p>
+      <p>The console shows you everything happening in real time — which AIs are sending requests, responding, succeeding, or failing, and a preview of what each one said.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Round Clock</span>
-        <span class="goal-info-desc">Tracks how long the current round is taking. Resets at the start of each new round.</span>
+        <span class="goal-info-desc">Displayed above the console, this clock tracks how long the current round is taking. It resets automatically at the start of each new round.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Project Clock</span>
-        <span class="goal-info-desc">Tracks total time spent on the project since your first round. Persists across sessions and pauses when you open the Finish modal.</span>
+        <span class="goal-info-desc">Also displayed above the console, this clock tracks the total time you have spent on the project since your first round. It persists if you close and reopen the browser. It pauses automatically when you click the Finish button. If you need to step away from the screen — to review something, take a break, or handle something else — use the pause button next to the project clock so your time remains an accurate picture of how long the project actually took.</span>
       </div>
-      <p class="goal-info-tip">💡 Color-coded log entries: green = success, amber = warning, red = error, blue = info. Copy the full log at any time for your records.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Legend</span>
+        <span class="goal-info-desc">The legend is located directly above the console and explains what the different colors of text in the log mean: green is a success, amber is a warning, red is an error, and blue is general info.</span>
+      </div>
+      <p class="goal-info-tip">💡 Using the Copy button you can copy the full console log at any time — useful for keeping a record of what happened during your session or for troubleshooting an issue.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoConsoleModal').classList.remove('active')">Got it →</button>
   </div>
