@@ -3080,8 +3080,8 @@ kbd {
 
 .smoker-explanation {
   margin-top: -10px;
-  width: 420px;
-  height: 420px;
+  width: 525px;
+  height: 525px;
   background-image: url('images/AI_Hive_v1.png');
   background-size: cover;
   background-position: center;
@@ -3089,7 +3089,7 @@ kbd {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 90px 80px;
+  padding: 112px 100px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
