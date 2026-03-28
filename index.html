@@ -738,16 +738,24 @@
     <div class="goal-info-icon"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img"></div>
     <h2 class="finish-modal-title">Working Document</h2>
     <div class="goal-info-body">
-      <p>This is the live document your hive is building. It updates after every round as the Builder applies reviewer suggestions. You can edit it directly at any time between rounds.</p>
+      <p>This is the live document your hive is building and refining. It updates after every round as the Builder applies the reviewer suggestions. You can edit it directly at any time between rounds — your edits are preserved and the hive will continue from wherever you leave it.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Line Numbers</span>
-        <span class="goal-info-desc">Each line is numbered so reviewers can reference exact locations in their suggestions — e.g. "Line 14: change X to Y." This is how the hive stays coordinated.</span>
+        <span class="goal-info-desc">Each line is numbered so reviewers can reference exact locations in their suggestions — e.g. "Line 14: change X to Y." This is how the hive stays coordinated across multiple AIs.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">80 Characters</span>
-        <span class="goal-info-desc">The document is fixed at 80 characters wide. This ensures line number references from AIs are always accurate regardless of your screen size.</span>
+        <span class="goal-info-desc">The document is fixed at 80 characters wide. This ensures line number references from AIs stay accurate regardless of your screen size or zoom level.</span>
       </div>
-      <p class="goal-info-tip">💡 Export saves your document as a .txt file with a byline noting how many rounds it took and how long the session ran.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">How Rounds Work</span>
+        <span class="goal-info-desc">Rounds continue as long as the AIs have suggestions to make. When a majority of your AIs agree the document needs no further changes, the hive converges. Any holdout suggestions — from AIs that still wanted changes — are presented for your review. You can apply them, decline them, or move straight to finishing.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">Finish Button</span>
+        <span class="goal-info-desc">You do not have to wait for the hive to converge on its own. If the document looks good to you at any point, hit the Finish button in the top bar. You can export your document, start a fresh project, or go back and keep refining — the choice is always yours.</span>
+      </div>
+      <p class="goal-info-tip">💡 Export saves your document as a .txt file with a byline noting the number of rounds it took and how long the session ran.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoDocModal').classList.remove('active')">Got it →</button>
   </div>
