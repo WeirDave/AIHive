@@ -2200,6 +2200,7 @@ async function runRound() {
   if (btn) btn.querySelector('.shake-wide-label').textContent = 'Smoking…';
   showSmokerOverlay("Smokin' the Hive…");
   startRoundTimer(btn, 'Smoking…');
+  projectClockStart(); // start/resume project clock on every round
   if (hiveStatus) hiveStatus.textContent = 'Working…';
   setStatus(`⚡ Round ${round} in progress — AI Hive is thinking…`);
   consoleLog(`═══ Round ${round} · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
