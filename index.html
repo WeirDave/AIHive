@@ -489,10 +489,10 @@
     <div class="work-footer">
       <span id="statusText" class="footer-status">Standing by — Smoke the Hive to begin</span>
       <div class="footer-actions">
-        <button class="footer-btn" id="builderOnlyBtn" onclick="runBuilderOnly()">
+        <button class="footer-btn" id="builderOnlyBtn" onclick="footerSendToBuilder()">
           <span class="builder-only-label">Send to Builder</span>
         </button>
-        <button class="footer-btn-smoke" id="runRoundBtn" onclick="runRound()">
+        <button class="footer-btn-smoke" id="runRoundBtn" onclick="footerSmokeOrBuilder()">
           <span class="shake-wide-label">Smoke the Hive</span>
         </button>
       </div>
@@ -525,9 +525,9 @@
   <div class="builder-stage">
     <div class="builder-sparks" id="builderSparks"></div>
     <img src="images/AI_Hive_Builder_Building_v1.png" alt="Building…" class="builder-hero-img">
-    <div class="builder-overlay-label">Building the Hive…</div>
+    <div class="builder-overlay-label">Building…</div>
     <div class="builder-explanation">
-      <p>The Builder bee reviews every suggestion from the hive and assembles them into your updated document — block by block.</p>
+      <p>The Builder bee is reviewing every suggestion from the hive and assembling your updated document — block by block.</p>
     </div>
   </div>
 </div>
@@ -538,7 +538,7 @@
 <div class="notes-drawer" id="notesModal">
   <div class="notes-drawer-hdr">
     <span class="notes-drawer-title">📝 Notes for this Round</span>
-    <span class="notes-drawer-sub">Optional directions for the Builder — reference line numbers if helpful.</span>
+    <span class="notes-drawer-sub">Directions for the Builder only — not sent to reviewers. Reference line numbers if helpful.</span>
     <div class="notes-drawer-actions">
       <button class="btn" onclick="copyNotes()">📋 Copy</button>
       <button class="btn" onclick="document.getElementById('workNotes').value='';saveSession()">✕ Clear</button>

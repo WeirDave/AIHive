@@ -1911,7 +1911,6 @@ function buildPromptForAI(ai, reviewerResponses) {
 
   if (goal && phase === 'draft') prompt += `PROJECT GOAL:\n${sep}\n${goal}\n\n`;
   if (goal && phase !== 'draft') prompt += `PROJECT CONTEXT: ${goal.length > 300 ? goal.substring(0, 300) + '…' : goal}\n\n`;
-  if (notes) prompt += `USER NOTES FOR THIS ROUND:\n${sep}\n${notes}\n\n`;
 
   if (isBuilder && hasResponses) {
     prompt += doc ? `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n` : '';
@@ -1924,6 +1923,8 @@ function buildPromptForAI(ai, reviewerResponses) {
       });
       prompt += `\n`;
     }
+
+    if (notes) prompt += `USER NOTES FOR THIS ROUND:\n${sep}\n${notes}\n\n`;
 
     reviewerResponses.forEach(r => {
       prompt += `${sep}\nFROM ${r.name.toUpperCase()}:\n${sep}\n${r.response}\n\n`;
@@ -1941,6 +1942,26 @@ function buildPromptForAI(ai, reviewerResponses) {
   }
 
   return prompt;
+}
+
+// ── FOOTER BUTTON ROUTING ──
+// If notes drawer is open, both buttons send to Builder only and close the drawer
+function footerSendToBuilder() {
+  closeNotesModal();
+  runBuilderOnly();
+}
+
+function footerSmokeOrBuilder() {
+  const notesOpen = document.getElementById('notesModal')?.classList.contains('active');
+  if (notesOpen) {
+    const notes = document.getElementById('workNotes')?.value.trim();
+    if (notes) {
+      closeNotesModal();
+      runBuilderOnly();
+      return;
+    }
+  }
+  runRound();
 }
 
 // ── SEND TO BUILDER ONLY ──
