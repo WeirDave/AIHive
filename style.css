@@ -1041,7 +1041,7 @@ html, body {
     linear-gradient(to right, transparent 44px, rgba(220,50,50,0.25) 44px, rgba(220,50,50,0.25) 46px, transparent 46px),
     repeating-linear-gradient(
       to bottom,
-      transparent 0px,
+      transparent 0,
       transparent 20px,
       rgba(80,140,220,0.18) 20px,
       rgba(80,140,220,0.18) 21px
@@ -2109,8 +2109,8 @@ kbd {
   gap: 6px;
   padding: 0 0 6px 0;
 }
-.fs-col-left { }
-.fs-col-right { }
+/* .fs-col-left reserved */
+/* .fs-col-right reserved */
 
 /* Main content card */
 .fs-col-main {
@@ -2216,7 +2216,7 @@ kbd {
 }
 
 /* proj-right-scroll — same as fs-col-scroll, no bee on right side of step 2 */
-.proj-right-scroll { }
+/* .proj-right-scroll reserved */
 
 /* ── PROJECT NOTEBOOK (paste + scratch panels) ── */
 .proj-notebook {
@@ -2235,7 +2235,7 @@ kbd {
     /* Blue ruled lines */
     repeating-linear-gradient(
       to bottom,
-      transparent 0px,
+      transparent 0,
       transparent 20px,
       rgba(80,140,220,0.18) 20px,
       rgba(80,140,220,0.18) 21px
@@ -2302,7 +2302,7 @@ kbd {
     linear-gradient(to right, transparent 44px, rgba(220,50,50,0.25) 44px, rgba(220,50,50,0.25) 46px, transparent 46px),
     repeating-linear-gradient(
       to bottom,
-      transparent 0px,
+      transparent 0,
       transparent 20px,
       rgba(80,140,220,0.18) 20px,
       rgba(80,140,220,0.18) 21px
@@ -3068,9 +3068,9 @@ kbd {
   animation: smokerBob 2s ease-in-out infinite;
 }
 @keyframes smokerBob {
-  0%   { transform: translateY(0px) rotate(-2deg); }
+  0%   { transform: translateY(0) rotate(-2deg); }
   50%  { transform: translateY(-12px) rotate(2deg); }
-  100% { transform: translateY(0px) rotate(-2deg); }
+  100% { transform: translateY(0) rotate(-2deg); }
 }
 .smoker-overlay-label {
   font-family: var(--font-display);
@@ -3098,7 +3098,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 205px 95px 140px;
+  padding: 190px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
@@ -3183,7 +3183,7 @@ kbd {
   height: 20px;
   background: repeating-linear-gradient(
     90deg,
-    #3a3f55 0px,
+    #3a3f55 0,
     #3a3f55 14px,
     transparent 14px,
     transparent 22px
@@ -3315,10 +3315,10 @@ kbd {
   animation: smokePuff var(--dur, 2.5s) ease-out var(--delay, 0s) infinite;
 }
 @keyframes smokePuff {
-  0%   { transform: translate(var(--ox, 0px), 0px) scale(0.15); opacity: 1; }
-  30%  { transform: translate(calc(var(--ox, 0px) * 0.6), -40px) scale(0.6); opacity: 0.9; }
-  65%  { transform: translate(calc(var(--ox, 0px) * 0.3), -90px) scale(1.8); opacity: 0.5; }
-  100% { transform: translate(0px, -150px) scale(3.5); opacity: 0; }
+  0%   { transform: translate(var(--ox, 0), 0) scale(0.15); opacity: 1; }
+  30%  { transform: translate(calc(var(--ox, 0) * 0.6), -40px) scale(0.6); opacity: 0.9; }
+  65%  { transform: translate(calc(var(--ox, 0) * 0.3), -90px) scale(1.8); opacity: 0.5; }
+  100% { transform: translate(0, -150px) scale(3.5); opacity: 0; }
 }
 
 /* ── NOTES DRAWER ── */
@@ -3604,7 +3604,6 @@ kbd {
 }
 .license-badge:hover { background: #e01830; box-shadow: 0 0 12px rgba(192,21,42,0.7); }
 .license-badge.licensed {
-  border: none;
   background: var(--green-dim);
   border: 1px solid var(--green);
   color: var(--green);
@@ -4246,7 +4245,7 @@ kbd {
 @keyframes hiveSmokeRise {
   0%   { opacity: 0; transform: translate3d(0, 0, 0) scale(0.72); }
   12%  { opacity: var(--opacity, 0.35); }
-  100% { opacity: 0; transform: translate3d(var(--x, 0px), var(--y, -240px), 0) scale(1.55); }
+  100% { opacity: 0; transform: translate3d(var(--x, 0), var(--y, -240px), 0) scale(1.55); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hive-finish-overlay, .hive-finish-overlay * { animation: none !important; transition: none !important; }
