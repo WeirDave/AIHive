@@ -1277,6 +1277,16 @@ html, body {
 .dual-clocks .console-clock-3d:last-child .clock-label.running {
   color: var(--accent);
 }
+/* Project clock paused — slow amber flash to nudge user to resume */
+.dual-clocks .console-clock-3d:last-child .clock-digit-group.paused {
+  color: var(--accent);
+  animation: projClockPausedFlash 1.4s ease-in-out infinite;
+}
+@keyframes projClockPausedFlash {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.25; }
+  100% { opacity: 1; }
+}
 
 /* ── Dual clock layout ── */
 .dual-clocks {

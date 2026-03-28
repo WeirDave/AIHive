@@ -337,6 +337,7 @@ function _projClockUpdateButtons() {
   const display = document.getElementById('projectTimerDisplay');
   if (display) {
     display.classList.toggle('running', _projClockRunning);
+    display.classList.toggle('paused', !_projClockRunning && _projClockSeconds > 0);
   }
 }
 
@@ -2055,7 +2056,9 @@ async function runBuilderOnly() {
   smokeBtn?.classList.add('running');
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Building…';
   showBuilderOverlay();
-  startRoundTimer(smokeBtn, 'Building…');
+  // Update label to BUILDING… but keep clock running from round start — don't reset
+  const _rtLabelEl = document.getElementById('roundTimerLabel');
+  if (_rtLabelEl) _rtLabelEl.textContent = 'BUILDING…';
   setStatus(`🏗️ Sending directly to ${builderAI.name}…`);
   consoleLog(`═══ Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
   consoleLog(`📝 Notes: ${notes}`, 'info');
@@ -2311,6 +2314,9 @@ async function runRound() {
     consoleLog(`🔨 ${builderAI.name} (Builder) — compiling document from ${allForBuilder.length} review${allForBuilder.length!==1?'s':''} (including its own)…`, 'info');
     setBeeStatus(builderAI.id, 'sending', 'Building…');
     setStatus(`🏗️ ${builderAI.name} is building the updated document…`);
+    // Update label to BUILDING… without resetting the clock
+    const _rtLabel = document.getElementById('roundTimerLabel');
+    if (_rtLabel) _rtLabel.textContent = 'BUILDING…';
     hideSmokerOverlay();
     showBuilderOverlay();
 
@@ -2428,7 +2434,6 @@ async function runRound() {
     btn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
   }
   if (hiveStatus) hiveStatus.textContent = 'Ready';
-  projectClockPause(); // auto-pause — resumes automatically on next Smoke the Hive
   if (builderHadError) {
     toast('⚠️ Round not saved — Builder output was invalid', 5000);
   } else {
