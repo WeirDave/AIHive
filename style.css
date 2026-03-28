@@ -3098,7 +3098,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 190px 95px 140px;
+  padding: 205px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
@@ -3142,6 +3142,12 @@ kbd {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  background: rgba(6, 8, 14, 0.72);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
 }
 
 /* Row: belt on left/center, station on right */
@@ -3200,25 +3206,26 @@ kbd {
   overflow: visible;
 }
 
-/* Boxes sit on top of the platform */
+/* AI name blocks — flat, riding on top of the rail */
 .builder-block {
   position: absolute;
   bottom: 28px;
-  width: 96px;
+  width: 116px;
   height: 52px;
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #eafcff;
   border: 1px solid rgba(56,210,210,0.40);
   background: linear-gradient(180deg, rgba(56,210,210,0.28), rgba(56,210,210,0.08));
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.4), 0 0 10px rgba(56,210,210,0.12);
   animation: builderBlockTravel var(--belt-dur, 8s) linear var(--belt-delay, 0s) infinite;
+  white-space: nowrap;
 }
 
 /* Station — large, bottom-left aligned to belt level */
