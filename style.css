@@ -3148,49 +3148,64 @@ kbd {
 .builder-belt-row {
   display: flex;
   align-items: flex-end;
-  width: 820px;
+  width: 720px;
+  gap: 0;
 }
 
-/* Conveyor belt — takes up left portion */
+/* Conveyor — rollers only, no platform */
 .builder-conveyor {
   flex: 1;
-  height: 70px;
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-  overflow: hidden;
+  height: 60px;
   position: relative;
-  background: linear-gradient(180deg, var(--surface2), var(--surface));
-  border: 1px solid rgba(255,255,255,0.06);
-  border-right: none;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -6px 14px rgba(0,0,0,0.3);
+  overflow: visible;
 }
+
+/* Hide the platform surface entirely */
 .builder-conveyor-surface {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  height: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  z-index: 1;
 }
+
+/* Rollers only */
 .builder-conveyor-surface::before {
   content: "";
   position: absolute;
-  inset: 0;
+  left: 6px;
+  right: 6px;
+  bottom: -8px;
+  height: 20px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(255,255,255,0.05) 0 14px,
-    rgba(255,255,255,0.01) 14px 36px,
-    rgba(0,0,0,0.18) 36px 40px
+    #3a3f55 0px,
+    #3a3f55 14px,
+    transparent 14px,
+    transparent 22px
   );
-  animation: builderBeltMove 1.2s linear infinite;
+  border-radius: 10px;
+  animation: builderBeltMove 1.0s linear infinite;
 }
+
+.builder-conveyor-surface::after { display: none; }
+
 .builder-belt-track {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
-/* AI name blocks */
+/* Boxes sit on top of the platform */
 .builder-block {
   position: absolute;
-  top: 10px;
+  bottom: 28px;
   width: 96px;
-  height: 48px;
+  height: 52px;
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
@@ -3200,32 +3215,34 @@ kbd {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #eafcff;
-  border: 1px solid rgba(56,210,210,0.35);
-  background: linear-gradient(180deg, rgba(56,210,210,0.26), rgba(56,210,210,0.08));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 4px 12px rgba(0,0,0,0.3);
+  border: 1px solid rgba(56,210,210,0.40);
+  background: linear-gradient(180deg, rgba(56,210,210,0.28), rgba(56,210,210,0.08));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.4), 0 0 10px rgba(56,210,210,0.12);
   animation: builderBlockTravel var(--belt-dur, 8s) linear var(--belt-delay, 0s) infinite;
 }
 
-/* End station — sits flush against right end of belt */
+/* Station — large, bottom-left aligned to belt level */
 .builder-station {
   position: relative;
-  width: 340px;
+  width: 480px;
   flex-shrink: 0;
+  margin-left: -120px;
+  margin-bottom: -10px;
 }
 .builder-station-img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.4));
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%);
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,1) 14%, rgba(0,0,0,1) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,1) 14%, rgba(0,0,0,1) 100%);
 }
 
 /* Sparks — drill tip sits roughly center-left of the image */
 .builder-station-sparks {
   position: absolute;
   top: 52%;
-  left: 28%;
+  left: 73%;
   width: 60px;
   height: 60px;
   pointer-events: none;
@@ -3268,10 +3285,10 @@ kbd {
 }
 @keyframes builderBlockTravel {
   from { transform: translateX(-120px); opacity: 0; }
-  5%   { opacity: 1; }
-  70%  { opacity: 1; }
-  82%  { opacity: 0; }
-  to   { transform: translateX(480px); opacity: 0; }
+  6%   { opacity: 1; }
+  68%  { opacity: 1; }
+  80%  { opacity: 0; }
+  to   { transform: translateX(560px); opacity: 0; }
 }
 @keyframes builderSparkBurst {
   0%   { transform: translate(0,0) scale(0.2); opacity: 0; }
