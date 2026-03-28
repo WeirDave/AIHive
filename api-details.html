@@ -19,9 +19,6 @@
     </div>
   </div>
   <div class="page-header-actions">
-    <button class="action-btn-sm" onclick="openAllConsoles()">🔑 All API Consoles</button>
-    <button class="action-btn-sm" onclick="openAllBilling()">💳 All Billing Pages</button>
-    <button class="close-btn" onclick="window.close()">✕ Close this tab</button>
   </div>
 </div>
 
@@ -197,8 +194,11 @@
 
 <div class="page-footer">
   <span class="footer-note">AI Hive — open source, no server, no tracking.</span>
-  <a href="https://github.com/WeirDave/AIHive" target="_blank" class="footer-btn">⭐ GitHub</a>
-  <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="footer-btn">📄 AGPL-3.0</a>
+  <button class="btn" onclick="openAllConsoles()">🔑 Open All API Consoles</button>
+  <button class="btn" onclick="openAllBilling()">💳 Open All Billing Pages</button>
+  <button class="btn" onclick="window.close()">✕ Close this tab</button>
+  <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
 </div>
 
 <script>

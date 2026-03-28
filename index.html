@@ -96,6 +96,7 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Your Worker Bees</h2>
               <p class="fs-col-sub">Each AI in your hive acts as a reviewer — reading your document and giving numbered suggestions each round. You need <strong>at least 2 AIs with saved API keys</strong> to run a round. You can add as many as you like. Only AIs with a saved key will run automatically — the rest are ignored. On the work screen you can toggle individual AIs on or off per session without losing their keys.</p>
+              <p class="fs-col-tip">💡 Don't have keys yet? <a href="api-details.html" target="_blank" class="link-accent">Open the API Key Guide →</a> for step-by-step instructions and direct billing links for each AI.</p>
             </div>
             <div class="bee-controls-row-setup">
               <button class="btn" onclick="resetBeesToDefaults()">↺ Reset to Defaults</button>
@@ -140,9 +141,6 @@
             <div class="ai-setup-grid" id="aiSetupGrid"></div>
           </div>
         </div>
-        <div class="setup-col-tip">
-          💡 <strong>Tip:</strong> Don't have keys yet? <a href="api-details.html" target="_blank" class="link-accent">Open the API Key Guide →</a> for step-by-step instructions and direct billing links for each AI.
-        </div>
       </div>
 
         <!-- ── Divider ── -->
@@ -156,12 +154,10 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Choose Your Builder</h2>
               <p class="fs-col-sub">The Builder is the AI that actually rewrites your document each round. While your reviewers give numbered suggestions, the Builder reads all of those suggestions plus the full document, then produces the updated version. Because it handles the entire document every single round, the Builder uses significantly more tokens than reviewers — it <strong>must have a paid API subscription with enough capacity</strong>. Choose an AI you trust with large documents. You can change your Builder any time from the work screen.</p>
+              <p class="fs-col-tip">💡 Claude, ChatGPT, Gemini, and DeepSeek all handle large documents well — DeepSeek in particular is extremely cost-effective as a Builder. Avoid free-tier AIs as Builder — they run out of tokens fast. <a href="tokens-explainer.html" target="_blank" class="link-accent">Learn about tokens →</a></p>
             </div>
             <div class="builder-pick-grid-large" id="builderPickGrid"></div>
           </div>
-        </div>
-        <div class="setup-col-tip">
-          💡 <strong>Tip:</strong> Claude, ChatGPT, and Gemini handle large documents well. Avoid free-tier AIs as Builder — they run out of tokens fast. <a href="tokens-explainer.html" target="_blank" class="link-accent">Learn about tokens →</a>
         </div>
       </div>
 
