@@ -566,17 +566,20 @@
 <div class="finish-modal-overlay" id="finishModal" onclick="if(event.target===this)hideFinishModal()">
   <div class="finish-modal">
     <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="finish-modal-logo">
-    <h2 class="finish-modal-title">Finish this project?</h2>
-    <p class="finish-modal-msg">Make sure you've saved your document before starting a new project. Your working document and round history will be cleared.</p>
+    <h2 class="finish-modal-title">🏁 Project Complete!</h2>
+    <p class="finish-modal-msg">Export your document before starting a new project — your working document and round history will be cleared when you do.</p>
     <div class="finish-modal-actions">
       <button class="finish-modal-btn finish-modal-btn-export" onclick="finishAndExport()">
-        💾 Export Document First
+        💾 Export Document
       </button>
       <button class="finish-modal-btn finish-modal-btn-new" onclick="finishAndNew()">
         <img src="images/AI_Hive_Worker_Bee_v2.png" class="finish-modal-bee"> Start New Project
       </button>
     </div>
-    <button class="finish-modal-cancel" onclick="hideFinishModal()">← Keep working</button>
+    <div class="finish-modal-footer-btns">
+      <button class="finish-modal-cancel" onclick="hideFinishModal()">← Back to Hive</button>
+      <button class="finish-modal-cancel" onclick="hideFinishModal();goToScreen('screen-welcome')">⌂ Exit to Home</button>
+    </div>
   </div>
 </div>
 

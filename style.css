@@ -3366,6 +3366,12 @@ kbd {
   border-style: solid;
 }
 
+.finish-modal-footer-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
 .finish-modal-cancel {
   background: transparent;
   border: 1px dashed var(--border2);
