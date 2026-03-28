@@ -2938,7 +2938,8 @@ kbd {
   line-height: 1.5;
   flex: 1;
   min-width: 0;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
 .decision-opt-custom {
   border-style: dashed;
