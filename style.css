@@ -3098,7 +3098,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 185px 95px 140px;
+  padding: 190px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
