@@ -3179,6 +3179,14 @@ kbd {
   z-index: -1;
   pointer-events: none;
 }
+[data-theme="light"] .builder-stage::before {
+  background: rgba(6, 8, 14, 0.92);
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .builder-stage::before {
+    background: rgba(6, 8, 14, 0.92);
+  }
+}
 
 /* Scene wrap — image with blocks sliding out left */
 .builder-scene-wrap {
