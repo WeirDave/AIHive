@@ -239,25 +239,38 @@ function setStatus(msg) {
 function playRoundCompleteSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [
-      { freq: 523.25, start: 0.00, dur: 0.18 },  // C5
-      { freq: 659.25, start: 0.14, dur: 0.18 },  // E5
-      { freq: 783.99, start: 0.28, dur: 0.30 },  // G5
-    ];
-    notes.forEach(({ freq, start, dur }) => {
-      const osc  = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
-      gain.gain.setValueAtTime(0, ctx.currentTime + start);
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
-      osc.start(ctx.currentTime + start);
-      osc.stop(ctx.currentTime + start + dur + 0.05);
-    });
-    setTimeout(() => ctx.close(), 1200);
+    const now = ctx.currentTime;
+
+    // Layer 1: main buzz — sawtooth with pitch drop (bee slowing down)
+    const osc1  = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(320, now);
+    osc1.frequency.exponentialRampToValueAtTime(180, now + 0.35);
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.15, now + 0.03);
+    gain1.gain.setValueAtTime(0.15, now + 0.20);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc1.start(now);
+    osc1.stop(now + 0.60);
+
+    // Layer 2: harmonic shimmer — square wave an octave up, quieter
+    const osc2  = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(640, now);
+    osc2.frequency.exponentialRampToValueAtTime(360, now + 0.35);
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.04, now + 0.03);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    osc2.start(now);
+    osc2.stop(now + 0.50);
+
+    setTimeout(() => ctx.close(), 900);
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
