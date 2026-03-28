@@ -2740,7 +2740,7 @@ kbd {
 }
 
 .conflicts-empty {
-  color: #4a5270;
+  color: var(--text);
   font-size: 12px;
   font-style: italic;
   padding: 4px 0;
@@ -3089,19 +3089,22 @@ kbd {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 112px 100px;
+  padding: 140px 90px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
 }
 .smoker-explanation p {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(40, 20, 0, 0.95);
-  line-height: 1.65;
+  line-height: 1.6;
   margin: 0;
   font-style: italic;
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(255,220,100,0.4);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 @keyframes smokerExplanationFadeIn {
   0%   { opacity: 0; transform: translateY(8px); }
@@ -3163,19 +3166,22 @@ kbd {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 112px 100px;
+  padding: 140px 90px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
 }
 .builder-explanation p {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(40, 20, 0, 0.95);
-  line-height: 1.65;
+  line-height: 1.6;
   margin: 0;
   font-style: italic;
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(255,220,100,0.4);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Gold sparks — fly out from the drill tip */
