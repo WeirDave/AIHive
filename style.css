@@ -3072,7 +3072,7 @@ kbd {
   align-items: center;
   gap: 12px;
   border-radius: var(--radius-lg);
-  padding: 48px 32px 24px;
+  padding: 148px 32px 224px;
   width: 760px;
   overflow: visible;
 }
@@ -3094,6 +3094,7 @@ kbd {
   width: 420px;
   height: 420px;
   object-fit: contain;
+  margin-top: 40px;
   filter: drop-shadow(0 0 40px rgba(245,166,35,0.6));
   animation: smokerBob 2s ease-in-out infinite;
 }
@@ -3324,7 +3325,7 @@ kbd {
 /* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
-  top: 0;
+  top: 140px;
   left: 50%;
   transform: translateX(-86%);
   width: 180px;
