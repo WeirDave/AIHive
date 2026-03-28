@@ -3126,9 +3126,9 @@ kbd {
    ══════════════════════════════════════ */
 .builder-overlay {
   position: fixed;
-  bottom: 90px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 8000;
   display: none;
   pointer-events: none;
@@ -3148,7 +3148,7 @@ kbd {
 .builder-belt-row {
   display: flex;
   align-items: flex-end;
-  width: 700px;
+  width: 820px;
 }
 
 /* Conveyor belt — takes up left portion */
@@ -3209,7 +3209,7 @@ kbd {
 /* End station — sits flush against right end of belt */
 .builder-station {
   position: relative;
-  width: 240px;
+  width: 340px;
   flex-shrink: 0;
 }
 .builder-station-img {
@@ -3217,16 +3217,15 @@ kbd {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 6px 18px rgba(0,0,0,0.4));
-  /* fade in from left so belt seam is hidden */
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 12%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 12%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%);
 }
 
-/* Sparks at drill tip */
+/* Sparks — drill tip sits roughly center-left of the image */
 .builder-station-sparks {
   position: absolute;
-  top: 44%;
-  left: 32%;
+  top: 52%;
+  left: 28%;
   width: 60px;
   height: 60px;
   pointer-events: none;
@@ -3264,8 +3263,8 @@ kbd {
 
 /* Keyframes */
 @keyframes builderBeltMove {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-40px); }
+  from { transform: translateX(-40px); }
+  to   { transform: translateX(0); }
 }
 @keyframes builderBlockTravel {
   from { transform: translateX(-120px); opacity: 0; }
