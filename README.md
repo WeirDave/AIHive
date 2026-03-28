@@ -2,7 +2,7 @@
 
 <img src="images/AI_Hive_Logo_v4.png" width="140" alt="AI Hive">
 
-# AI Hive
+# AI Hive v2.5
 
 **Orchestrate the Hive**
 
