@@ -1824,6 +1824,7 @@ Rules for USER DECISION format:
 - Include as many options as there are genuinely distinct suggestions — minimum 2, maximum 6
 - Do not add commentary outside the structured block
 - Do not combine options that are meaningfully different
+- CRITICAL: The quoted option text must never contain an em dash (—). The only em dash on an OPTION line is the single separator between the quoted text and the AI names at the end. If you need a pause or range in the option text, use a comma or hyphen instead.
 
 If there are no conflicts write exactly: NO CONFLICTS
 %%CONFLICTS_END%%`,
