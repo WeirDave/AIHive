@@ -2858,15 +2858,15 @@ kbd {
   line-height: 1.4;
 }
 .decision-current {
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 13px;
+  color: var(--text-dim);
   margin-bottom: 10px;
   font-style: italic;
 }
 .decision-label {
   font-weight: 700;
   font-style: normal;
-  color: var(--text-dim);
+  color: var(--text);
 }
 .decision-options {
   display: flex;
@@ -2948,8 +2948,8 @@ kbd {
   border-color: var(--accent-hover);
 }
 .decision-opt-ais {
-  font-size: 10px;
-  color: var(--muted);
+  font-size: 12px;
+  color: var(--text-dim);
   font-style: italic;
   flex-shrink: 0;
   align-self: center;
