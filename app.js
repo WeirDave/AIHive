@@ -2091,6 +2091,9 @@ async function runBuilderOnly() {
     renderRoundHistory();
     renderWorkPhaseBar();
     renderConflicts();
+    // Clear notes — they've been applied, don't carry into next round
+    const notesEl = document.getElementById('workNotes');
+    if (notesEl) { notesEl.value = ''; }
     saveSession();
     if (!isLicensed()) { incrementTrialRound(); updateLicenseBadge(); }
     toast(`✅ Round ${round - 1} complete — Builder applied your instructions`);
