@@ -3037,9 +3037,9 @@ kbd {
 /* ── SMOKER OVERLAY ── */
 .smoker-overlay {
   position: fixed;
-  bottom: 90px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 8000;
   display: none;
   pointer-events: none;
@@ -3047,22 +3047,34 @@ kbd {
 .smoker-overlay.active {
   display: block;
 }
-@keyframes smokerFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
 .smoker-stage {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  border-radius: var(--radius-lg);
+  padding: 48px 32px 24px;
+  width: 760px;
+  overflow: visible;
+}
+.smoker-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 8, 14, 0.72);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  z-index: -1;
+  pointer-events: none;
 }
 .smoker-hero-img {
   position: relative;
   z-index: 1;
-  width: 340px;
-  height: 340px;
+  width: 420px;
+  height: 420px;
   object-fit: contain;
   filter: drop-shadow(0 0 40px rgba(245,166,35,0.6));
   animation: smokerBob 2s ease-in-out infinite;
@@ -3086,37 +3098,18 @@ kbd {
   50%  { opacity: 1; }
   100% { opacity: 0.7; }
 }
-
-.smoker-explanation {
-  margin-top: -10px;
-  width: 525px;
-  height: 525px;
-  background-image: url('images/AI_Hive_v1.png');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  text-align: center;
-  padding: 205px 95px 140px;
-  box-sizing: border-box;
-  opacity: 0;
-  animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
-}
-.smoker-explanation p {
-  font-size: 13px;
-  color: rgba(40, 20, 0, 0.95);
+.smoker-subtitle {
+  font-size: 12px;
+  color: var(--text-dim);
   line-height: 1.6;
-  margin: 0;
+  text-align: center;
+  max-width: 420px;
   font-style: italic;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(255,220,100,0.4);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  opacity: 0;
+  animation: smokerExplanationFadeIn 0.8s ease-out 1.5s forwards;
 }
 @keyframes smokerExplanationFadeIn {
-  0%   { opacity: 0; transform: translateY(8px); }
+  0%   { opacity: 0; transform: translateY(6px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
@@ -3142,137 +3135,144 @@ kbd {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  border-radius: var(--radius-lg);
+  padding: 28px 32px 20px;
+  overflow: visible;
+}
+.builder-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: rgba(6, 8, 14, 0.72);
   backdrop-filter: blur(6px);
   border-radius: var(--radius-lg);
-  padding: 28px 32px 20px;
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  z-index: -1;
+  pointer-events: none;
 }
 
-/* Row: belt on left/center, station on right */
-.builder-belt-row {
-  display: flex;
-  align-items: flex-end;
-  width: 720px;
-  gap: 0;
-}
-
-/* Conveyor — rollers only, no platform */
-.builder-conveyor {
-  flex: 1;
-  height: 60px;
+/* Scene wrap — image with blocks sliding out left */
+.builder-scene-wrap {
   position: relative;
+  width: 760px;
   overflow: visible;
 }
 
-/* Hide the platform surface entirely */
-.builder-conveyor-surface {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 18px;
-  height: 0;
-  background: none;
-  border: none;
-  box-shadow: none;
-  z-index: 1;
-}
-
-/* Rollers only */
-.builder-conveyor-surface::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  bottom: -8px;
-  height: 20px;
-  background: repeating-linear-gradient(
-    90deg,
-    #3a3f55 0,
-    #3a3f55 14px,
-    transparent 14px,
-    transparent 22px
-  );
-  border-radius: 10px;
-  animation: builderBeltMove 1.0s linear infinite;
-}
-
-.builder-conveyor-surface::after { display: none; }
-
-.builder-belt-track {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-}
-
-/* AI name blocks — flat, riding on top of the rail */
-.builder-block {
-  position: absolute;
-  bottom: 28px;
-  width: 116px;
-  height: 52px;
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #eafcff;
-  border: 1px solid rgba(56,210,210,0.40);
-  background: linear-gradient(180deg, rgba(56,210,210,0.28), rgba(56,210,210,0.08));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.4), 0 0 10px rgba(56,210,210,0.12);
-  animation: builderBlockTravel var(--belt-dur, 8s) linear var(--belt-delay, 0s) infinite;
-  white-space: nowrap;
-}
-
-/* Station — large, bottom-left aligned to belt level */
-.builder-station {
-  position: relative;
-  width: 480px;
-  flex-shrink: 0;
-  margin-left: -120px;
-  margin-bottom: -10px;
-}
+/* Image full width */
 .builder-station-img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,1) 14%, rgba(0,0,0,1) 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,1) 14%, rgba(0,0,0,1) 100%);
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.3));
 }
 
-/* Sparks — drill tip sits roughly center-left of the image */
+/* Belt segments — silver blocks IN the belt surface, create movement illusion */
+.builder-belt-segments {
+  position: absolute;
+  bottom: 24%;
+  left: 0;
+  right: 0;
+  height: 28px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.builder-belt-seg {
+  position: absolute;
+  top: 4px;
+  width: 52px;
+  height: 18px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(160,165,180,0.25), rgba(100,105,120,0.12));
+  border: 1px solid rgba(180,185,200,0.18);
+  animation: builderSegMove var(--seg-dur, 3s) linear var(--seg-delay, 0s) infinite;
+}
+
+/* AI blocks track — sits above the belt */
+.builder-belt-track {
+  position: absolute;
+  bottom: 32%;
+  left: 0;
+  right: 0;
+  height: 70px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* AI branded blocks — icon + name, exit right to left */
+.builder-block {
+  position: absolute;
+  top: 0;
+  width: 110px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid rgba(56,210,210,0.40);
+  background: linear-gradient(180deg, rgba(20,22,32,0.88), rgba(10,12,18,0.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 14px rgba(0,0,0,0.5);
+  animation: builderBlockExit var(--belt-dur, 8s) linear var(--belt-delay, 0s) infinite;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.builder-block-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.builder-block-name {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #eafcff;
+}
+
+/* Sparks at drill tip */
 .builder-station-sparks {
   position: absolute;
-  top: 52%;
-  left: 73%;
-  width: 60px;
-  height: 60px;
+  top: 63%;
+  left: calc(80% + 20px);
+  width: 140px;
+  height: 140px;
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
+  overflow: visible;
 }
 .builder-station-sparks span {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 0;
+  top: 0;
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff8c0 0%, var(--accent) 55%, transparent 70%);
-  box-shadow: 0 0 6px rgba(245,166,35,0.7);
-  animation: builderSparkBurst 1.3s ease-out infinite;
+  background: radial-gradient(circle, #fff 0%, #ffe566 35%, var(--accent) 68%, transparent 100%);
+  box-shadow: 0 0 8px rgba(255,220,80,0.95);
+  transform: translate(0, 0);
+  transform-origin: center;
+  animation: builderSparkBurst var(--spark-dur, 0.85s) ease-out var(--spark-delay, 0s) infinite;
   opacity: 0;
 }
-.builder-station-sparks span:nth-child(1) { animation-delay: 0.00s; }
-.builder-station-sparks span:nth-child(2) { animation-delay: 0.18s; }
-.builder-station-sparks span:nth-child(3) { animation-delay: 0.34s; }
-.builder-station-sparks span:nth-child(4) { animation-delay: 0.50s; }
-.builder-station-sparks span:nth-child(5) { animation-delay: 0.66s; }
-.builder-station-sparks span:nth-child(6) { animation-delay: 0.82s; }
+.builder-station-sparks span:nth-child(1)  { --dx:  18px; --dy:  60px; --spark-dur: .55s; --spark-delay: .00s; }
+.builder-station-sparks span:nth-child(2)  { --dx:  28px; --dy:  80px; --spark-dur: .65s; --spark-delay: .05s; }
+.builder-station-sparks span:nth-child(3)  { --dx:  65px; --dy:  30px; --spark-dur: .70s; --spark-delay: .10s; }
+.builder-station-sparks span:nth-child(4)  { --dx:  44px; --dy:  70px; --spark-dur: .75s; --spark-delay: .15s; }
+.builder-station-sparks span:nth-child(5)  { --dx:  10px; --dy: 100px; --spark-dur: .80s; --spark-delay: .20s; }
+.builder-station-sparks span:nth-child(6)  { --dx: -40px; --dy:  45px; --spark-dur: .85s; --spark-delay: .03s; }
+.builder-station-sparks span:nth-child(7)  { --dx:  22px; --dy:  75px; --spark-dur: .60s; --spark-delay: .08s; }
+.builder-station-sparks span:nth-child(8)  { --dx:  34px; --dy:  95px; --spark-dur: .72s; --spark-delay: .12s; }
+.builder-station-sparks span:nth-child(9)  { --dx:  70px; --dy:  25px; --spark-dur: .82s; --spark-delay: .18s; }
+.builder-station-sparks span:nth-child(10) { --dx:  46px; --dy: 110px; --spark-dur: .90s; --spark-delay: .24s; }
+.builder-station-sparks span:nth-child(11) { --dx:  26px; --dy:  65px; --spark-dur: .68s; --spark-delay: .28s; }
+.builder-station-sparks span:nth-child(12) { --dx: -30px; --dy:  55px; --spark-dur: .78s; --spark-delay: .32s; }
 
 /* Label */
 .builder-overlay-label {
@@ -3285,30 +3285,30 @@ kbd {
   animation: smokerPulse 1.5s ease-in-out infinite;
 }
 
-/* Keyframes */
-@keyframes builderBeltMove {
-  from { transform: translateX(-40px); }
-  to   { transform: translateX(0); }
-}
-@keyframes builderBlockTravel {
-  from { transform: translateX(-120px); opacity: 0; }
+/* Keyframes — blocks exit left from bee workstation */
+@keyframes builderBlockExit {
+  from { transform: translateX(660px); opacity: 0; }
   6%   { opacity: 1; }
-  68%  { opacity: 1; }
-  80%  { opacity: 0; }
-  to   { transform: translateX(560px); opacity: 0; }
+  70%  { opacity: 1; }
+  85%  { opacity: 0; }
+  to   { transform: translateX(-140px); opacity: 0; }
+}
+@keyframes builderSegMove {
+  from { transform: translateX(760px); }
+  to   { transform: translateX(-80px); }
 }
 @keyframes builderSparkBurst {
-  0%   { transform: translate(0,0) scale(0.2); opacity: 0; }
-  15%  { opacity: 1; }
-  100% { transform: translate(var(--dx,16px), var(--dy,-16px)) scale(1.1); opacity: 0; }
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  35%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.15); opacity: 0; }
 }
 
 /* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
-  top: -42px;
+  top: 0;
   left: 50%;
-  transform: translateX(-74%);
+  transform: translateX(-86%);
   width: 180px;
   height: 160px;
   pointer-events: none;

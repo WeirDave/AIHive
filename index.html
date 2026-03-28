@@ -514,9 +514,7 @@
     <div class="smoke-particles" id="smokeParticles"></div>
     <img src="images/AI_Hive_Smoker_v2.png" alt="Smoking…" class="smoker-hero-img">
     <div class="smoker-overlay-label" id="smokerOverlayLabel">Smokin' the Hive…</div>
-    <div class="smoker-explanation">
-      <p>Beekeepers smoke their hives<br>to calm the bees before working<br>with them.<br>We do the same —<br>a little smoke settles the AI Hive<br>so they can focus<br>on your<br>document.</p>
-    </div>
+    <div class="smoker-subtitle">Beekeepers smoke their hives to calm the bees before working with them. We do the same — a little smoke settles the AI Hive so they can focus on your document.</div>
   </div>
 </div>
 
@@ -527,27 +525,29 @@
     <!-- Label at top -->
     <div class="builder-overlay-label" id="builderOverlayLabel">Building your document...</div>
 
-    <!-- Belt + station row -->
-    <div class="builder-belt-row">
+    <!-- Image + output blocks -->
+    <div class="builder-scene-wrap">
 
-      <!-- Moving conveyor belt -->
-      <div class="builder-conveyor">
-        <div class="builder-conveyor-surface"></div>
-        <div class="builder-belt-track" id="builderBeltTrack"></div>
+      <!-- Blocks slide OUT from the right (bee creating them) -->
+      <div class="builder-belt-track" id="builderBeltTrack"></div>
+
+      <!-- Sparks at drill tip -->
+      <div class="builder-station-sparks" id="builderSparks">
+        <span style="--sx:-18px;--fall:40px;"></span>
+        <span style="--sx:-8px;--fall:55px;"></span>
+        <span style="--sx:4px;--fall:48px;"></span>
+        <span style="--sx:14px;--fall:60px;"></span>
+        <span style="--sx:22px;--fall:44px;"></span>
+        <span style="--sx:-28px;--fall:52px;"></span>
+        <span style="--sx:-14px;--fall:65px;"></span>
+        <span style="--sx:8px;--fall:58px;"></span>
+        <span style="--sx:26px;--fall:50px;"></span>
+        <span style="--sx:-4px;--fall:70px;"></span>
+        <span style="--sx:18px;--fall:62px;"></span>
+        <span style="--sx:-22px;--fall:46px;"></span>
       </div>
 
-      <!-- End station image — sits over right end of belt -->
-      <div class="builder-station">
-        <div class="builder-station-sparks" id="builderSparks">
-          <span style="--dx:-14px;--dy:-22px;"></span>
-          <span style="--dx:18px;--dy:-26px;"></span>
-          <span style="--dx:-8px;--dy:14px;"></span>
-          <span style="--dx:22px;--dy:-10px;"></span>
-          <span style="--dx:4px;--dy:-30px;"></span>
-          <span style="--dx:-20px;--dy:6px;"></span>
-        </div>
-        <img src="images/AI_Hive_Builder_Building_v3.png" alt="Builder bee assembling the document" class="builder-station-img">
-      </div>
+      <img src="images/AI_Hive_Builder_Building_v4.png" alt="Builder bee assembling the document" class="builder-station-img">
 
     </div>
 

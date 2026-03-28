@@ -2926,22 +2926,41 @@ function showBuilderOverlay() {
   const overlay = document.getElementById('builderOverlay');
   if (!overlay) return;
 
-  // Build conveyor belt blocks from active AIs (excluding the builder)
+  // AI brand colors for blocks
+  const brandColors = {
+    chatgpt:    { border: 'rgba(16,163,127,0.6)',  bg: 'rgba(16,163,127,0.15)',  glow: 'rgba(16,163,127,0.3)'  },
+    claude:     { border: 'rgba(210,140,80,0.6)',   bg: 'rgba(210,140,80,0.15)',   glow: 'rgba(210,140,80,0.3)'   },
+    deepseek:   { border: 'rgba(77,138,255,0.6)',   bg: 'rgba(77,138,255,0.15)',   glow: 'rgba(77,138,255,0.3)'   },
+    gemini:     { border: 'rgba(138,100,255,0.6)',  bg: 'rgba(138,100,255,0.15)',  glow: 'rgba(138,100,255,0.3)'  },
+    grok:       { border: 'rgba(220,220,220,0.5)',  bg: 'rgba(220,220,220,0.10)',  glow: 'rgba(220,220,220,0.2)'  },
+    perplexity: { border: 'rgba(32,210,210,0.6)',   bg: 'rgba(32,210,210,0.15)',   glow: 'rgba(32,210,210,0.3)'   },
+  };
+
   const track = document.getElementById('builderBeltTrack');
   if (track) {
     track.innerHTML = '';
     const reviewers = activeAIs.filter(a => a.id !== builder);
-    const names = reviewers.length > 0
-      ? reviewers.map(a => a.name)
-      : ['GPT', 'Claude', 'Gemini', 'DeepSeek'];
-    const count = names.length;
-    const dur = Math.max(6, count * 2.2); // belt speed scales with AI count
-    names.forEach((name, i) => {
+    const ais = reviewers.length > 0 ? reviewers : [
+      { id: 'chatgpt', name: 'ChatGPT', icon: 'images/chatgpt.ico' },
+      { id: 'claude',  name: 'Claude',  icon: 'images/claude.ico'  },
+      { id: 'gemini',  name: 'Gemini',  icon: 'https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64' },
+      { id: 'deepseek',name: 'DeepSeek',icon: 'https://www.google.com/s2/favicons?domain=deepseek.com&sz=64' },
+    ];
+    const count = ais.length;
+    const dur = Math.max(7, count * 2.4);
+    ais.forEach((ai, i) => {
+      const colors = brandColors[ai.id] || brandColors.deepseek;
       const block = document.createElement('div');
       block.className = 'builder-block';
-      block.textContent = name;
       block.style.setProperty('--belt-dur', `${dur}s`);
       block.style.setProperty('--belt-delay', `${-(dur / count) * i}s`);
+      block.style.borderColor = colors.border;
+      block.style.background = `linear-gradient(180deg, ${colors.bg}, rgba(0,0,0,0.2))`;
+      block.style.boxShadow = `inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.4), 0 0 14px ${colors.glow}`;
+      block.innerHTML = `
+        <img src="${ai.icon}" class="builder-block-icon" alt="${ai.name}" onerror="this.style.display='none'">
+        <span class="builder-block-name">${ai.name}</span>
+      `;
       track.appendChild(block);
     });
   }
