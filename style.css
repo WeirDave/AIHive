@@ -1777,10 +1777,12 @@ kbd {
 .goal-info-phase.refine { background: var(--blue-dim);   border: 1px solid var(--blue);   color: var(--blue); }
 .goal-info-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
 .goal-info-tip {
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 13px;
+  color: var(--text);
+  font-style: italic;
   border-top: 1px solid var(--border);
   padding-top: 10px;
+  margin-top: 4px;
 }
 
 /* ── GOAL HEADING ── */

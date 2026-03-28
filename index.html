@@ -702,16 +702,16 @@
     <div class="goal-info-icon"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img"></div>
     <h2 class="finish-modal-title">Conflicts</h2>
     <div class="goal-info-body">
-      <p>After each round the Builder flags decisions it couldn't make alone — usually because the reviewers disagreed. These appear here as conflicts for you to resolve.</p>
+      <p>This section displays conflicts that occur when AIs disagree on what changes need to be made. When the Builder can't determine the right path forward on its own, it flags it here for you to decide.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">User Decision</span>
-        <span class="goal-info-desc">The Builder found competing suggestions and needs you to choose. Pick an option, type your own, or decline. Your choice is applied in the next Builder-only round.</span>
+        <span class="goal-info-desc">The Builder found competing suggestions from different AIs and needs you to choose. Pick one of the options, type your own, or decline. Your choice is then automatically applied by the Builder to produce a revised working document and keep the project moving forward.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Builder Decision</span>
-        <span class="goal-info-desc">The Builder flagged a judgment call it made on your behalf. Review it and override if needed.</span>
+        <span class="goal-info-desc">The Builder is flagging a judgment call it made on your behalf. Review what it chose and override it by selecting a different option or typing your own — then hit Apply to have the Builder revise the document with your correction.</span>
       </div>
-      <p class="goal-info-tip">💡 Click the "Current:" text on any conflict to scroll the document to that line and highlight it.</p>
+      <p class="goal-info-tip">💡 Click the "Current:" text on any conflict card to scroll the working document directly to that line and highlight it.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoConflictsModal').classList.remove('active')">Got it →</button>
   </div>
