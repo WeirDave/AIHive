@@ -195,7 +195,7 @@ A valid suggestion is one that improves clarity, accuracy, consistency, logic, o
 
 MAJORITY RULES — CONFLICT DECISION LOGIC:
 Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change):
-- 4 or more reviewers agree → apply it automatically. Do not flag this as a conflict.
+- A strict majority of reviewers agree (more than half) → apply it automatically. Do not flag this as a conflict.
 - Exactly 3 reviewers agree vs 3 who disagree or suggest an alternative → flag it as a USER DECISION conflict.
 - 2 or fewer reviewers suggest something that conflicts with another suggestion → use your best judgment, apply the stronger choice, flag it as a BUILDER DECISION conflict.
 - Only 1 reviewer suggests something → apply it if valid, skip it if not. Do not flag solo suggestions as conflicts.
