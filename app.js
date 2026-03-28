@@ -2925,31 +2925,36 @@ function hideSmokerOverlay() {
 function showBuilderOverlay() {
   const overlay = document.getElementById('builderOverlay');
   if (!overlay) return;
-  // Generate gold sparks from drill tip
-  const sparks = document.getElementById('builderSparks');
-  if (sparks) {
-    sparks.innerHTML = '';
-    for (let i = 0; i < 18; i++) {
-      const s = document.createElement('div');
-      s.className = 'builder-spark';
-      const angle = (Math.random() * 160) - 130; // spread left/up from drill
-      const dist  = 30 + Math.random() * 60;
-      const rad   = angle * Math.PI / 180;
-      s.style.cssText = `
-        --dx: ${Math.cos(rad) * dist}px;
-        --dy: ${Math.sin(rad) * dist}px;
-        --dur: ${0.4 + Math.random() * 0.5}s;
-        --delay: ${Math.random() * 0.8}s;
-      `;
-      sparks.appendChild(s);
-    }
+
+  // Build conveyor belt blocks from active AIs (excluding the builder)
+  const track = document.getElementById('builderBeltTrack');
+  if (track) {
+    track.innerHTML = '';
+    const reviewers = activeAIs.filter(a => a.id !== builder);
+    const names = reviewers.length > 0
+      ? reviewers.map(a => a.name)
+      : ['GPT', 'Claude', 'Gemini', 'DeepSeek'];
+    const count = names.length;
+    const dur = Math.max(6, count * 2.2); // belt speed scales with AI count
+    names.forEach((name, i) => {
+      const block = document.createElement('div');
+      block.className = 'builder-block';
+      block.textContent = name;
+      block.style.setProperty('--belt-dur', `${dur}s`);
+      block.style.setProperty('--belt-delay', `${-(dur / count) * i}s`);
+      track.appendChild(block);
+    });
   }
+
+  overlay.setAttribute('aria-hidden', 'false');
   overlay.classList.add('active');
 }
 
 function hideBuilderOverlay() {
   const overlay = document.getElementById('builderOverlay');
-  if (overlay) overlay.classList.remove('active');
+  if (!overlay) return;
+  overlay.classList.remove('active');
+  overlay.setAttribute('aria-hidden', 'true');
 }
 
 function openNotesModal() {

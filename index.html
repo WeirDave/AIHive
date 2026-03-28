@@ -521,14 +521,49 @@
 </div>
 
 <!-- ── BUILDER OVERLAY ── -->
-<div class="builder-overlay" id="builderOverlay">
-  <div class="builder-stage">
-    <div class="builder-sparks" id="builderSparks"></div>
-    <img src="images/AI_Hive_Builder_Building_v1.png" alt="Building…" class="builder-hero-img">
-    <div class="builder-overlay-label">Building…</div>
-    <div class="builder-explanation">
-      <p>The Builder bee is reviewing every suggestion from the hive and assembling your updated document — block by block.</p>
+<div class="builder-overlay" id="builderOverlay" aria-hidden="true">
+  <div class="builder-overlay-backdrop"></div>
+  <div class="builder-overlay-content">
+
+    <!-- Copy block -->
+    <div class="builder-copy">
+      <div class="builder-copy-badge">Builder Active</div>
+      <div class="builder-copy-title">Assembling your document…</div>
+      <div class="builder-copy-subtitle">Collecting every suggestion from the hive and welding them into a clean draft.</div>
     </div>
+
+    <!-- Assembly zone -->
+    <div class="builder-assembly-zone">
+      <div class="builder-assembly-label">ASSEMBLING OUTPUT</div>
+      <div class="builder-assembly-lines">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Energy beam -->
+    <div class="builder-beam"></div>
+
+    <!-- Sparks -->
+    <div class="builder-sparks" id="builderSparks">
+      <span style="--dx:-18px;--dy:-26px;"></span>
+      <span style="--dx:28px;--dy:-30px;"></span>
+      <span style="--dx:-10px;--dy:18px;"></span>
+      <span style="--dx:34px;--dy:14px;"></span>
+      <span style="--dx:6px;--dy:-38px;"></span>
+      <span style="--dx:-28px;--dy:8px;"></span>
+    </div>
+
+    <!-- Builder bee -->
+    <div class="builder-bee-wrap">
+      <div class="builder-drill-ring"></div>
+      <img src="images/AI_Hive_Builder_Building_v1.png" alt="Building…" class="builder-hero-img">
+    </div>
+
+    <!-- Conveyor belt -->
+    <div class="builder-belt">
+      <div class="builder-belt-track" id="builderBeltTrack"></div>
+    </div>
+
   </div>
 </div>
 
