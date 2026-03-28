@@ -3080,8 +3080,8 @@ kbd {
 
 .smoker-explanation {
   margin-top: -10px;
-  width: 320px;
-  height: 320px;
+  width: 420px;
+  height: 420px;
   background-image: url('images/AI_Hive_v1.png');
   background-size: cover;
   background-position: center;
@@ -3089,15 +3089,15 @@ kbd {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 50px;
+  padding: 90px 80px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
 }
 .smoker-explanation p {
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(40, 20, 0, 0.95);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
   font-style: italic;
   font-weight: 600;

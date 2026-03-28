@@ -2118,7 +2118,7 @@ async function runRound() {
   // Set running state
   btn?.classList.add('running');
   if (btn) btn.querySelector('.shake-wide-label').textContent = 'Smoking…';
-  showSmokerOverlay('Smoking…');
+  showSmokerOverlay('Smoking the Hive…');
   startRoundTimer(btn, 'Smoking…');
   if (hiveStatus) hiveStatus.textContent = 'Working…';
   setStatus(`⚡ Round ${round} in progress — AI Hive is thinking…`);
@@ -2856,7 +2856,7 @@ function renderRoundHistory() {
   }).join('');
 }
 
-function showSmokerOverlay(label = 'Smoking…') {
+function showSmokerOverlay(label = 'Smoking the Hive…') {
   const overlay = document.getElementById('smokerOverlay');
   const labelEl = document.getElementById('smokerOverlayLabel');
   const particles = document.getElementById('smokeParticles');
