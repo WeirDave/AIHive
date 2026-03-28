@@ -248,7 +248,7 @@
           <div class="fs-col-scroll proj-right-scroll">
 
             <div class="fs-col-header">
-              <h2 class="fs-col-title">Starting Document</h2>
+              <h2 class="fs-col-title">Starting Document <button class="goal-info-btn" onclick="document.getElementById('infoUploadModal').classList.add('active')" title="About file uploads"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Choose how you want to start. Upload an existing file, paste text, or let the AIs create a first draft from scratch using your goal above.</p>
             </div>
 
@@ -818,6 +818,31 @@
       <p class="goal-info-tip">💡 Using the Copy button you can copy the full console log at any time — useful for keeping a record of what happened during your session or for troubleshooting an issue.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoConsoleModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
+
+<!-- STARTING DOCUMENT / UPLOAD -->
+<div class="finish-modal-overlay" id="infoUploadModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div class="goal-info-icon"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img"></div>
+    <h2 class="finish-modal-title">Starting Document</h2>
+    <div class="goal-info-body">
+      <p>Choose how to give the hive its starting point. There are three ways:</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Upload File</span>
+        <span class="goal-info-desc">Upload an existing document and the hive will refine it. Supported formats: Word (.docx), PDF (.pdf), PowerPoint (.pptx), and plain text (.txt). The file's text is extracted and loaded into the working document automatically.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">Paste Text</span>
+        <span class="goal-info-desc">Copy and paste any text directly — from a website, another app, or anywhere else. Useful when you already have content but don't have it as a file.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Start from Scratch</span>
+        <span class="goal-info-desc">Don't have anything yet? The hive will generate a first draft based entirely on your project goal. The more specific your goal, the better the first draft will be.</span>
+      </div>
+      <p class="goal-info-tip">💡 <strong>PDF tip:</strong> PDF extraction works best with standard digitally-created documents — like those exported from Word or Google Docs. Heavily designed resumes, scanned documents, or PDFs built from images may produce garbled or incomplete text. If that happens, try copying and pasting the text directly using the Paste Text option instead.</p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('infoUploadModal').classList.remove('active')">Got it →</button>
   </div>
 </div>
 
