@@ -241,36 +241,40 @@ function playRoundCompleteSound() {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const now = ctx.currentTime;
 
-    // Layer 1: main buzz — sawtooth with pitch drop (bee slowing down)
-    const osc1  = ctx.createOscillator();
-    const gain1 = ctx.createGain();
-    osc1.connect(gain1);
-    gain1.connect(ctx.destination);
-    osc1.type = 'sawtooth';
-    osc1.frequency.setValueAtTime(320, now);
-    osc1.frequency.exponentialRampToValueAtTime(180, now + 0.35);
-    gain1.gain.setValueAtTime(0, now);
-    gain1.gain.linearRampToValueAtTime(0.15, now + 0.03);
-    gain1.gain.setValueAtTime(0.15, now + 0.20);
-    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-    osc1.start(now);
-    osc1.stop(now + 0.60);
+    // Trill: square wave with LFO wobble like a hovering bee
+    const trill = ctx.createOscillator();
+    const tg    = ctx.createGain();
+    trill.connect(tg);
+    tg.connect(ctx.destination);
+    trill.type = 'square';
+    trill.frequency.setValueAtTime(200, now);
+    const lfo = ctx.createOscillator();
+    const lg  = ctx.createGain();
+    lfo.frequency.value = 28;
+    lg.gain.value = 40;
+    lfo.connect(lg);
+    lg.connect(trill.frequency);
+    tg.gain.setValueAtTime(0, now);
+    tg.gain.linearRampToValueAtTime(0.07, now + 0.04);
+    tg.gain.setValueAtTime(0.07, now + 0.22);
+    tg.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+    lfo.start(now);   lfo.stop(now + 0.35);
+    trill.start(now); trill.stop(now + 0.35);
 
-    // Layer 2: harmonic shimmer — square wave an octave up, quieter
-    const osc2  = ctx.createOscillator();
-    const gain2 = ctx.createGain();
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.type = 'square';
-    osc2.frequency.setValueAtTime(640, now);
-    osc2.frequency.exponentialRampToValueAtTime(360, now + 0.35);
-    gain2.gain.setValueAtTime(0, now);
-    gain2.gain.linearRampToValueAtTime(0.04, now + 0.03);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-    osc2.start(now);
-    osc2.stop(now + 0.50);
+    // Ping: one crisp high sine at the end
+    const ping = ctx.createOscillator();
+    const pg   = ctx.createGain();
+    ping.connect(pg);
+    pg.connect(ctx.destination);
+    ping.type = 'sine';
+    ping.frequency.value = 1046;
+    pg.gain.setValueAtTime(0, now + 0.30);
+    pg.gain.linearRampToValueAtTime(0.15, now + 0.32);
+    pg.gain.exponentialRampToValueAtTime(0.001, now + 0.80);
+    ping.start(now + 0.30);
+    ping.stop(now + 0.85);
 
-    setTimeout(() => ctx.close(), 900);
+    setTimeout(() => ctx.close(), 1200);
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
