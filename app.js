@@ -1515,8 +1515,31 @@ function showProjectGoalModal() {
   const version = document.getElementById('projectVersion')?.value.trim() || '';
   const metaEl = document.getElementById('projectGoalModalMeta');
   const textEl = document.getElementById('projectGoalModalText');
-  if (metaEl) metaEl.textContent = [name, version].filter(Boolean).join(' · ');
-  if (textEl) textEl.textContent = goal || '(No project goal set)';
+  if (metaEl) {
+    const parts = [name, version].filter(Boolean).join(' · ');
+    const charNote = goal.length > 300
+      ? `${parts ? parts + ' — ' : ''}${goal.length} characters · amber text exceeds the 300-character Refine Text limit`
+      : `${parts}${goal.length ? ' — ' + goal.length + ' characters' : ''}`;
+    metaEl.textContent = charNote;
+  }
+  if (textEl) {
+    const LIMIT = 300;
+    if (!goal) {
+      textEl.textContent = '(No project goal set)';
+    } else if (goal.length <= LIMIT) {
+      textEl.textContent = goal;
+    } else {
+      // Render first 300 chars normally, remainder highlighted in amber
+      textEl.innerHTML = '';
+      const within = document.createTextNode(goal.slice(0, LIMIT));
+      const beyond = document.createElement('span');
+      beyond.textContent = goal.slice(LIMIT);
+      beyond.style.color = 'var(--accent)';
+      beyond.title = 'This text exceeds the 300-character limit and is not sent to AIs during the Refine Text phase';
+      textEl.appendChild(within);
+      textEl.appendChild(beyond);
+    }
+  }
   modal.classList.add('active');
 }
 
