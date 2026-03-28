@@ -1537,11 +1537,11 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
-  showHiveFinish({ text: 'HIVE APPROVED', subtext: 'Final draft sealed', duration: 2400, smokeBursts: 14 });
+  showHiveFinish({ duration: 6000, smokeBursts: 12 });
   setTimeout(() => {
     clearProject();
     goToScreen('screen-project');
-  }, 2500);
+  }, 6200);
 }
 
 /* =========================================
