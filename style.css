@@ -1932,7 +1932,21 @@ kbd {
 @media (prefers-color-scheme: dark) {
   [data-theme="auto"] .live-console { background: #0a0c12; }
 }
-.console-entry { padding: 1px 0; word-break: break-word; }
+.console-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  padding: 1px 0;
+  word-break: break-word;
+}
+.console-time {
+  flex-shrink: 0;
+  min-width: 90px;
+}
+.console-entry span:last-child {
+  flex: 1;
+  min-width: 0;
+}
 .console-time { color: #4a5270; margin-right: 6px; user-select: none; }
 .console-info    { color: #9aa3b8; }
 .console-success { color: #34d399; }
