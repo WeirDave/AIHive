@@ -1981,6 +1981,16 @@ function buildPromptForAI(ai, reviewerResponses) {
     prompt += getPrompt('draft_scratch', DEFAULT_PHASE_INSTRUCTIONS.draft_scratch);
   } else {
     prompt += doc ? `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n` : '';
+
+    // Inject previously resolved decisions so reviewers don't re-raise them
+    if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
+      prompt += `PREVIOUSLY RESOLVED DECISIONS (do NOT suggest changes to these — they have already been decided by the user):\n${sep}\n`;
+      window._resolvedDecisions.forEach((rd, i) => {
+        prompt += `${i + 1}. "${rd.original}" → resolved as "${rd.chosen}"\n`;
+      });
+      prompt += `\n`;
+    }
+
     prompt += `${sep}\nSEND TO ALL AIs\n${sep}\n\n`;
     prompt += getPrompt('refine', DEFAULT_PHASE_INSTRUCTIONS.refine);
   }
