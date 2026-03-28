@@ -522,26 +522,34 @@
 
 <!-- ── BUILDER OVERLAY ── -->
 <div class="builder-overlay" id="builderOverlay" aria-hidden="true">
-  <div class="builder-overlay-backdrop"></div>
-  <div class="builder-build-layer">
+  <div class="builder-stage">
 
-    <!-- Copy block -->
-    <div class="builder-copy">
-      <div class="builder-copy-badge">Builder Active</div>
-      <div class="builder-copy-title">Assembling your document…</div>
-      <div class="builder-copy-subtitle">Collecting every suggestion from the hive and welding them into a clean draft.</div>
+    <!-- Belt + station row -->
+    <div class="builder-belt-row">
+
+      <!-- Moving conveyor belt -->
+      <div class="builder-conveyor">
+        <div class="builder-conveyor-surface"></div>
+        <div class="builder-belt-track" id="builderBeltTrack"></div>
+      </div>
+
+      <!-- End station image — sits over right end of belt -->
+      <div class="builder-station">
+        <div class="builder-station-sparks" id="builderSparks">
+          <span style="--dx:-14px;--dy:-22px;"></span>
+          <span style="--dx:18px;--dy:-26px;"></span>
+          <span style="--dx:-8px;--dy:14px;"></span>
+          <span style="--dx:22px;--dy:-10px;"></span>
+          <span style="--dx:4px;--dy:-30px;"></span>
+          <span style="--dx:-20px;--dy:6px;"></span>
+        </div>
+        <img src="images/AI_Hive_Builder_Building_v3.png" alt="Builder bee assembling the document" class="builder-station-img">
+      </div>
+
     </div>
 
-    <!-- HTML conveyor belt — blocks slide left to right, fade under scene image -->
-    <div class="builder-conveyor">
-      <div class="builder-conveyor-surface"></div>
-      <div class="builder-belt-track" id="builderBeltTrack"></div>
-    </div>
-
-    <!-- Scene image — sits on top of right end of conveyor -->
-    <div class="builder-scene">
-      <img src="images/AI_Hive_Builder_Building_v1.png" alt="Builder bee assembling the document" class="builder-scene-image">
-    </div>
+    <!-- Label below -->
+    <div class="builder-overlay-label" id="builderOverlayLabel">Building…</div>
 
   </div>
 </div>
