@@ -10,7 +10,6 @@
 <body class="helper-body">
 
 <div class="page-header">
-  <div class="page-header-left-spacer"></div>
   <div class="page-header-brand">
     <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="page-header-logo">
     <div>
@@ -18,18 +17,22 @@
       <div class="page-header-tag">API Key Setup Guide</div>
     </div>
   </div>
-  <div class="page-header-actions">
-  </div>
 </div>
 
 <div class="page-main">
+
+<div class="api-intro-strip">
+  <img src="images/AI_Hive_API_Bee_v1.png" alt="" class="col-bee" style="width:180px;height:180px;margin:0;">
+  <div class="api-intro-text">
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);margin:0 0 6px;">Get Your API Keys</h2>
+    <p style="font-size:14px;color:var(--text-dim);line-height:1.6;margin:0;">In Pro mode, AI Hive sends prompts directly to each AI automatically — no copy/paste, no tab switching. Each AI needs its own API key. Follow the guides below to get set up.</p>
+  </div>
+</div>
 
 <div class="two-col">
 
   <!-- LEFT COLUMN -->
   <div class="col">
-
-    <img src="images/AI_Hive_API_Bee_v1.png" alt="" class="col-bee">
 
     <div class="section-title">Free or low-cost AIs</div>
 
@@ -42,6 +45,7 @@
     <div class="info-card green">
       <h3>Your keys never leave your device</h3>
       <p>Keys are stored in your browser only. They go directly from your browser to each AI provider. AI Hive has no server — your keys are never shared with any third party.</p>
+      <p style="margin-top:8px;font-size:12px;opacity:0.8;">AI Hive is fully open source (AGPL-3.0). No tracking, no analytics, no backend. <a href="https://github.com/WeirDave/AIHive" target="_blank" class="link-accent">Read every line on GitHub →</a></p>
     </div>
 
     <div class="ai-card">
@@ -88,15 +92,20 @@
       <div class="ai-card-header">
         <img src="images/copilot.ico" onerror="this.style.display='none'">
         <div class="ai-card-name">Copilot (Microsoft)</div>
-        <span class="badge badge-note">Not yet available for individuals</span>
+        <span class="badge badge-limited">Limited availability</span>
       </div>
       <div class="ai-card-body">
         <div class="model-line">
-          <span class="model-label">Status:</span>
-          <span class="model-note">API in Private Preview — enterprise only as of early 2026</span>
+          <span class="model-label">Model:</span><code>gpt-4o</code>
+          <span class="model-note">Microsoft's AI via Azure OpenAI</span>
         </div>
-        <div class="note-box">Copilot API is not currently available for personal Microsoft 365 subscribers. It requires an enterprise license and is still in Private Preview. This is a Microsoft restriction — not an AI Hive limitation.</div>
-        <div class="note-box green">Copilot works great in Free mode. Open <a href="https://copilot.microsoft.com" target="_blank">copilot.microsoft.com</a> in a tab, paste your prompts, and copy responses back into AI Hive.</div>
+        <ol class="steps">
+          <li>Go to <a href="https://copilot.microsoft.com" target="_blank">copilot.microsoft.com</a> and sign in with your Microsoft account.</li>
+          <li>Navigate to <strong>Settings → API Access</strong> or check <a href="https://aka.ms/CopilotAPI" target="_blank">aka.ms/CopilotAPI</a> for current availability.</li>
+          <li>If access is available, generate a key and paste it into the Copilot field in AI Hive.</li>
+        </ol>
+        <div class="note-box">API access is not guaranteed for all accounts — availability varies by region, subscription type, and rollout status. It's worth checking. Some users have been able to get access as individuals.</div>
+        <div class="note-box green">No API key yet? Copilot works great in Free mode. Open <a href="https://copilot.microsoft.com" target="_blank">copilot.microsoft.com</a> in a tab, paste your prompts, and copy responses back into AI Hive.</div>
       </div>
     </div>
 
@@ -193,12 +202,13 @@
 </div><!-- /page-main -->
 
 <div class="page-footer">
-  <span class="footer-note">AI Hive — open source, no server, no tracking.</span>
-  <button class="btn" onclick="openAllConsoles()">🔑 Open All API Consoles</button>
-  <button class="btn" onclick="openAllBilling()">💳 Open All Billing Pages</button>
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex:1;flex-wrap:wrap;">
+    <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
+    <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
+    <button class="btn" onclick="openAllBilling()">💳 Open All Billing Pages</button>
+    <button class="btn" onclick="openAllConsoles()">🔑 Open All API Consoles</button>
+  </div>
   <button class="btn" onclick="window.close()">✕ Close this tab</button>
-  <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
-  <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
 </div>
 
 <script>
