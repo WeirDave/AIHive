@@ -2056,9 +2056,7 @@ async function runBuilderOnly() {
   smokeBtn?.classList.add('running');
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Building…';
   showBuilderOverlay();
-  // Update label to BUILDING… but keep clock running from round start — don't reset
-  const _rtLabelEl = document.getElementById('roundTimerLabel');
-  if (_rtLabelEl) _rtLabelEl.textContent = 'BUILDING…';
+  startRoundTimer(smokeBtn, 'Building…');
   setStatus(`🏗️ Sending directly to ${builderAI.name}…`);
   consoleLog(`═══ Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
   consoleLog(`📝 Notes: ${notes}`, 'info');
