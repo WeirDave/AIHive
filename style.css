@@ -2906,6 +2906,8 @@ kbd {
   text-align: left;
   transition: all 0.15s;
   width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .decision-opt-btn:hover {
   border-color: var(--amber);
@@ -2935,6 +2937,8 @@ kbd {
   color: var(--text);
   line-height: 1.5;
   flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 .decision-opt-custom {
   border-style: dashed;
@@ -3089,7 +3093,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 115px 95px 140px;
+  padding: 145px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
