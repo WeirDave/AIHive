@@ -2499,7 +2499,7 @@ function renderConflicts() {
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
         </div>
         <div class="decision-question">${esc(d.question)}</div>
-        ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
+        ${d.current ? `<div class="decision-current decision-current-clickable" onclick="highlightConflictInDoc('${esc(d.current)}')" title="Click to highlight in document"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
         <div class="decision-options">
           ${d.options.map((opt, oi) => `
             <button class="decision-opt-btn" id="dopt-${di}-${oi}"
@@ -2549,6 +2549,62 @@ function renderConflicts() {
   }
 
   el.innerHTML = html;
+}
+
+function highlightConflictInDoc(currentText) {
+  if (!currentText) return;
+  const ta = document.getElementById('workDocument');
+  const ln = document.getElementById('lineNumbers');
+  const scrollEl = ta?.closest('.work-doc-scroll')?.parentElement;
+  if (!ta || !ln) return;
+
+  const docLines = ta.value.split('\n');
+  const searchText = currentText.replace(/^"|"$/g, '').trim();
+
+  // Find which line(s) contain the text
+  let startLine = -1;
+  let endLine = -1;
+  for (let i = 0; i < docLines.length; i++) {
+    if (startLine === -1 && docLines[i].includes(searchText.substring(0, 30))) {
+      startLine = i;
+      endLine = i;
+    } else if (startLine !== -1 && endLine === startLine) {
+      // Check if text spans multiple lines
+      const combined = docLines.slice(startLine, i + 1).join('\n');
+      if (combined.includes(searchText)) { endLine = i; break; }
+    }
+  }
+
+  // Broader search if exact not found
+  if (startLine === -1) {
+    const words = searchText.split(' ').slice(0, 5).join(' ');
+    for (let i = 0; i < docLines.length; i++) {
+      if (docLines[i].includes(words)) { startLine = endLine = i; break; }
+    }
+  }
+
+  if (startLine === -1) return;
+
+  // Clear any existing highlights
+  ln.querySelectorAll('.line-highlight').forEach(d => d.classList.remove('line-highlight'));
+
+  // Highlight the line number divs (1-indexed)
+  const lineDivs = ln.querySelectorAll('div');
+  for (let i = startLine; i <= endLine; i++) {
+    if (lineDivs[i]) lineDivs[i].classList.add('line-highlight');
+  }
+
+  // Scroll to the line
+  const LINE_HEIGHT = 21;
+  const scrollTop = startLine * LINE_HEIGHT;
+  const container = ta.closest('.work-doc-scroll')?.parentElement || ta.parentElement;
+  if (container) container.scrollTop = Math.max(0, scrollTop - 80);
+
+  // Remove highlight after 3 seconds
+  clearTimeout(window._lineHighlightTimer);
+  window._lineHighlightTimer = setTimeout(() => {
+    ln.querySelectorAll('.line-highlight').forEach(d => d.classList.remove('line-highlight'));
+  }, 3000);
 }
 
 function selectDecision(decisionIdx, optionIdx, total) {

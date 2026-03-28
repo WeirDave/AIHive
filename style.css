@@ -1080,6 +1080,15 @@ html, body {
   flex-shrink: 0;
   padding-right: 6px;
 }
+.work-line-numbers div.line-highlight {
+  color: var(--amber);
+  font-weight: 700;
+  animation: lineNumPulse 0.8s ease-in-out infinite;
+}
+@keyframes lineNumPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
 
 /* Inner wrapper — no scroll, just sizes the textarea correctly */
 .work-doc-inner {
@@ -2862,6 +2871,12 @@ kbd {
   color: var(--text-dim);
   margin-bottom: 10px;
   font-style: italic;
+}
+.decision-current-clickable {
+  cursor: pointer;
+}
+.decision-current-clickable:hover {
+  color: var(--accent);
 }
 .decision-label {
   font-weight: 700;
