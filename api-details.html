@@ -23,11 +23,11 @@
 
 <div class="api-intro-strip">
   <div class="api-intro-bee-wrap">
-    <img src="images/AI_Hive_API_Bee_v1.png" alt="" class="col-bee" style="width:260px;height:260px;margin:0;">
+    <img src="images/AI_Hive_API_Bee_v1.png" alt="" class="col-bee">
   </div>
   <div class="api-intro-text">
-    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);margin:0 0 6px;">Get Your API Keys</h2>
-    <p style="font-size:14px;color:var(--text-dim);line-height:1.6;margin:0;">In Pro mode, AI Hive sends prompts directly to each AI automatically — no copy/paste, no tab switching. Each AI needs its own API key. Follow the guides below to get set up.</p>
+    <h2 class="api-intro-title">Get Your API Keys</h2>
+    <p class="api-intro-desc">In Pro mode, AI Hive sends prompts directly to each AI automatically — no copy/paste, no tab switching. Each AI needs its own API key. Follow the guides below to get set up.</p>
   </div>
 </div>
 
@@ -47,7 +47,10 @@
     <div class="info-card green">
       <h3>Your keys never leave your device</h3>
       <p>Keys are stored in your browser only. They go directly from your browser to each AI provider. AI Hive has no server — your keys are never shared with any third party.</p>
-      <p style="margin-top:8px;font-size:12px;opacity:0.8;">AI Hive is fully open source (AGPL-3.0). No tracking, no analytics, no backend. <a href="https://github.com/WeirDave/AIHive" target="_blank" class="link-accent">Read every line on GitHub →</a></p>
+      <div class="helper-note-card">
+        <img src="images/AI_Hive_InfoButton_v1.png" alt="" class="goal-info-btn-img">
+        <p class="helper-note">AI Hive — open source, no server, no tracking. <a href="#" onclick="document.getElementById('openSourceModal').classList.add('active');return false;" class="link-accent">Learn more →</a></p>
+      </div>
     </div>
 
     <div class="ai-card">
@@ -203,8 +206,30 @@
 </div><!-- /two-col -->
 </div><!-- /page-main -->
 
+<div class="finish-modal-overlay" id="openSourceModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div class="goal-info-icon">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img">
+    </div>
+    <h2 class="finish-modal-title">Open Source & Privacy</h2>
+    <div class="goal-info-body">
+      <p>AI Hive is fully open source under the AGPL-3.0 license. Every line of code is public and auditable.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">No Server</span>
+        <span class="goal-info-desc">AI Hive has no backend. Everything runs in your browser. Your documents, API keys, and session data never leave your machine.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">No Tracking</span>
+        <span class="goal-info-desc">No analytics, no telemetry, no cookies, no accounts. Nothing is tracked.</span>
+      </div>
+      <p class="goal-info-tip">💡 Your API keys go directly from your browser to each AI provider. AI Hive never sees them. <a href="https://github.com/WeirDave/AIHive" target="_blank" class="link-accent">Read the source on GitHub →</a></p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('openSourceModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
+
 <div class="page-footer">
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex:1;flex-wrap:wrap;">
+  <div class="page-footer-btns">
     <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
     <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
     <button class="btn" onclick="openAllBilling()">💳 Open All Billing Pages</button>

@@ -10,7 +10,6 @@
 <body class="helper-body">
 
 <div class="page-header">
-  <div class="page-header-spacer"></div>
   <div class="page-header-brand">
     <img src="images/AI_Hive_Logo_v4.png" alt="AI Hive" class="page-header-logo">
     <div>
@@ -18,7 +17,6 @@
       <div class="page-header-tag">Understanding Tokens</div>
     </div>
   </div>
-  <button class="close-btn" onclick="window.close()">✕ Close this tab</button>
 </div>
 
 <div class="page-main">
@@ -41,6 +39,11 @@
       <h3>Why does this matter for your Builder?</h3>
       <p>Free-tier AI accounts have token limits — a cap on how much they can read and write per minute, per hour, or per day. If your Builder hits that limit mid-session, it will either fail or make you wait before it can continue.</p>
       <p><strong>Reviewers</strong> only send numbered suggestions, so they use far fewer tokens. Free-tier AIs work fine as Reviewers. The Builder is the one that needs headroom.</p>
+    </div>
+
+    <div class="card card-push-bottom helper-note-card">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="" class="goal-info-btn-img">
+      <p class="helper-note">AI Hive — open source, no server, no tracking. <a href="#" onclick="document.getElementById('openSourceModal').classList.add('active');return false;" class="link-accent">Learn more →</a></p>
     </div>
 
   </div>
@@ -116,10 +119,34 @@
 </div>
 </div>
 
+<div class="finish-modal-overlay" id="openSourceModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div class="goal-info-icon">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img">
+    </div>
+    <h2 class="finish-modal-title">Open Source & Privacy</h2>
+    <div class="goal-info-body">
+      <p>AI Hive is fully open source under the AGPL-3.0 license. Every line of code is public and auditable.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">No Server</span>
+        <span class="goal-info-desc">AI Hive has no backend. Everything runs in your browser. Your documents, API keys, and session data never leave your machine.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">No Tracking</span>
+        <span class="goal-info-desc">No analytics, no telemetry, no cookies, no accounts. Nothing is tracked.</span>
+      </div>
+      <p class="goal-info-tip">💡 Your API keys go directly from your browser to each AI provider. AI Hive never sees them. <a href="https://github.com/WeirDave/AIHive" target="_blank" class="link-accent">Read the source on GitHub →</a></p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('openSourceModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
+
 <div class="page-footer">
-  <span class="footer-note">AI Hive — open source, no server, no tracking.</span>
-  <a href="https://github.com/WeirDave/AIHive" target="_blank" class="footer-btn">⭐ GitHub</a>
-  <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="footer-btn">📄 AGPL-3.0</a>
+  <div class="page-footer-btns">
+    <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="btn">📄 AGPL-3.0</a>
+    <a href="https://github.com/WeirDave/AIHive" target="_blank" class="btn">⭐ GitHub</a>
+  </div>
+  <button class="btn" onclick="window.close()">✕ Close this tab</button>
 </div>
 
 <script>

@@ -1724,6 +1724,8 @@ kbd {
   opacity: 0.9;
   transition: opacity 0.12s;
 }
+.goal-info-btn img { width: 28px; height: 28px; display: block; }
+.goal-info-btn-img { width: 28px; height: 28px; display: block; flex-shrink: 0; opacity: 0.9; }
 .goal-info-btn:hover { opacity: 1; }
 .goal-info-modal {
   max-width: 480px;
@@ -3733,6 +3735,13 @@ kbd {
 .ai-card-header img { border-radius: 6px; height: 28px; width: 28px; object-fit: contain; flex-shrink: 0; }
 .ai-card-name { flex: 1; font-family: var(--font-display); font-size: 14px; font-weight: 700; }
 .ai-card-body { padding: 14px; }
+.badge {
+  font-size: 11px; font-weight: 700; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.badge-free    { background: var(--green-dim); border: 1px solid var(--green); color: var(--green); }
+.badge-paid    { background: var(--amber-dim); border: 1px solid var(--amber); color: var(--amber); }
+.badge-limited { background: var(--blue-dim);  border: 1px solid var(--blue);  color: var(--blue); }
 
 /* ── Steps (api page) ── */
 .steps { counter-reset: step; display: flex; flex-direction: column; gap: 7px; list-style: none; padding-left: 0; }
@@ -3849,8 +3858,52 @@ kbd {
 .page-footer {
   background: var(--surface2);
   padding: 14px 32px; margin-top: 16px;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
   flex-shrink: 0;
+}
+.page-footer-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.api-intro-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+.api-intro-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+.helper-note-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.helper-note-card .helper-note {
+  margin: 0;
+}
+.helper-info-img {
+  width: 72px;
+  height: 72px;
+  display: block;
+  margin: 0 auto;
+}
+.helper-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.card-push-bottom {
+  margin-top: auto;
 }
 .footer-note { color: var(--text-dim); font-size: 13px; }
 
