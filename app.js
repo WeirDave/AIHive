@@ -2193,8 +2193,10 @@ async function runRound() {
     if (!isLicensed()) { const used = incrementTrialRound(); updateLicenseBadge(); }
     activeAIs.forEach(a => setBeeStatus(a.id, 'idle', ''));
     setStatus(`🏁 Hive converged — review holdout suggestions or finish the project`);
-    document.getElementById('runRoundBtn')?.classList.remove('running');
-    stopRoundTimer(document.getElementById('runRoundBtn'));
+    const runBtn = document.getElementById('runRoundBtn');
+    runBtn?.classList.remove('running');
+    if (runBtn) runBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
+    stopRoundTimer();
     hideSmokerOverlay();
     return;
   }
