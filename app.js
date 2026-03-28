@@ -1978,7 +1978,7 @@ async function runBuilderOnly() {
   btn.disabled = true;
   smokeBtn?.classList.add('running');
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Building…';
-  showSmokerOverlay('Building…');
+  showBuilderOverlay();
   startRoundTimer(smokeBtn, 'Building…');
   setStatus(`🏗️ Sending directly to ${builderAI.name}…`);
   consoleLog(`═══ Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
@@ -2080,7 +2080,7 @@ async function runBuilderOnly() {
   btn.disabled = false;
   smokeBtn?.classList.remove('running');
   stopRoundTimer();
-  hideSmokerOverlay();
+  hideBuilderOverlay();
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
   const hiveStatus = document.getElementById('hiveStatus');
   if (hiveStatus) hiveStatus.textContent = 'Ready';
@@ -2230,6 +2230,8 @@ async function runRound() {
     consoleLog(`🔨 ${builderAI.name} (Builder) — compiling document from ${allForBuilder.length} review${allForBuilder.length!==1?'s':''} (including its own)…`, 'info');
     setBeeStatus(builderAI.id, 'sending', 'Building…');
     setStatus(`🏗️ ${builderAI.name} is building the updated document…`);
+    hideSmokerOverlay();
+    showBuilderOverlay();
 
     const builderPrompt = buildPromptForAI(builderAI, allForBuilder);
     // consoleLog(`🔍 DEBUG BUILDER (${builderAI.name}) prompt preview: ${builderPrompt.substring(0, 500).replace(/\n/g, '↵')}`, 'warn');
@@ -2340,6 +2342,7 @@ async function runRound() {
     btn.classList.remove('running');
     stopRoundTimer();
     hideSmokerOverlay();
+    hideBuilderOverlay();
     btn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
   }
   if (hiveStatus) hiveStatus.textContent = 'Ready';
@@ -2891,6 +2894,36 @@ function showSmokerOverlay(label = "Smokin' the Hive…") {
 
 function hideSmokerOverlay() {
   const overlay = document.getElementById('smokerOverlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
+function showBuilderOverlay() {
+  const overlay = document.getElementById('builderOverlay');
+  if (!overlay) return;
+  // Generate gold sparks from drill tip
+  const sparks = document.getElementById('builderSparks');
+  if (sparks) {
+    sparks.innerHTML = '';
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement('div');
+      s.className = 'builder-spark';
+      const angle = (Math.random() * 160) - 130; // spread left/up from drill
+      const dist  = 30 + Math.random() * 60;
+      const rad   = angle * Math.PI / 180;
+      s.style.cssText = `
+        --dx: ${Math.cos(rad) * dist}px;
+        --dy: ${Math.sin(rad) * dist}px;
+        --dur: ${0.4 + Math.random() * 0.5}s;
+        --delay: ${Math.random() * 0.8}s;
+      `;
+      sparks.appendChild(s);
+    }
+  }
+  overlay.classList.add('active');
+}
+
+function hideBuilderOverlay() {
+  const overlay = document.getElementById('builderOverlay');
   if (overlay) overlay.classList.remove('active');
 }
 

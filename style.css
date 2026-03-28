@@ -3108,6 +3108,102 @@ kbd {
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ══════════════════════════════════════
+   BUILDER OVERLAY — shown during build step
+   ══════════════════════════════════════ */
+.builder-overlay {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8000;
+  display: none;
+  pointer-events: none;
+}
+.builder-overlay.active {
+  display: block;
+}
+.builder-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.builder-hero-img {
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  height: 300px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(245,166,35,0.8));
+  animation: builderDrill 0.15s ease-in-out infinite alternate;
+}
+@keyframes builderDrill {
+  0%   { transform: translateX(0px)  translateY(0px)  rotate(-1deg) scale(1); }
+  100% { transform: translateX(4px)  translateY(-4px) rotate(1.5deg) scale(1.02); }
+}
+.builder-overlay-label {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(245,166,35,0.5);
+  animation: smokerPulse 1.5s ease-in-out infinite;
+}
+.builder-explanation {
+  margin-top: -10px;
+  width: 525px;
+  height: 525px;
+  background-image: url('images/AI_Hive_v1.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 112px 100px;
+  box-sizing: border-box;
+  opacity: 0;
+  animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
+}
+.builder-explanation p {
+  font-size: 14px;
+  color: rgba(40, 20, 0, 0.95);
+  line-height: 1.65;
+  margin: 0;
+  font-style: italic;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255,220,100,0.4);
+}
+
+/* Gold sparks — fly out from the drill tip */
+.builder-sparks {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-90%);
+  width: 120px;
+  height: 120px;
+  pointer-events: none;
+  z-index: 2;
+}
+.builder-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  animation: builderSpark var(--dur, 0.6s) ease-out var(--delay, 0s) infinite;
+}
+@keyframes builderSpark {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 1; }
+  60%  { opacity: 0.6; }
+  100% { transform: translate(var(--dx, 30px), var(--dy, -30px)) scale(0); opacity: 0; }
+}
+
 /* Smoke particles — out the top of the nozzle */
 .smoke-particles {
   position: absolute;
