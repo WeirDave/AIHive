@@ -2906,8 +2906,6 @@ kbd {
   text-align: left;
   transition: all 0.15s;
   width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
 }
 .decision-opt-btn:hover {
   border-color: var(--amber);
@@ -2937,9 +2935,6 @@ kbd {
   color: var(--text);
   line-height: 1.5;
   flex: 1;
-  min-width: 0;
-  overflow-wrap: break-word;
-  overflow: hidden;
 }
 .decision-opt-custom {
   border-style: dashed;
