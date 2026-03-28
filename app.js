@@ -3204,6 +3204,12 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSettings(); // always load hive (AI keys) silently
   updateSetupRequirements();
 
+  // Show dev toolbar if dev mode is active
+  if (localStorage.getItem('aihive_dev') === '1') {
+    const tb = document.getElementById('devToolbar');
+    if (tb) tb.style.display = 'flex';
+  }
+
   const hasSession = loadSession();
 
   // Only resume project if there's actually a project name saved

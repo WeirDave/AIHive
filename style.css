@@ -4336,3 +4336,48 @@ kbd {
   .hive-finish-overlay.is-active { opacity: 1; visibility: visible; }
   .hive-finish-bee-img, .hive-finish-tagline { opacity: 1 !important; transform: none !important; }
 }
+
+/* ══════════════════════════════════════
+   DEV TOOLBAR — dev mode only
+   ══════════════════════════════════════ */
+.dev-toolbar {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10,12,18,0.92);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  box-shadow: 0 0 12px rgba(245,166,35,0.3);
+  pointer-events: all;
+}
+.dev-toolbar-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-right: 4px;
+  border-right: 1px solid var(--border2);
+  margin-right: 2px;
+}
+.dev-toolbar button {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dev-toolbar button:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
