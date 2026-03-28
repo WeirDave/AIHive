@@ -3640,6 +3640,12 @@ kbd {
   padding: 20px 16px 0;
   justify-content: center;
 }
+.api-intro-bee-wrap {
+  background: rgba(0,0,0,0.82);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  padding: 24px;
+  flex-shrink: 0;
+}
 .api-intro-text { max-width: 520px; }
 .two-col {
   display: grid; grid-template-columns: 1fr 1fr;
