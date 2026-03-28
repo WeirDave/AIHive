@@ -1737,8 +1737,12 @@ kbd {
 .goal-info-btn-img { width: 28px; height: 28px; display: block; flex-shrink: 0; opacity: 0.9; }
 .goal-info-btn:hover { opacity: 1; }
 .goal-info-modal {
-  max-width: 480px;
+  max-width: 520px;
   text-align: left;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 .goal-info-icon {
   font-size: 32px;

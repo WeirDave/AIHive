@@ -363,19 +363,15 @@
         </select>
 
         <div class="left-panel-header">
-          <span class="work-section-title">The Hive</span>
-          <div class="flex-row-sm">
-            <button class="goal-info-btn" onclick="document.getElementById('infoHiveModal').classList.add('active')" title="About The Hive"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button>
-            <button class="btn" onclick="openChangeBuilder()">Change Builder</button>
-          </div>
+          <span class="work-section-title">The Hive <button class="goal-info-btn" onclick="document.getElementById('infoHiveModal').classList.add('active')" title="About The Hive"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button></span>
+          <button class="btn" onclick="openChangeBuilder()">Change Builder</button>
         </div>
 
         <div class="hex-grid" id="beeStatusGrid"></div>
 
         <div class="left-panel-header left-panel-section-border">
-          <span class="work-section-title">Conflicts</span>
+          <span class="work-section-title">Conflicts <button class="goal-info-btn" onclick="document.getElementById('infoConflictsModal').classList.add('active')" title="About Conflicts"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button></span>
           <div class="flex-row-sm">
-            <button class="goal-info-btn" onclick="document.getElementById('infoConflictsModal').classList.add('active')" title="About Conflicts"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button>
             <button class="btn" onclick="copyConflicts()">📋 Copy</button>
             <button class="btn" onclick="clearConflicts()">✕ Clear</button>
           </div>
@@ -392,9 +388,8 @@
       <!-- ══ COL 3: Working Document ══ -->
       <div class="work-doc-panel">
         <div class="work-panel-header">
-          <span class="work-section-title">📄 Working Document</span>
+          <span class="work-section-title">📄 Working Document <button class="goal-info-btn" onclick="document.getElementById('infoDocModal').classList.add('active')" title="About Working Document"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button></span>
           <div class="flex-row">
-            <button class="goal-info-btn" onclick="document.getElementById('infoDocModal').classList.add('active')" title="About Working Document"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button>
             <button class="btn" onclick="exportDocument()">💾 Export</button>
             <button class="btn" onclick="copyDocument()">📋 Copy</button>
             <button class="btn" onclick="clearDocument()">✕ Clear</button>
@@ -464,9 +459,8 @@
 
         <!-- Console -->
         <div class="work-panel-header honeycomb-header">
-          <span class="work-section-title">🖥️ Live Console</span>
+          <span class="work-section-title">🖥️ Live Console <button class="goal-info-btn" onclick="document.getElementById('infoConsoleModal').classList.add('active')" title="About Live Console"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button></span>
           <div class="flex-row-sm">
-            <button class="goal-info-btn" onclick="document.getElementById('infoConsoleModal').classList.add('active')" title="About Live Console"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ"></button>
             <button class="btn" onclick="copyConsole()">📋 Copy</button>
             <button class="btn" onclick="clearConsole()">✕ Clear</button>
           </div>
@@ -681,16 +675,37 @@
     <div class="goal-info-icon"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" class="helper-info-img"></div>
     <h2 class="finish-modal-title">The Hive</h2>
     <div class="goal-info-body">
-      <p>Your hive is the team of AIs working on your document. Each checked AI participates in every round as a Reviewer — reading the document and submitting numbered suggestions.</p>
-      <div class="goal-info-row">
-        <span class="goal-info-phase draft">Builder</span>
-        <span class="goal-info-desc">One AI acts as the Builder — it reads all reviewer suggestions and rewrites the document each round. The Builder uses significantly more tokens than reviewers.</span>
-      </div>
+      <p>Your hive is the team of AIs collaborating on your document each round. Every checked AI with a saved API key participates automatically. AIs without a key are skipped silently.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Reviewers</span>
-        <span class="goal-info-desc">All other checked AIs are Reviewers. They suggest specific numbered changes but don't rewrite the document themselves.</span>
+        <span class="goal-info-desc">Every AI in your hive reviews the document each round — reading it in full and submitting specific numbered suggestions for improvement.</span>
       </div>
-      <p class="goal-info-tip">💡 Toggle individual AIs on or off per session without losing their API keys. Only AIs with a saved key participate automatically.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Builder</span>
+        <span class="goal-info-desc">The AI marked as Builder both reviews and builds — it reads all reviewer suggestions and rewrites the working document each round. The Builder is the only AI that actually changes the document. It uses significantly more tokens than reviewers so it should have a paid API key with enough capacity.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Idle</span>
+        <span class="goal-info-desc">The AI is standing by, waiting for the next round to begin.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">Reviewing…</span>
+        <span class="goal-info-desc">The AI is actively reading the document and generating its suggestions.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Building…</span>
+        <span class="goal-info-desc">The Builder is reading all reviewer suggestions and rewriting the document. This usually takes longer than reviewing.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">Done ✓</span>
+        <span class="goal-info-desc">The AI completed its work for this round successfully.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Failed</span>
+        <span class="goal-info-desc">The AI encountered an error — usually an expired API key, rate limit, or network issue. Check the Live Console for details.</span>
+      </div>
+      <p>You can toggle individual AIs on or off between rounds using the checkboxes without losing their saved keys. Use <strong>Change Builder</strong> to swap which AI does the building.</p>
+      <p>The <strong>API Keys</strong> button in the top bar opens the API key setup guide. The <strong>Prompts</strong> button lets you view and customize the exact instructions sent to your AIs each round. The <strong>Notes</strong> button lets you leave notes that are passed to the Builder at the start of the next round.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoHiveModal').classList.remove('active')">Got it →</button>
   </div>
