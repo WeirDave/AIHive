@@ -3081,21 +3081,13 @@ kbd {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(6, 8, 14, 0.72);
+  background: rgba(6, 8, 14, 0.98);
   backdrop-filter: blur(6px);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow: 0 16px 48px rgba(0,0,0,0.6);
   z-index: -1;
   pointer-events: none;
-}
-[data-theme="light"] .smoker-stage::before {
-  background: rgba(6, 8, 14, 0.92);
-}
-@media (prefers-color-scheme: light) {
-  [data-theme="auto"] .smoker-stage::before {
-    background: rgba(6, 8, 14, 0.92);
-  }
 }
 .smoker-hero-img {
   position: relative;
@@ -3171,21 +3163,13 @@ kbd {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(6, 8, 14, 0.72);
+  background: rgba(6, 8, 14, 0.98);
   backdrop-filter: blur(6px);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow: 0 16px 48px rgba(0,0,0,0.6);
   z-index: -1;
   pointer-events: none;
-}
-[data-theme="light"] .builder-stage::before {
-  background: rgba(6, 8, 14, 0.92);
-}
-@media (prefers-color-scheme: light) {
-  [data-theme="auto"] .builder-stage::before {
-    background: rgba(6, 8, 14, 0.92);
-  }
 }
 
 /* Scene wrap — image with blocks sliding out left */
