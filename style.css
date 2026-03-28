@@ -4283,8 +4283,8 @@ kbd {
    ══════════════════════════════════════ */
 .dev-toolbar {
   position: fixed;
-  bottom: 10px;
-  right: 10px;
+  top: 80px;
+  right: 160px;
   z-index: 99999;
   display: flex;
   align-items: center;
@@ -4295,6 +4295,7 @@ kbd {
   padding: 5px 8px;
   box-shadow: 0 0 12px rgba(245,166,35,0.3);
   pointer-events: all;
+  user-select: none;
 }
 .dev-toolbar-label {
   font-size: 10px;
@@ -4305,6 +4306,10 @@ kbd {
   padding-right: 4px;
   border-right: 1px solid var(--border2);
   margin-right: 2px;
+  cursor: grab;
+}
+.dev-toolbar-label:active {
+  cursor: grabbing;
 }
 .dev-toolbar button {
   font-size: 11px;

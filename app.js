@@ -3268,7 +3268,45 @@ document.addEventListener('DOMContentLoaded', () => {
   // Show dev toolbar if dev mode is active
   if (localStorage.getItem('aihive_dev') === '1') {
     const tb = document.getElementById('devToolbar');
-    if (tb) tb.style.display = 'flex';
+    if (tb) {
+      tb.style.display = 'flex';
+      // Restore saved position
+      const savedPos = JSON.parse(localStorage.getItem('aihive_dev_toolbar_pos') || 'null');
+      if (savedPos) {
+        tb.style.top  = savedPos.top  + 'px';
+        tb.style.left = savedPos.left + 'px';
+        tb.style.right = 'auto';
+      }
+      // Drag by label
+      const label = tb.querySelector('.dev-toolbar-label');
+      if (label) {
+        label.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          const rect = tb.getBoundingClientRect();
+          const offX = e.clientX - rect.left;
+          const offY = e.clientY - rect.top;
+          function onMove(e) {
+            const newLeft = Math.max(0, Math.min(window.innerWidth  - tb.offsetWidth,  e.clientX - offX));
+            const newTop  = Math.max(0, Math.min(window.innerHeight - tb.offsetHeight, e.clientY - offY));
+            tb.style.left  = newLeft + 'px';
+            tb.style.top   = newTop  + 'px';
+            tb.style.right = 'auto';
+            tb.style.bottom = 'auto';
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            // Save position
+            localStorage.setItem('aihive_dev_toolbar_pos', JSON.stringify({
+              top:  parseInt(tb.style.top),
+              left: parseInt(tb.style.left)
+            }));
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+    }
   }
 
   const hasSession = loadSession();
