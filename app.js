@@ -235,6 +235,32 @@ function setStatus(msg) {
   if (el) el.textContent = msg;
 }
 
+// ── ROUND COMPLETE SOUND ──
+function playRoundCompleteSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [
+      { freq: 523.25, start: 0.00, dur: 0.18 },  // C5
+      { freq: 659.25, start: 0.14, dur: 0.18 },  // E5
+      { freq: 783.99, start: 0.28, dur: 0.30 },  // G5
+    ];
+    notes.forEach(({ freq, start, dur }) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+      gain.gain.setValueAtTime(0, ctx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + dur + 0.05);
+    });
+    setTimeout(() => ctx.close(), 1200);
+  } catch(e) { /* audio not supported — fail silently */ }
+}
+
 // ── ROUND TIMER ──
 let _roundTimerInterval = null;
 let _roundTimerStart    = null;
@@ -2060,6 +2086,7 @@ async function runBuilderOnly() {
         setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
         setStatus(`✅ Round ${round} complete — Builder applied your instructions`);
         consoleLog(`✅ Round ${round} complete — Builder only (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
+        playRoundCompleteSound();
       }
     } else if (!builderHadError) {
       builderHadError = true;
@@ -2300,6 +2327,7 @@ async function runRound() {
           setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
           setStatus(`✅ Round ${round} complete — document updated`);
           consoleLog(`✅ Round ${round} complete — document updated (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
+          playRoundCompleteSound();
         }
       } else if (!builderHadError) {
         // Extraction failed — keep existing working document unchanged
@@ -2375,6 +2403,7 @@ async function runRound() {
     toast('⚠️ Round not saved — Builder output was invalid', 5000);
   } else {
     toast(`✅ Round ${round - 1} complete!`);
+    playRoundCompleteSound();
   }
 }
 
