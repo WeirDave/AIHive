@@ -380,6 +380,24 @@ html, body {
   color: var(--accent);
   background: var(--accent-dim);
 }
+.welcome-card.free {
+  background: rgba(59, 130, 246, 0.07);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+.welcome-card.free:hover {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.65);
+  color: #7ab8ff;
+}
+.welcome-card.pro {
+  background: rgba(245, 158, 11, 0.07);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.welcome-card.pro:hover {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 .welcome-card-icon {
   font-size: 28px;
@@ -4265,8 +4283,8 @@ kbd {
    ══════════════════════════════════════ */
 .dev-toolbar {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  bottom: 10px;
+  left: 10px;
   z-index: 99999;
   display: flex;
   align-items: center;
