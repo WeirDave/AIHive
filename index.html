@@ -523,7 +523,7 @@
 <!-- ── BUILDER OVERLAY ── -->
 <div class="builder-overlay" id="builderOverlay" aria-hidden="true">
   <div class="builder-overlay-backdrop"></div>
-  <div class="builder-overlay-content">
+  <div class="builder-build-layer">
 
     <!-- Copy block -->
     <div class="builder-copy">
@@ -532,36 +532,15 @@
       <div class="builder-copy-subtitle">Collecting every suggestion from the hive and welding them into a clean draft.</div>
     </div>
 
-    <!-- Assembly zone -->
-    <div class="builder-assembly-zone">
-      <div class="builder-assembly-label">ASSEMBLING OUTPUT</div>
-      <div class="builder-assembly-lines">
-        <span></span><span></span><span></span><span></span>
-      </div>
-    </div>
-
-    <!-- Energy beam -->
-    <div class="builder-beam"></div>
-
-    <!-- Sparks -->
-    <div class="builder-sparks" id="builderSparks">
-      <span style="--dx:-18px;--dy:-26px;"></span>
-      <span style="--dx:28px;--dy:-30px;"></span>
-      <span style="--dx:-10px;--dy:18px;"></span>
-      <span style="--dx:34px;--dy:14px;"></span>
-      <span style="--dx:6px;--dy:-38px;"></span>
-      <span style="--dx:-28px;--dy:8px;"></span>
-    </div>
-
-    <!-- Builder bee -->
-    <div class="builder-bee-wrap">
-      <div class="builder-drill-ring"></div>
-      <img src="images/AI_Hive_Builder_Building_v1.png" alt="Building…" class="builder-hero-img">
-    </div>
-
-    <!-- Conveyor belt -->
-    <div class="builder-belt">
+    <!-- HTML conveyor belt — blocks slide left to right, fade under scene image -->
+    <div class="builder-conveyor">
+      <div class="builder-conveyor-surface"></div>
       <div class="builder-belt-track" id="builderBeltTrack"></div>
+    </div>
+
+    <!-- Scene image — sits on top of right end of conveyor -->
+    <div class="builder-scene">
+      <img src="images/AI_Hive_Builder_Building_v1.png" alt="Builder bee assembling the document" class="builder-scene-image">
     </div>
 
   </div>

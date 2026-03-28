@@ -3098,7 +3098,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 190px 95px 140px;
+  padding: 205px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
@@ -3122,7 +3122,7 @@ kbd {
 
 
 /* ══════════════════════════════════════
-   BUILDER OVERLAY — conveyor belt assembly
+   BUILDER OVERLAY — scene conveyor belt
    ══════════════════════════════════════ */
 .builder-overlay {
   position: fixed;
@@ -3138,12 +3138,10 @@ kbd {
 .builder-overlay-backdrop {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 70% 55%, rgba(245,166,35,0.10), transparent 28%),
-    rgba(6, 8, 14, 0.55);
+  background: rgba(6, 8, 14, 0.52);
   backdrop-filter: blur(2px);
 }
-.builder-overlay-content {
+.builder-build-layer {
   position: absolute;
   inset: 0;
 }
@@ -3151,10 +3149,11 @@ kbd {
 /* Copy block — bottom left */
 .builder-copy {
   position: absolute;
-  left: 40px;
-  bottom: 130px;
-  max-width: 400px;
+  left: 32px;
+  bottom: 110px;
+  max-width: 360px;
   color: var(--text);
+  z-index: 4;
 }
 .builder-copy-badge {
   display: inline-block;
@@ -3183,134 +3182,26 @@ kbd {
   line-height: 1.5;
 }
 
-/* Builder bee — right side */
-.builder-bee-wrap {
+/* Conveyor belt — full width, anchored to bottom */
+.builder-conveyor {
   position: absolute;
-  right: 80px;
-  bottom: 120px;
-  width: 280px;
-  filter: drop-shadow(0 0 40px rgba(245,166,35,0.6));
-  animation: builderBeeBob 2.2s ease-in-out infinite;
-}
-.builder-hero-img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-.builder-drill-ring {
-  position: absolute;
-  left: 52px;
-  top: 118px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 2px dashed rgba(245,166,35,0.35);
-  animation: builderSpin 0.7s linear infinite;
-}
-
-/* Assembly zone — center right */
-.builder-assembly-zone {
-  position: absolute;
-  right: 300px;
-  bottom: 190px;
-  width: 180px;
-  height: 116px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(77,138,255,0.28);
-  background: linear-gradient(180deg, rgba(77,138,255,0.10), rgba(77,138,255,0.03));
-  box-shadow: 0 0 24px rgba(77,138,255,0.08);
-}
-.builder-assembly-label {
-  position: absolute;
-  top: 10px;
-  left: 12px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: rgba(77,138,255,0.8);
-  text-transform: uppercase;
-}
-.builder-assembly-lines {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  top: 38px;
-  bottom: 12px;
-  display: grid;
-  gap: 9px;
-}
-.builder-assembly-lines span {
-  display: block;
-  height: 7px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(77,138,255,0.95), rgba(77,138,255,0.15));
-  transform-origin: left center;
-  animation: builderAssemble 2.4s ease-in-out infinite;
-}
-.builder-assembly-lines span:nth-child(1) { width: 75%; animation-delay: 0.1s; }
-.builder-assembly-lines span:nth-child(2) { width: 90%; animation-delay: 0.45s; }
-.builder-assembly-lines span:nth-child(3) { width: 60%; animation-delay: 0.85s; }
-.builder-assembly-lines span:nth-child(4) { width: 80%; animation-delay: 1.25s; }
-
-/* Energy beam */
-.builder-beam {
-  position: absolute;
-  right: 244px;
-  bottom: 218px;
-  width: 150px;
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(245,166,35,0), rgba(245,166,35,0.9), rgba(77,138,255,0.8));
-  transform: rotate(-10deg);
-  transform-origin: right center;
-  filter: blur(1px);
-  animation: builderBeamPulse 1.4s ease-in-out infinite;
-}
-
-/* Sparks */
-.builder-sparks {
-  position: absolute;
-  right: 264px;
-  bottom: 214px;
-  width: 100px;
-  height: 80px;
-  pointer-events: none;
-  z-index: 2;
-}
-.builder-sparks span {
-  position: absolute;
-  left: 46px;
-  top: 38px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff3b0 0%, var(--accent) 55%, transparent 70%);
-  box-shadow: 0 0 8px rgba(245,166,35,0.6);
-  animation: builderSparkBurst 1.4s ease-out infinite;
-  opacity: 0;
-}
-.builder-sparks span:nth-child(1) { animation-delay: 0.00s; }
-.builder-sparks span:nth-child(2) { animation-delay: 0.15s; }
-.builder-sparks span:nth-child(3) { animation-delay: 0.30s; }
-.builder-sparks span:nth-child(4) { animation-delay: 0.45s; }
-.builder-sparks span:nth-child(5) { animation-delay: 0.60s; }
-.builder-sparks span:nth-child(6) { animation-delay: 0.75s; }
-
-/* Conveyor belt */
-.builder-belt {
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 20px;
-  height: 80px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  height: 78px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: linear-gradient(180deg, var(--surface2), var(--surface));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -8px 20px rgba(0,0,0,0.3);
+  z-index: 1;
 }
-.builder-belt::before {
+.builder-conveyor-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--surface2), var(--surface));
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -8px 18px rgba(0,0,0,0.28);
+}
+.builder-conveyor-surface::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -3327,55 +3218,100 @@ kbd {
   inset: 0;
   overflow: hidden;
 }
+
+/* Blocks — teal to match image, fade out before reaching the scene image */
 .builder-block {
   position: absolute;
   top: 12px;
-  width: 100px;
-  height: 56px;
+  width: 104px;
+  height: 52px;
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--text);
-  border: 1px solid rgba(245,166,35,0.30);
-  background: linear-gradient(180deg, rgba(245,166,35,0.18), rgba(245,166,35,0.06));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 16px rgba(0,0,0,0.25);
-  animation: builderBlockMove var(--belt-dur, 8s) linear var(--belt-delay, 0s) infinite;
+  color: #eafcff;
+  border: 1px solid rgba(56,210,210,0.35);
+  background: linear-gradient(180deg, rgba(56,210,210,0.28), rgba(56,210,210,0.10));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 6px 16px rgba(0,0,0,0.25);
+  animation: builderBlockTravel var(--belt-dur, 9s) linear var(--belt-delay, 0s) infinite;
+}
+
+/* Scene image — right side, sits on top of belt, left edge fades in */
+.builder-scene {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 520px;
+  z-index: 3;
+  pointer-events: none;
+}
+.builder-scene::before {
+  content: "";
+  position: absolute;
+  right: 80px;
+  bottom: 60px;
+  width: 160px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(245,166,35,0.20), transparent 70%);
+  filter: blur(14px);
+  z-index: -1;
+}
+.builder-scene-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35));
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0.3) 8%,
+    rgba(0,0,0,0.8) 16%,
+    rgba(0,0,0,1) 24%,
+    rgba(0,0,0,1) 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0.3) 8%,
+    rgba(0,0,0,0.8) 16%,
+    rgba(0,0,0,1) 24%,
+    rgba(0,0,0,1) 100%
+  );
 }
 
 /* Keyframes */
-@keyframes builderBeeBob {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-10px) rotate(-1deg); }
-}
-@keyframes builderSpin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 @keyframes builderBeltMove {
   from { transform: translateX(0); }
   to   { transform: translateX(-44px); }
 }
-@keyframes builderBlockMove {
-  from { transform: translateX(-140px); }
-  to   { transform: translateX(calc(100vw + 140px)); }
+@keyframes builderBlockTravel {
+  from  { transform: translateX(-140px); opacity: 0; }
+  4%    { opacity: 1; }
+  72%   { opacity: 1; }
+  82%   { opacity: 0; }
+  to    { transform: translateX(calc(100vw - 560px)); opacity: 0; }
 }
-@keyframes builderAssemble {
-  0%, 18%   { transform: scaleX(0.05); opacity: 0.1; }
-  35%, 100% { transform: scaleX(1);    opacity: 0.9; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .builder-scene { width: 420px; }
 }
-@keyframes builderBeamPulse {
-  0%, 100% { opacity: 0.3; transform: rotate(-10deg) scaleX(0.88); }
-  50%      { opacity: 1;   transform: rotate(-10deg) scaleX(1.04); }
+@media (max-width: 900px) {
+  .builder-copy { max-width: 260px; bottom: 104px; }
+  .builder-copy-title { font-size: 20px; }
+  .builder-scene { width: 340px; }
+  .builder-block { width: 88px; height: 46px; font-size: 11px; }
 }
-@keyframes builderSparkBurst {
-  0%   { transform: translate(0,0) scale(0.2); opacity: 0; }
-  15%  { opacity: 1; }
-  100% { transform: translate(var(--dx,20px), var(--dy,-20px)) scale(1.2); opacity: 0; }
+@media (max-width: 700px) {
+  .builder-copy { left: 16px; right: 16px; max-width: none; bottom: 96px; }
+  .builder-scene { width: 260px; right: 10px; }
+  .builder-conveyor { left: 10px; right: 10px; height: 64px; }
 }
 
 
