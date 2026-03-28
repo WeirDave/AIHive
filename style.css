@@ -3072,9 +3072,10 @@ kbd {
   align-items: center;
   gap: 12px;
   border-radius: var(--radius-lg);
-  padding: 148px 32px 224px;
+  padding: 148px 32px 48px;
   width: 760px;
-  overflow: visible;
+  max-height: 90vh;
+  overflow: hidden;
 }
 .smoker-stage::before {
   content: "";
