@@ -3086,10 +3086,10 @@ kbd {
   background-size: cover;
   background-position: center;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   text-align: center;
-  padding: 140px 90px;
+  padding: 115px 95px 140px;
   box-sizing: border-box;
   opacity: 0;
   animation: smokerExplanationFadeIn 0.8s ease-out 2s forwards;
