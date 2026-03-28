@@ -332,7 +332,7 @@
       <div class="work-topbar-left">
         <button class="btn" onclick="goToScreen('screen-welcome')">⌂ Home</button>
         <div class="work-project-info" onclick="showProjectGoalModal()" title="Click to view project goal" style="cursor:pointer;">
-          <span class="work-project-label">Project:</span>
+          <span class="work-project-label btn" onclick="event.stopPropagation();goToScreen('screen-project')" title="Back to project setup">Project:</span>
           <span class="work-project-name" id="workProjectName">Project</span>
           <span class="work-project-version" id="workProjectVersion"></span>
           <span class="work-start-mode" id="workStartMode"></span>
@@ -791,6 +791,7 @@
       </div>
       <p class="goal-info-tip">💡 Export saves your document as a .txt file with a byline noting the number of rounds it took and how long the session ran.</p>
       <p class="goal-info-tip">💡 To review your project goal at any time during a session, click the project name and version number in the top bar. The first 300 characters are what your AIs see during the Refine Text phase — text beyond that limit is highlighted in amber in the viewer.</p>
+      <p class="goal-info-tip">⚠️ If your document looks garbled — especially after uploading a PDF — the file was likely too design-heavy to extract cleanly. Use the <strong>← Project</strong> button in the top bar to go back, then try the Paste Text option instead and copy your text in manually.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoDocModal').classList.remove('active')">Got it →</button>
   </div>
