@@ -2428,6 +2428,7 @@ async function runRound() {
     btn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
   }
   if (hiveStatus) hiveStatus.textContent = 'Ready';
+  projectClockPause(); // auto-pause — resumes automatically on next Smoke the Hive
   if (builderHadError) {
     toast('⚠️ Round not saved — Builder output was invalid', 5000);
   } else {
