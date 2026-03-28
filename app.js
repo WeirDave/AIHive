@@ -1388,7 +1388,7 @@ function initWorkScreen(isNewSession = false) {
   if (docTa) {
     if (docTab === 'scratch' && !docText) {
       docTa.value = '';
-      docTa.placeholder = `Starting from scratch — click "Activate the Hive" to generate your first draft.\n\nProject: ${name}${version ? ' ' + version : ''}\nGoal: ${goal}`;
+      docTa.placeholder = `Starting from scratch — click "Smoke the Hive" to generate your first draft.\n\nProject: ${name}${version ? ' ' + version : ''}\nGoal: ${goal}`;
     } else {
       docTa.value = docText;
     }
@@ -1415,7 +1415,7 @@ function initWorkScreen(isNewSession = false) {
   renderConflicts();
   updateRoundBadge();
   updateLicenseBadge();
-  setStatus('Standing by — toggle bees above, then Smoke the Hive');
+  setStatus('Standing by — Smoke the Hive to begin');
 
   // Keep line numbers filled on resize
   if (window._lineNumObserver) window._lineNumObserver.disconnect();
