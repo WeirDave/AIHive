@@ -711,6 +711,7 @@ function clearProject() {
   switchDocTab('upload');
   round = 1; phase = 'draft'; history = []; docText = '';
   window._resolvedDecisions = [];
+  localStorage.removeItem('aihive_resolved_decisions');
   projectClockReset();
   toast('🗑 Project cleared — AI keys and settings kept');
 }
@@ -2545,7 +2546,12 @@ function extractDocument(text) {
 // Track user's choices for current conflict set
 window._decisionChoices = {};
 // Track resolved USER DECISION conflicts to prevent Builder re-raising them
-window._resolvedDecisions = [];
+// Restored from localStorage so refreshes don't wipe resolved decisions
+try {
+  window._resolvedDecisions = JSON.parse(localStorage.getItem('aihive_resolved_decisions') || '[]');
+} catch(e) {
+  window._resolvedDecisions = [];
+}
 
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
@@ -2799,6 +2805,7 @@ function applyDecisions() {
     }
     if (d.current && chosenText) {
       window._resolvedDecisions.push({ original: d.current, chosen: chosenText });
+      localStorage.setItem('aihive_resolved_decisions', JSON.stringify(window._resolvedDecisions));
     }
   });
 
