@@ -156,7 +156,7 @@
         <img src="images/claude.ico" class="kyh-card-icon" onerror="this.style.display='none'">
         <div>
           <div class="kyh-card-name">Claude</div>
-          <div class="kyh-card-model">claude-opus-4-5</div>
+          <div class="kyh-card-model">claude-sonnet-4-6</div>
         </div>
         <div class="kyh-badges">
           <span class="kyh-badge kyh-badge-builder">Strong Builder</span>
@@ -169,7 +169,7 @@
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-good">Precise instruction following</span>
             <span class="kyh-pill kyh-pill-good">Nuanced language suggestions</span>
-            <span class="kyh-pill kyh-pill-good">Excellent at tone and flow</span>
+            <span class="kyh-pill kyh-pill-good">Mastery of tone and flow</span>
             <span class="kyh-pill kyh-pill-good">Large context window</span>
             <span class="kyh-pill kyh-pill-good">Consistent format compliance</span>
           </div>
@@ -178,16 +178,16 @@
           <div class="kyh-section-title">Weaknesses</div>
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-warn">Higher cost per token</span>
-            <span class="kyh-pill kyh-pill-warn">Can be overly cautious</span>
+            <span class="kyh-pill kyh-pill-warn">May overemphasize minor details</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>Excellent in both roles. As a reviewer, Claude catches subtle issues with tone, redundancy, and flow that others miss. As a Builder, it's reliable and format-compliant. Higher cost but worth it for quality-sensitive documents.</p>
+          <p>A versatile choice for both Builder and Reviewer roles. As a reviewer, Claude excels at catching subtle issues with tone, redundancy, and flow that others miss. As a Builder, it is reliable and format-compliant. Higher cost, but worth it for quality-sensitive projects.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
-          <p>Claude tends to give the most thoughtful reasoning behind its suggestions — useful when you're trying to understand why something should change.</p>
+          <p>Claude tends to give the most thoughtful reasoning for its suggestions — clarifying the logic behind each change.</p>
         </div>
       </div>
     </div>
@@ -224,11 +224,11 @@
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>A solid all-rounder in both roles. Fast, reliable, and consistent. Good Builder choice if DeepSeek isn't available. As a reviewer it tends to converge quickly once the document is in decent shape — which is actually useful in later rounds.</p>
+          <p>A solid all-rounder for both Builder and Reviewer roles — fast, reliable, and consistent. A strong alternative Builder if DeepSeek is unavailable. As a reviewer, it effectively signals document convergence during final refinement rounds.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
-          <p>ChatGPT calling NO CHANGES early in later rounds is a good signal the document is converging — don't toggle it off just because it's quiet.</p>
+          <p>When ChatGPT returns NO CHANGES in later rounds, treat this as a sign of document convergence rather than a reason to toggle it off.</p>
         </div>
       </div>
     </div>
@@ -265,11 +265,11 @@
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>Best as a reviewer, especially for factual or research-heavy documents. Its search-aware training makes it good at spotting vague claims. Avoid using it as Builder — its output format can be less reliable for document reconstruction.</p>
+          <p>A specialized reviewer for factual or research-heavy documents. Its search-aware training makes it uniquely effective at spotting unsupported claims, though its inconsistent output formatting may complicate document reconstruction.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
-          <p>Perplexity is particularly useful early in a project when the document is rough and needs fact-checking pressure from the hive.</p>
+          <p>Perplexity is particularly useful early in a project when the document is rough and needs fact-checking input from the hive.</p>
         </div>
       </div>
     </div>
@@ -307,11 +307,11 @@
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>Grok is valuable in early rounds when the document needs aggressive improvement — it pushes hard for stronger phrasing and action verbs. However, its known tendency to re-raise already-resolved conflicts makes it friction in later rounds once the document is converging.</p>
+          <p>A valuable reviewer in early rounds, pushing hard for stronger phrasing and action verbs. However, its tendency to revisit resolved points may prolong final convergence.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">⚠️</span>
-          <p>Consider toggling Grok off in later refinement rounds once key decisions are locked in. It tends to keep pushing its own preferred wording even after you've made your choice — this is a known behavioral pattern of the grok-3 model, not a bug in AI Hive.</p>
+          <p>Toggle Grok off in later refinement rounds once key decisions are finalized to avoid repetitive suggestions.</p>
         </div>
       </div>
     </div>
@@ -322,16 +322,16 @@
   <div class="info-card" style="margin-top:32px;">
     <h2 style="font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:12px;">General Tips</h2>
     <p style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:10px;">
-      <strong style="color:var(--text);">Mix roles strategically.</strong> You don't need six AIs all doing the same thing. Claude for nuance, Grok for aggression early on, Gemini for free coverage, DeepSeek as your Builder — that's a well-rounded hive.
+      <strong style="color:var(--text);">You don't need all six AIs every round.</strong> Toggle them on or off at any time, except for your Builder. For a lean setup, consider DeepSeek as your Builder, Claude for nuanced feedback, Grok for early assertive input, and Gemini for free support — that's a well-balanced hive. A smaller hive completes rounds faster, while the full hive ensures the most thorough review possible.
     </p>
     <p style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:10px;">
-      <strong style="color:var(--text);">Toggle, don't remove.</strong> Use the checkboxes on the work screen to turn individual AIs on or off between rounds without losing their keys. This is the fastest way to manage a stubborn reviewer.
+      <strong style="color:var(--text);">Toggle, don't remove.</strong> Use the checkboxes on the work screen to toggle individual AIs on or off between rounds while preserving their API keys. This is the most efficient way to manage persistent reviewers.
     </p>
     <p style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:10px;">
-      <strong style="color:var(--text);">Your Builder is the most important choice.</strong> The Builder reads the entire document plus all suggestions every single round — it uses far more tokens than any reviewer. Choose an AI you trust with large amounts of text, and make sure it has a paid subscription with enough capacity.
+      <strong style="color:var(--text);">Your Builder is the most important choice.</strong> The Builder processes the entire document along with all reviewer suggestions each round, using significantly more tokens than any reviewer. Choose an AI you trust with large amounts of text, one with sufficient rate limits and token budget for your project scope.
     </p>
     <p style="font-size:14px;color:var(--text-dim);line-height:1.7;margin:0;">
-      <strong style="color:var(--text);">Watch for convergence signals.</strong> When multiple AIs start returning NO CHANGES in the same round, the hive is telling you the document is in good shape. That's your cue to either finish or make one final pass with your own eye.
+      <strong style="color:var(--text);">Watch for convergence signals.</strong> When multiple AIs start returning NO CHANGES in the same round, the hive signals that the document has converged and may be ready for finalization or manual review.
     </p>
   </div>
 

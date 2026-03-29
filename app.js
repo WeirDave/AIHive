@@ -34,7 +34,7 @@ const DEFAULT_AIS = [
 // ══════════════════════════════════════
 const API_CONFIGS = {
   claude: {
-    label: 'Anthropic (Claude)', model: 'claude-opus-4-5',
+    label: 'Anthropic (Claude)', model: 'claude-sonnet-4-6',
     endpoint: 'https://aihive-claude-proxy.weirdave.workers.dev',
     note: null,
     headersFn: k => ({ 'Content-Type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01' }),
@@ -94,8 +94,9 @@ const API_CONFIGS = {
     extractFn: d => d?.choices?.[0]?.message?.content || ''
   },
   gemini: {
-    label: 'Google (Gemini)', model: 'gemini-flash-latest',
-    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+    label: 'Google (Gemini)', model: 'gemini-2.5-flash',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    endpointFn: (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     note: null,
     headersFn: k => ({ 'Content-Type': 'application/json', 'x-goog-api-key': k }),
     bodyFn: (model, prompt) => {
@@ -118,9 +119,9 @@ const API_CONFIGS = {
     extractFn: d => d?.candidates?.[0]?.content?.parts?.[0]?.text || ''
   },
   grok: {
-    label: 'xAI (Grok)', model: 'grok-3',
+    label: 'xAI (Grok)', model: 'grok-4',
     endpoint: 'https://api.x.ai/v1/chat/completions',
-    note: '⚠️ Check console.x.ai for API availability',
+    note: null,
     headersFn: k => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${k}` }),
     bodyFn: (model, prompt) => {
       const splitA = prompt.indexOf('SEND TO ALL AIs');
@@ -197,7 +198,171 @@ const API_CONFIGS = {
   }
 };
 
-// ── STATE ──
+// ── MODEL LABELS & STATIC FALLBACKS ──
+// Label lookup for known model IDs — shown in the model selector dropdown
+// Maintained here so adding a new model label never requires touching UI code
+const MODEL_LABELS = {
+  // OpenAI
+  'gpt-4.1':        { tag: 'Recommended · Fast',       note: 'Best instruction following, low cost' },
+  'gpt-4.1-mini':   { tag: 'Budget',                   note: 'Faster, cheaper, good for reviewers' },
+  'gpt-5.4':        { tag: 'Latest · Most Capable',    note: 'Best quality, higher cost' },
+  'gpt-5.4-mini':   { tag: 'Fast · Capable',           note: 'GPT-5 class at lower cost' },
+  // Anthropic
+  'claude-sonnet-4-6': { tag: 'Recommended',           note: 'Best balance of quality and cost' },
+  'claude-opus-4-6':   { tag: 'Most Capable',          note: 'Highest quality, higher cost' },
+  'claude-haiku-4-5':  { tag: 'Budget · Fast',         note: 'Fastest, most affordable' },
+  // Gemini
+  'gemini-2.5-flash':  { tag: 'Recommended',           note: 'Best balance, free tier available' },
+  'gemini-2.5-pro':    { tag: 'Most Capable',          note: 'Higher quality, may cost more' },
+  // Grok
+  'grok-4':            { tag: 'Recommended · Latest',  note: 'Current flagship' },
+  'grok-3':            { tag: 'Previous',              note: 'Still works, previous generation' },
+  // DeepSeek
+  'deepseek-chat':     { tag: 'Recommended · Budget',  note: 'Best value Builder, very low cost' },
+  // Perplexity
+  'sonar-pro':         { tag: 'Recommended',           note: 'Best for factual review tasks' },
+  'sonar':             { tag: 'Budget',                note: 'Lighter, faster, cheaper' },
+};
+
+// Static fallback model lists per provider — used when dynamic fetch fails or is offline
+const MODEL_FALLBACKS = {
+  chatgpt:    ['gpt-4.1', 'gpt-4.1-mini', 'gpt-5.4', 'gpt-5.4-mini'],
+  claude:     ['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5'],
+  gemini:     ['gemini-2.5-flash', 'gemini-2.5-pro'],
+  grok:       ['grok-4', 'grok-3'],
+  deepseek:   ['deepseek-chat'],
+  perplexity: ['sonar-pro', 'sonar'],
+};
+
+// Filters to keep only chat-relevant models from dynamic lists
+const MODEL_FILTERS = {
+  chatgpt: id => /^gpt-[45]/.test(id) && !/instruct|audio|realtime|search|image|tts|whisper|embed|babbage|davinci|curie|ada/.test(id),
+  claude:  id => /^claude-/.test(id),
+  gemini:  id => /^gemini-[23]/.test(id) && !/embed|image|video|audio|tts|veo|lyria|imagine/.test(id),
+  grok:    id => /^grok-[0-9]/.test(id) && !/imagine|video|vision-beta/.test(id),
+  deepseek: id => /^deepseek-(chat|reasoner)/.test(id),
+  perplexity: null, // no dynamic endpoint — always use fallback
+};
+
+// Cache key prefix and TTL (7 days)
+const MODELS_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+async function fetchModelsForProvider(provider) {
+  if (!MODEL_FILTERS[provider]) return null; // no endpoint for this provider
+
+  const cacheKey = `aihive_models_${provider}`;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+    if (cached && (Date.now() - cached.ts) < MODELS_CACHE_TTL) return cached.models;
+  } catch(e) {}
+
+  const cfg = API_CONFIGS[provider];
+  if (!cfg?._key) return null;
+
+  try {
+    let models = [];
+
+    if (provider === 'chatgpt' || provider === 'grok' || provider === 'deepseek' || provider === 'perplexity') {
+      const baseUrl = cfg.endpoint.replace(/\/v1\/.*/, '');
+      const resp = await fetch(`${baseUrl}/v1/models`, {
+        headers: cfg.headersFn(cfg._key)
+      });
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const filter = MODEL_FILTERS[provider];
+      models = (data?.data || []).map(m => m.id).filter(filter).sort();
+
+    } else if (provider === 'claude') {
+      const resp = await fetch('https://api.anthropic.com/v1/models', {
+        headers: { 'x-api-key': cfg._key, 'anthropic-version': '2023-06-01' }
+      });
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      models = (data?.data || []).map(m => m.id).sort().reverse(); // newest first
+
+    } else if (provider === 'gemini') {
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${cfg._key}&pageSize=100`
+      );
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const filter = MODEL_FILTERS[provider];
+      models = (data?.models || [])
+        .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+        .map(m => m.name.replace('models/', ''))
+        .filter(filter)
+        .sort().reverse();
+    }
+
+    if (models.length > 0) {
+      try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), models })); } catch(e) {}
+      return models;
+    }
+  } catch(e) {}
+
+  return null;
+}
+
+function getModelsForProvider(provider) {
+  const cacheKey = `aihive_models_${provider}`;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+    if (cached?.models?.length > 0) return cached.models;
+  } catch(e) {}
+  return MODEL_FALLBACKS[provider] || [];
+}
+
+function buildModelSelector(aiId, provider, currentModel) {
+  const models = getModelsForProvider(provider);
+  if (!models.length) return '';
+  const options = models.map(m => {
+    const label = MODEL_LABELS[m];
+    const display = label ? `${m} — ${label.tag}` : m;
+    const selected = m === currentModel ? 'selected' : '';
+    return `<option value="${m}" ${selected}>${esc(display)}</option>`;
+  }).join('');
+  const labelInfo = MODEL_LABELS[currentModel];
+  const noteHtml = labelInfo?.note
+    ? `<span class="model-select-note">${esc(labelInfo.note)}</span>`
+    : '';
+  return `<div class="model-select-wrap">
+    <select class="model-select" id="modelsel-${aiId}"
+      onchange="saveModelForAI('${aiId}', this.value)">
+      ${options}
+    </select>
+    ${noteHtml}
+  </div>`;
+}
+
+function saveModelForAI(aiId, modelId) {
+  const ai = aiList.find(a => a.id === aiId);
+  if (!ai) return;
+  const cfg = API_CONFIGS[ai.provider];
+  if (!cfg) return;
+  cfg.model = modelId;
+  // Update Gemini endpoint if needed
+  if (ai.provider === 'gemini' && cfg.endpointFn) {
+    cfg.endpoint = cfg.endpointFn(modelId);
+  }
+  saveSettings();
+  // Update the note under the selector
+  const noteEl = document.querySelector(`#airow-${aiId} .model-select-note`);
+  if (noteEl) {
+    const label = MODEL_LABELS[modelId];
+    noteEl.textContent = label?.note || '';
+  }
+  toast(`✓ ${ai.name} model set to ${modelId}`, 2000);
+}
+
+async function refreshModelsForAI(aiId) {
+  const ai = aiList.find(a => a.id === aiId);
+  if (!ai) return;
+  const cacheKey = `aihive_models_${ai.provider}`;
+  localStorage.removeItem(cacheKey);
+  await fetchModelsForProvider(ai.provider);
+  renderAIRow(aiId);
+  toast(`↺ ${ai.name} models refreshed`, 2000);
+}
 let aiList    = JSON.parse(JSON.stringify(DEFAULT_AIS)); // full list, active = checked ones
 let activeAIs = [];   // AIs selected in setup
 let builder   = null; // id of builder AI
@@ -699,14 +864,17 @@ function confirmGoHome() {
 // saveHive — AI list + keys — persistent forever
 function saveHive() {
   const keys = {};
+  const models = {};
   Object.keys(API_CONFIGS).forEach(id => {
     if (API_CONFIGS[id]._key) keys[id] = API_CONFIGS[id]._key;
+    if (API_CONFIGS[id].model) models[id] = API_CONFIGS[id].model;
   });
   const hive = {
     activeAIIds:    activeAIs.map(a => a.id),
     knownDefaultIds: DEFAULT_AIS.map(d => d.id),
     builder,
     keys,
+    models,
     customAIs: aiList.filter(a => !DEFAULT_AIS.find(d => d.id === a.id))
   };
   try { localStorage.setItem(LS_HIVE, JSON.stringify(hive)); } catch(e) {}
@@ -850,6 +1018,17 @@ function loadSettings() {
         if (API_CONFIGS[id]) API_CONFIGS[id]._key = h.keys[id];
       });
     }
+    if (h.models) {
+      Object.keys(h.models).forEach(id => {
+        if (API_CONFIGS[id]) {
+          API_CONFIGS[id].model = h.models[id];
+          // Re-sync Gemini endpoint if model was customised
+          if (id === 'gemini' && API_CONFIGS[id].endpointFn) {
+            API_CONFIGS[id].endpoint = API_CONFIGS[id].endpointFn(h.models[id]);
+          }
+        }
+      });
+    }
     if (h.activeAIIds !== undefined) {
       activeAIs = h.activeAIIds.map(id => aiList.find(a => a.id === id)).filter(Boolean);
       DEFAULT_AIS.forEach(d => {
@@ -927,6 +1106,7 @@ function renderAISetupGrid() {
     const key = cfg?._key || '';
     const hasKey = !!key;
     const consoleUrl = ai.apiConsole || '#';
+    const modelSelector = hasKey ? buildModelSelector(ai.id, ai.provider, cfg?.model || '') : '';
     return `
     <div class="ai-setup-row" id="airow-${ai.id}">
       <img src="${ai.icon}" class="ai-setup-icon" onerror="this.style.display='none'">
@@ -947,6 +1127,7 @@ function renderAISetupGrid() {
         ${hasKey ? `<button class="ai-test-btn" id="testbtn-${ai.id}" onclick="testApiKey('${ai.id}')" title="Test this API key">Test</button>` : ''}
         <a class="ai-info-btn" href="${consoleUrl}" target="_blank" title="Get API key for ${ai.name}">↗</a>
       </div>
+      ${modelSelector}
       <button class="ai-remove-btn" onclick="removeAI('${ai.id}')" title="Remove ${ai.name} from hive">🗑</button>
     </div>`;
   }).join('');
@@ -1010,6 +1191,10 @@ function saveKeyForAI(id, val, inputEl) {
   saveSettings();
   // Move focus away so user knows it saved
   if (inputEl) inputEl.blur();
+  // Background fetch models for this provider if key was just added
+  if (val.trim() && MODEL_FILTERS[ai.provider] !== null) {
+    fetchModelsForProvider(ai.provider).then(() => renderAIRow(id));
+  }
   // Re-render just this row so the ✕ Key button appears/disappears correctly
   renderAIRow(id);
   toast(val.trim() ? `🔑 ${ai.name} key saved` : `🗑 ${ai.name} key cleared`, 2000);
@@ -1043,6 +1228,20 @@ function renderAIRow(id) {
     ${hasKey ? `<button class="ai-test-btn" id="testbtn-${ai.id}" onclick="testApiKey('${ai.id}')" title="Test connection">Test</button>` : ''}
     <a class="ai-info-btn" href="${consoleUrl}" target="_blank" title="Get API key for ${ai.name}">↗</a>
   `;
+  // Insert/update model selector
+  let modelSelWrap = rowEl.querySelector('.model-select-wrap');
+  if (hasKey) {
+    const modelSel = buildModelSelector(ai.id, ai.provider, cfg?.model || '');
+    if (modelSelWrap) {
+      modelSelWrap.outerHTML = modelSel;
+    } else {
+      // Insert before the remove button
+      const removeBtn = rowEl.querySelector('.ai-remove-btn, .ai-remove-placeholder');
+      if (removeBtn) removeBtn.insertAdjacentHTML('beforebegin', modelSel);
+    }
+  } else if (modelSelWrap) {
+    modelSelWrap.remove();
+  }
   // Update remove button outside key-wrap
   const removeBtn = rowEl.querySelector('.ai-remove-btn, .ai-remove-placeholder');
   if (removeBtn) {
@@ -1242,7 +1441,7 @@ function addCustomAI() {
     },
     anthropic: {
       headersFn: k => ({ 'Content-Type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01' }),
-      bodyFn: (model, prompt) => JSON.stringify({ model: 'claude-opus-4-5', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] }),
+      bodyFn: (model, prompt) => JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] }),
       extractFn: d => d?.content?.[0]?.text || ''
     },
     google: {
@@ -2847,7 +3046,8 @@ async function callAPI(ai, prompt) {
 
   let response;
   try {
-    response = await fetch(cfg.endpoint, {
+    const endpoint = cfg.endpointFn ? cfg.endpointFn(cfg.model) : cfg.endpoint;
+    response = await fetch(endpoint, {
       method: 'POST',
       headers: cfg.headersFn(cfg._key),
       body: cfg.bodyFn(cfg.model, prompt)

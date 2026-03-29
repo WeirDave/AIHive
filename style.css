@@ -488,6 +488,7 @@ html, body {
 .ai-setup-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 12px;
   border: 1px dashed var(--border2);
@@ -1888,6 +1889,38 @@ html, body {
 }
 .ai-test-btn:hover { background: var(--blue-dim); }
 .ai-test-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── MODEL SELECTOR ── */
+.model-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 0 48px; /* align with key input area */
+  width: 100%;
+  box-sizing: border-box;
+}
+.model-select {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  min-width: 220px;
+  max-width: 340px;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.model-select:focus { border-color: var(--accent); outline: none; }
+.model-select-note {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .ai-remove-btn {
   background: transparent;
   border: 1px solid var(--border2);
@@ -4664,4 +4697,39 @@ kbd {
   background: var(--accent);
   color: #000;
   border-color: var(--accent);
+}
+
+/* ── MODEL SELECTOR ── */
+.model-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 4px 8px;
+  flex-wrap: wrap;
+}
+.model-select {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  cursor: pointer;
+  min-width: 200px;
+  max-width: 320px;
+  transition: border-color 0.15s;
+}
+.model-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.model-select-note {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+[data-theme="light"] .model-select { background: #f4f4f4; }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .model-select { background: #f4f4f4; }
 }
