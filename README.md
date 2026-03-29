@@ -146,10 +146,10 @@ Two clocks sit above the Live Console:
 | AI | Provider | Notes |
 |---|---|---|
 | ChatGPT | OpenAI | `gpt-4.1` — excellent at high-volume document work |
-| Claude | Anthropic | `claude-opus-4-5` — large context, precise instruction following |
-| Gemini | Google | `gemini-flash-latest` — **free API tier available**, great starting point |
+| Claude | Anthropic | `claude-sonnet-4-6` — large context, precise instruction following |
+| Gemini | Google | `gemini-2.5-flash` — **free API tier available**, great starting point |
 | DeepSeek | DeepSeek | `deepseek-chat` — very low cost per token, strong Builder |
-| Grok | xAI | `grok-3` — good context window |
+| Grok | xAI | `grok-4` — good context window |
 | Perplexity | Perplexity | `sonar-pro` — search-aware, works well as a reviewer |
 | Copilot | Microsoft | `gpt-4o` — OpenAI-compatible endpoint |
 | Custom | Any | Add any AI with an OpenAI-compatible API endpoint |
@@ -169,6 +169,12 @@ AI Hive runs entirely in your browser — no install, no server, no account requ
 1. Download or clone this repo
 2. Open `index.html` in your browser
 3. That's it — no build step, no dependencies
+
+---
+
+## User Guide
+
+For detailed usage instructions — writing effective goals, handling conflicts, course correcting mid-session, and knowing when you're done — see the **[Working with the Hive](https://weirdave.github.io/AIHive/working-with-the-hive.html)** guide.
 
 ---
 
