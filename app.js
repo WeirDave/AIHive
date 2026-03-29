@@ -2248,7 +2248,7 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
-  showHiveFinish({ duration: 6000, smokeBursts: 12 });
+  showHiveFinish({ duration: 4000, smokeBursts: 10 });
   setTimeout(() => {
     clearProject();
     goToScreen('screen-project');
