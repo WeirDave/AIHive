@@ -6,7 +6,7 @@
 
 **Orchestrate the Hive**
 
-Put a team of AI assistants to work on your document — simultaneously. One writes. The rest review. Every round, it gets better.
+AI Hive orchestrates a team of AIs around your document — every round, all of them review, one of them builds, and the result gets better each time.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-3.0-orange.svg)](https://github.com/WeirDave/AIHive/releases)
@@ -15,8 +15,6 @@ Put a team of AI assistants to work on your document — simultaneously. One wri
 <a href="https://weirdave.github.io/AIHive/" target="_blank"><strong>→ Launch AI Hive</strong></a>
 
 </div>
-
----
 
 ![AI Hive Welcome Screen](screenshots/screenshot_welcome_dark.png)
 
