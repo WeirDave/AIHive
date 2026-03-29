@@ -798,6 +798,9 @@ function clearProject() {
   localStorage.removeItem('aihive_conflict_ledger');
   window._aiWarnings = {};
   localStorage.removeItem('aihive_ai_warnings');
+  window._lastPDFPages = null;
+  localStorage.removeItem('aihive_v2_source_type');
+  localStorage.removeItem('aihive_v2_has_pdf_pages');
   projectClockReset();
   toast('🗑 Project cleared — AI keys and settings kept');
 }
@@ -1310,6 +1313,7 @@ function validateAndContinue() {
     if (btn) btn.innerHTML = '<img src="images/AI_Hive_Project_Bee_v1.png" style="width:36px;height:36px;object-fit:contain;vertical-align:middle;margin-right:8px;"> Continue to Project Setup →';
     renderBeeStatusGrid();
     goToScreen('screen-work');
+    showReExtractBanner();
   } else {
     goToScreen('screen-project');
     updateLaunchRequirements();
@@ -1373,32 +1377,54 @@ async function processFile(file) {
   status.style.color = 'var(--blue)';
 
   try {
-    let text = '';
+    let result = { text: '', warnings: [], sourceType: ext };
+
     if (ext === 'txt') {
-      text = await file.text();
+      result.text = await file.text();
     } else if (ext === 'pdf') {
-      text = await extractPDF(file);
+      result = await extractPDF(file);
     } else if (ext === 'docx') {
-      text = await extractDOCX(file);
+      result = await extractDOCX(file);
     } else if (ext === 'pptx') {
-      text = await extractPPTX(file);
+      result = await extractPPTX(file);
     } else {
       throw new Error('Unsupported file type');
     }
-    docText = text.trim();
-    // Save extracted text immediately so refresh doesn't lose it
+
+    docText = result.text.trim();
     saveSession();
-    // Save filename for status restoration
-    try { localStorage.setItem('aihive_v2_filename', file.name); } catch(e) {}
-    const warnNote = ext === 'pptx' ? ' — check Live Console for any slides that couldn\'t be read' : '';
-    status.textContent = `✅ Extracted ${docText.length.toLocaleString()} characters from ${file.name}${warnNote}`;
-    status.style.background = 'var(--green-dim)';
-    status.style.borderColor = 'var(--green)';
-    status.style.color = 'var(--green)';
+    try {
+      localStorage.setItem('aihive_v2_filename', file.name);
+      localStorage.setItem('aihive_v2_source_type', result.sourceType);
+    } catch(e) {}
+
+    // Show status — green if clean, amber if warnings
+    if (result.warnings.length > 0) {
+      status.textContent = `⚠️ ${docText.length.toLocaleString()} chars from ${file.name} — ${result.warnings[0]}`;
+      status.style.background = 'var(--accent-dim)';
+      status.style.borderColor = 'var(--accent)';
+      status.style.color = 'var(--accent)';
+      // Show all warnings as stacked lines below
+      if (result.warnings.length > 1) {
+        result.warnings.slice(1).forEach(w => {
+          const line = document.createElement('div');
+          line.style.cssText = 'font-size:11px;margin-top:4px;opacity:0.85;';
+          line.textContent = '↳ ' + w;
+          status.appendChild(line);
+        });
+      }
+    } else {
+      status.textContent = `✅ ${docText.length.toLocaleString()} characters extracted from ${file.name}`;
+      status.style.background = 'var(--green-dim)';
+      status.style.borderColor = 'var(--green)';
+      status.style.color = 'var(--green)';
+    }
+
     const clearRow = document.getElementById('fileClearRow');
     if (clearRow) clearRow.style.display = 'block';
+    updateLaunchRequirements();
   } catch(e) {
-    status.textContent = `❌ Could not read file: ${e.message}. Try pasting the text instead.`;
+    status.textContent = `❌ Could not read file: ${e.message}`;
     status.style.background = 'var(--red-dim)';
     status.style.borderColor = 'var(--red)';
     status.style.color = 'var(--red)';
@@ -1406,7 +1432,9 @@ async function processFile(file) {
 }
 
 async function extractPDF(file) {
-  // Step 1: attempt text-based extraction via PDF.js
+  const result = { text: '', warnings: [], sourceType: 'pdf' };
+
+  // Load PDF.js
   if (!window.pdfjsLib) {
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
     window.pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -1414,13 +1442,12 @@ async function extractPDF(file) {
   }
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  // Step 1: attempt position-aware text extraction
   let text = '';
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    // Use position-aware joining — only insert a space when there's a meaningful
-    // horizontal gap between text runs, avoiding the character-spacing artifact
-    // where Word-exported PDFs split every character into its own run.
     let pageText = '';
     let lastX = null;
     let lastWidth = 0;
@@ -1429,7 +1456,6 @@ async function extractPDF(file) {
       const x = item.transform ? item.transform[4] : null;
       if (lastX !== null && x !== null) {
         const gap = x - (lastX + lastWidth);
-        // Only insert space if gap is larger than ~1 unit (real word gap vs character spacing)
         if (gap > 1) pageText += ' ';
       }
       pageText += item.str;
@@ -1440,27 +1466,43 @@ async function extractPDF(file) {
   }
   text = text.trim();
 
-  // Step 2: check if extraction looks like a scanned/image PDF
-  // Heuristic: less than 80 characters per page on average = likely scanned
+  // Step 2: detect garbled or scanned output
+  // Trigger 1: scanned/image PDF — less than 80 chars per page
   const avgCharsPerPage = text.length / pdf.numPages;
-  if (avgCharsPerPage >= 80) return text;
+  // Trigger 2: character-spacing artifacts — average word length under 2.5
+  const tokens = text.split(/\s+/).filter(Boolean);
+  const avgWordLen = tokens.length > 20
+    ? tokens.reduce((s, t) => s + t.length, 0) / tokens.length
+    : 99;
+  const isScanned = avgCharsPerPage < 80;
+  const isGarbled = avgWordLen < 2.5;
 
-  // Step 3: scanned PDF detected — attempt vision transcription
-  const status = document.getElementById('fileStatus');
-  if (status) {
-    status.textContent = `⚠️ PDF appears to be scanned or image-based — attempting vision transcription… check Live Console`;
-    status.style.background = 'var(--accent-dim)';
-    status.style.borderColor = 'var(--accent)';
-    status.style.color = 'var(--accent)';
+  if (!isScanned && !isGarbled) {
+    // Clean extraction — store page images for re-extract just in case
+    result.text = text;
+    await storePDFPageImages(pdf);
+    return result;
   }
 
-  // Find a vision-capable AI with a saved key — try Builder first, then ChatGPT, then Gemini
+  // Step 3: bad extraction detected — attempt vision transcription
+  const reason = isScanned ? 'scanned/image-based PDF detected' : 'character-spacing artifacts detected';
+  const status = document.getElementById('fileStatus');
+  if (status) {
+    status.textContent = `⏳ ${reason.charAt(0).toUpperCase() + reason.slice(1)} — attempting AI vision transcription…`;
+    status.style.background = 'var(--blue-dim)';
+    status.style.borderColor = 'var(--blue)';
+    status.style.color = 'var(--blue)';
+  }
+
+  // Render pages to images for vision and store for re-extract
+  const pageImages = await renderPDFToImages(pdf);
+  window._lastPDFPages = pageImages;
+  try { localStorage.setItem('aihive_v2_has_pdf_pages', '1'); } catch(e) {}
+
+  // Find vision-capable AI
   const visionProviders = ['chatgpt', 'gemini'];
   const builderAI = aiList.find(a => a.id === builder);
-  const candidateIds = [
-    ...(builderAI ? [builderAI.provider] : []),
-    ...visionProviders
-  ];
+  const candidateIds = [...(builderAI ? [builderAI.provider] : []), ...visionProviders];
   let visionCfg = null;
   let visionKey = null;
   for (const provider of candidateIds) {
@@ -1469,104 +1511,123 @@ async function extractPDF(file) {
   }
 
   if (!visionCfg) {
-    consoleLog(`⚠️ PDF appears scanned but no vision-capable AI key found (need ChatGPT or Gemini). Try pasting the text instead.`, 'warn');
-    throw new Error('Scanned PDF — no vision AI available. Try pasting the text instead.');
+    // No vision AI available — return garbled text with a warning so user knows
+    result.text = text;
+    result.warnings.push('Text may be garbled — no vision AI key available to fix it. Use the Re-extract button on the work screen after adding a ChatGPT or Gemini key, or paste the text manually.');
+    return result;
   }
 
-  consoleLog(`🔍 Scanned PDF detected — sending ${pdf.numPages} page(s) to ${visionCfg.label} for vision transcription…`, 'info');
+  const transcribed = await runVisionTranscription(pageImages, visionCfg, visionKey);
+  result.text = transcribed;
+  result.sourceType = 'pdf-vision';
+  result.warnings.push(`Extracted via AI vision (${visionCfg.label}) — check for accuracy before running rounds`);
+  return result;
+}
 
-  // Render each page to a canvas and collect base64 images
-  const pageImages = [];
+// Render PDF pages to base64 JPEG images
+async function renderPDFToImages(pdf) {
+  const images = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const viewport = page.getViewport({ scale: 1.5 });
     const canvas = document.createElement('canvas');
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    const ctx = canvas.getContext('2d');
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-    pageImages.push(base64);
-    consoleLog(`📄 PDF page ${i} of ${pdf.numPages} rendered`, 'info');
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    images.push(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
   }
+  return images;
+}
 
-  // Build vision API request — ChatGPT and Gemini have different formats
-  let transcribed = '';
+// Store PDF pages in memory for re-extract on work screen
+async function storePDFPageImages(pdf) {
   try {
-    if (visionCfg.provider === 'chatgpt') {
-      const imageContent = pageImages.map(b64 => ({
-        type: 'image_url',
-        image_url: { url: `data:image/jpeg;base64,${b64}`, detail: 'high' }
-      }));
-      const body = JSON.stringify({
-        model: 'gpt-4o',
-        messages: [{
-          role: 'user',
-          content: [
-            ...imageContent,
-            { type: 'text', text: 'Transcribe all text from these document pages exactly as it appears. Preserve paragraph breaks and section structure. Return only the plain text — no commentary, no formatting symbols.' }
-          ]
-        }],
-        max_tokens: 4096
-      });
-      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${visionKey}` },
-        body
-      });
-      const data = await resp.json();
-      transcribed = data?.choices?.[0]?.message?.content || '';
-
-    } else if (visionCfg.provider === 'gemini') {
-      const imageParts = pageImages.map(b64 => ({
-        inline_data: { mime_type: 'image/jpeg', data: b64 }
-      }));
-      const body = JSON.stringify({
-        contents: [{
-          parts: [
-            ...imageParts,
-            { text: 'Transcribe all text from these document pages exactly as it appears. Preserve paragraph breaks and section structure. Return only the plain text — no commentary, no formatting symbols.' }
-          ]
-        }]
-      });
-      const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${visionKey}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }
-      );
-      const data = await resp.json();
-      transcribed = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    }
+    window._lastPDFPages = await renderPDFToImages(pdf);
+    localStorage.setItem('aihive_v2_has_pdf_pages', '1');
   } catch(e) {
-    consoleLog(`❌ Vision transcription failed: ${e.message}. Try pasting the text instead.`, 'error');
-    throw new Error('Vision transcription failed. Try pasting the text instead.');
+    window._lastPDFPages = null;
+  }
+}
+
+// Run vision transcription against stored page images
+async function runVisionTranscription(pageImages, visionCfg, visionKey) {
+  const prompt = 'Transcribe all text from these document pages exactly as it appears. Preserve paragraph breaks and section structure. Return only the plain text — no commentary, no formatting symbols.';
+
+  if (visionCfg.provider === 'chatgpt') {
+    const body = JSON.stringify({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: [
+        ...pageImages.map(b64 => ({ type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}`, detail: 'high' } })),
+        { type: 'text', text: prompt }
+      ]}],
+      max_tokens: 4096
+    });
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${visionKey}` },
+      body
+    });
+    const data = await resp.json();
+    const transcribed = data?.choices?.[0]?.message?.content || '';
+    if (!transcribed.trim()) throw new Error('Vision transcription returned no text');
+    return transcribed;
   }
 
-  if (!transcribed.trim()) {
-    consoleLog(`❌ Vision transcription returned empty — the PDF may be too complex. Try pasting the text instead.`, 'error');
-    throw new Error('Vision transcription returned no text. Try pasting the text instead.');
+  if (visionCfg.provider === 'gemini') {
+    const body = JSON.stringify({
+      contents: [{ parts: [
+        ...pageImages.map(b64 => ({ inline_data: { mime_type: 'image/jpeg', data: b64 } })),
+        { text: prompt }
+      ]}]
+    });
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${visionKey}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }
+    );
+    const data = await resp.json();
+    const transcribed = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!transcribed.trim()) throw new Error('Vision transcription returned no text');
+    return transcribed;
   }
 
-  consoleLog(`✅ Vision transcription complete — ${transcribed.length.toLocaleString()} characters extracted via ${visionCfg.label}`, 'success');
-  return transcribed;
+  throw new Error('No supported vision provider available');
 }
 
 async function extractDOCX(file) {
+  const result = { text: '', warnings: [], sourceType: 'docx' };
   if (!window.mammoth) {
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
   }
   const arrayBuffer = await file.arrayBuffer();
-  const result = await window.mammoth.extractRawText({ arrayBuffer });
-  return result.value;
+  const mammothResult = await window.mammoth.extractRawText({ arrayBuffer });
+  result.text = mammothResult.value;
+
+  // Mammoth returns messages about content it couldn't extract
+  if (mammothResult.messages && mammothResult.messages.length > 0) {
+    const skipped = mammothResult.messages.filter(m => m.type === 'warning').length;
+    if (skipped > 0) {
+      result.warnings.push(`${skipped} element${skipped > 1 ? 's' : ''} couldn't be extracted (text boxes, embedded objects, or SmartArt) — check the working document for gaps`);
+    }
+  }
+
+  // Completeness check — warn if output seems very short for the file size
+  const fileSizeKB = file.size / 1024;
+  const charsPerKB = result.text.length / fileSizeKB;
+  if (fileSizeKB > 20 && charsPerKB < 10) {
+    result.warnings.push('Output seems short for the file size — the document may contain mostly images, tables, or embedded objects that couldn\'t be extracted');
+  }
+
+  return result;
 }
 
 async function extractPPTX(file) {
+  const result = { text: '', warnings: [], sourceType: 'pptx' };
   if (!window.JSZip) {
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
   }
   const arrayBuffer = await file.arrayBuffer();
   const zip = await window.JSZip.loadAsync(arrayBuffer);
 
-  // Get slide files in order
   const slideFiles = Object.keys(zip.files)
     .filter(name => /^ppt\/slides\/slide[0-9]+\.xml$/.test(name))
     .sort((a, b) => {
@@ -1576,55 +1637,35 @@ async function extractPPTX(file) {
     });
 
   let text = '';
-  let warningSlides = [];
+  const warningSlides = [];
 
   for (const slideFile of slideFiles) {
     const slideNum = parseInt(slideFile.match(/slide(\d+)/)[1]);
     const xml = await zip.files[slideFile].async('text');
-
-    // Extract text runs (<a:t>) in document order — preserves reading flow
     const runs = [];
     const runRegex = /<a:t[^>]*>([^<]*)<\/a:t>/g;
     let m;
     while ((m = runRegex.exec(xml)) !== null) {
       const t = m[1]
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&apos;/g, "'")
-        .trim();
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&apos;/g, "'").trim();
       if (t) runs.push(t);
     }
-
-    if (runs.length === 0) {
-      warningSlides.push(slideNum);
-      continue;
-    }
-
+    if (runs.length === 0) { warningSlides.push(slideNum); continue; }
     text += `--- Slide ${slideNum} ---\n${runs.join(' ')}\n\n`;
+  }
+
+  if (!text.trim()) {
+    throw new Error('No text found in this PowerPoint — the presentation may be entirely image-based. Try Paste Text instead.');
   }
 
   if (warningSlides.length > 0) {
     const slideList = warningSlides.join(', ');
-    const msg = `⚠️ Slide${warningSlides.length > 1 ? 's' : ''} ${slideList} had no extractable text — may be image-only. Copy any missing content manually after import.`;
-    // Surface in status bar (visible on setup screen) and console (visible on work screen)
-    const status = document.getElementById('fileStatus');
-    if (status && status.style.display !== 'none') {
-      status.textContent = `✅ Extracted — but slide${warningSlides.length > 1 ? 's' : ''} ${slideList} had no text. Check those slides and paste any missing content manually.`;
-      status.style.background = 'var(--accent-dim)';
-      status.style.borderColor = 'var(--accent)';
-      status.style.color = 'var(--accent)';
-    }
-    console.warn('[AI Hive] ' + msg);
+    result.warnings.push(`Slide${warningSlides.length > 1 ? 's' : ''} ${slideList} had no extractable text — may be image-only or use embedded objects. Check those slides and paste any missing content into the working document manually.`);
   }
 
-  if (!text.trim()) {
-    console.error('[AI Hive] PPTX: no text could be extracted from any slide. The presentation may be entirely image-based.');
-    throw new Error('No text found in this PowerPoint. Try Paste Text instead.');
-  }
-
-  return text.trim();
+  result.text = text.trim();
+  return result;
 }
 
 function loadScript(src) {
@@ -1633,6 +1674,77 @@ function loadScript(src) {
     s.src = src; s.onload = resolve; s.onerror = reject;
     document.head.appendChild(s);
   });
+}
+
+function showReExtractBanner() {
+  const sourceType = localStorage.getItem('aihive_v2_source_type') || '';
+  const hasPDFPages = localStorage.getItem('aihive_v2_has_pdf_pages') === '1';
+  const banner = document.getElementById('reExtractBanner');
+  if (!banner) return;
+  // Only show for PDF imports, only before any rounds have run
+  if ((sourceType === 'pdf' || sourceType === 'pdf-vision') && round === 1 && history.length === 0) {
+    banner.style.display = 'flex';
+    // Update button state based on whether we have stored pages
+    const btn = document.getElementById('reExtractBtn');
+    if (btn) {
+      btn.disabled = !hasPDFPages && !window._lastPDFPages;
+      btn.title = (!hasPDFPages && !window._lastPDFPages)
+        ? 'PDF pages not available — please re-upload the file from the Project screen'
+        : 'Re-extract this PDF using AI vision';
+    }
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+async function reExtractWithVision() {
+  const btn = document.getElementById('reExtractBtn');
+  const banner = document.getElementById('reExtractBanner');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Extracting…'; }
+
+  // Find vision AI
+  const visionProviders = ['chatgpt', 'gemini'];
+  const builderAI = aiList.find(a => a.id === builder);
+  const candidateIds = [...(builderAI ? [builderAI.provider] : []), ...visionProviders];
+  let visionCfg = null;
+  let visionKey = null;
+  for (const provider of candidateIds) {
+    const cfg = API_CONFIGS[provider];
+    if (cfg?._key) { visionCfg = { ...cfg, provider }; visionKey = cfg._key; break; }
+  }
+
+  if (!visionCfg) {
+    toast('⚠️ No vision AI available — add a ChatGPT or Gemini API key first');
+    if (btn) { btn.disabled = false; btn.textContent = '🔍 Re-extract with AI Vision'; }
+    return;
+  }
+
+  try {
+    const pageImages = window._lastPDFPages;
+    if (!pageImages || pageImages.length === 0) {
+      toast('⚠️ PDF pages not available — please re-upload from the Project screen');
+      if (btn) { btn.disabled = false; btn.textContent = '🔍 Re-extract with AI Vision'; }
+      return;
+    }
+
+    consoleLog(`🔍 Re-extracting PDF via ${visionCfg.label} vision…`, 'info');
+    const transcribed = await runVisionTranscription(pageImages, visionCfg, visionKey);
+
+    // Update working document
+    docText = transcribed;
+    const docTa = document.getElementById('workDocument');
+    if (docTa) { docTa.value = transcribed; updateLineNumbers(); }
+    saveSession();
+    localStorage.setItem('aihive_v2_source_type', 'pdf-vision');
+
+    consoleLog(`✅ Re-extraction complete — ${transcribed.length.toLocaleString()} characters via ${visionCfg.label}`, 'success');
+    toast(`✅ Document re-extracted successfully via ${visionCfg.label}`);
+    if (banner) banner.style.display = 'none';
+  } catch(e) {
+    consoleLog(`❌ Re-extraction failed: ${e.message}`, 'error');
+    toast(`❌ Re-extraction failed: ${e.message}`);
+    if (btn) { btn.disabled = false; btn.textContent = '🔍 Re-extract with AI Vision'; }
+  }
 }
 
 function startSession() {
@@ -1659,6 +1771,7 @@ function startSession() {
   saveSettings();
   goToScreen('screen-work');
   initWorkScreen(true);
+  showReExtractBanner();
   // Save original document as Round 0 — done AFTER initWorkScreen so notes are populated
   if (docText && history.length === 0) {
     history.push({

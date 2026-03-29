@@ -428,6 +428,12 @@
         <div class="doc-stats-row">
           <span class="doc-stats" id="docStats"></span>
         </div>
+        <!-- PDF re-extract banner — shown when PDF import may be garbled -->
+        <div class="reextract-banner" id="reExtractBanner" style="display:none">
+          <span class="reextract-banner-text">📄 Imported from PDF — if the text looks garbled, re-extract it using AI vision.</span>
+          <button class="btn btn-sm" id="reExtractBtn" onclick="reExtractWithVision()">🔍 Re-extract with AI Vision</button>
+          <button class="reextract-dismiss" onclick="document.getElementById('reExtractBanner').style.display='none'" title="Dismiss">✕</button>
+        </div>
         <div class="work-doc-editor">
           <div class="work-doc-scroll">
             <div class="work-line-numbers" id="lineNumbers"></div>

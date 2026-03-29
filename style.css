@@ -3106,8 +3106,21 @@ kbd {
 .decision-card.resolved {
   border-color: #34d399;
 }
+/* Repeat offender — hot card (3+ appearances) */
+.decision-card.decision-card-hot {
+  border-color: #f87171;
+  background: rgba(239,68,68,0.06);
+}
+[data-theme="light"] .decision-card.decision-card-hot { background: rgba(239,68,68,0.04); }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .decision-card.decision-card-hot { background: rgba(239,68,68,0.04); }
+}
 .decision-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 .decision-badge {
   font-size: 11px;
@@ -3118,6 +3131,41 @@ kbd {
 }
 .decision-card.resolved .decision-badge {
   color: #34d399;
+}
+/* Repeat badge — shown when conflict appears 2+ times */
+.conflict-repeat-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(245,166,35,0.12);
+  border: 1px solid rgba(245,166,35,0.4);
+  color: var(--amber);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+/* Hot badge — 3+ appearances */
+.conflict-repeat-badge.conflict-repeat-hot {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.5);
+  color: #f87171;
+}
+[data-theme="light"] .conflict-repeat-badge { background: rgba(245,166,35,0.08); }
+[data-theme="light"] .conflict-repeat-badge.conflict-repeat-hot { background: rgba(239,68,68,0.08); }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .conflict-repeat-badge { background: rgba(245,166,35,0.08); }
+  [data-theme="auto"] .conflict-repeat-badge.conflict-repeat-hot { background: rgba(239,68,68,0.08); }
+}
+/* Repeat offender summary warning banner */
+.conflict-repeat-warning {
+  background: rgba(239,68,68,0.08);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,0.4);
+  margin-bottom: 10px;
+}
+[data-theme="light"] .conflict-repeat-warning { background: rgba(239,68,68,0.05); }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .conflict-repeat-warning { background: rgba(239,68,68,0.05); }
 }
 .decision-question {
   font-size: 13px;
@@ -4013,6 +4061,49 @@ kbd {
 @media (prefers-color-scheme: dark) {
   [data-theme="auto"] .doc-stats { color: var(--accent); border-color: var(--border); }
 }
+
+/* ── PDF RE-EXTRACT BANNER ── */
+.reextract-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(245,166,35,0.08);
+  border-bottom: 1px solid rgba(245,166,35,0.3);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+[data-theme="light"] .reextract-banner {
+  background: rgba(245,166,35,0.06);
+  border-bottom-color: rgba(245,166,35,0.4);
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .reextract-banner {
+    background: rgba(245,166,35,0.06);
+    border-bottom-color: rgba(245,166,35,0.4);
+  }
+}
+.reextract-banner-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  flex: 1;
+  min-width: 0;
+}
+[data-theme="light"] .reextract-banner-text { color: #4b5563; }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .reextract-banner-text { color: #4b5563; }
+}
+.reextract-dismiss {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+.reextract-dismiss:hover { color: var(--text); }
 
 /* ══════════════════════════════════════
    UTILITY CLASSES
