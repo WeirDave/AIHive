@@ -794,6 +794,10 @@ function clearProject() {
   round = 1; phase = 'draft'; history = []; docText = '';
   window._resolvedDecisions = [];
   localStorage.removeItem('aihive_resolved_decisions');
+  window._conflictLedger = [];
+  localStorage.removeItem('aihive_conflict_ledger');
+  window._aiWarnings = {};
+  localStorage.removeItem('aihive_ai_warnings');
   projectClockReset();
   toast('🗑 Project cleared — AI keys and settings kept');
 }
@@ -2266,6 +2270,16 @@ function buildPromptForAI(ai, reviewerResponses) {
       prompt += `\n`;
     }
 
+    // Inject targeted per-AI warnings for repeat offenders
+    const aiWarnings = window._aiWarnings?.[ai.id];
+    if (aiWarnings && aiWarnings.length > 0) {
+      prompt += `SPECIFIC WARNINGS FOR YOU — REPEATED VIOLATIONS:\n${sep}\nYou have repeatedly raised the following after the user already resolved them. This is your final notice — do NOT raise these again under any circumstances:\n`;
+      aiWarnings.forEach((w, i) => {
+        prompt += `${i + 1}. "${w.original}" — the user has chosen "${w.chosen}" and this is final. Stop suggesting alternatives to this.\n`;
+      });
+      prompt += `\n`;
+    }
+
     prompt += `${sep}\nSEND TO ALL AIs\n${sep}\n\n`;
     prompt += getPrompt('refine', DEFAULT_PHASE_INSTRUCTIONS.refine);
   }
@@ -2831,6 +2845,68 @@ try {
   window._resolvedDecisions = [];
 }
 
+// Conflict ledger — tracks how many times each conflict has appeared
+// Used to detect repeat offenders (e.g. Grok re-raising settled points)
+try {
+  window._conflictLedger = JSON.parse(localStorage.getItem('aihive_conflict_ledger') || '[]');
+} catch(e) {
+  window._conflictLedger = [];
+}
+
+// Per-AI warnings — targeted instructions injected into specific AI prompts
+// when they keep re-raising resolved conflicts
+try {
+  window._aiWarnings = JSON.parse(localStorage.getItem('aihive_ai_warnings') || '{}');
+} catch(e) {
+  window._aiWarnings = {};
+}
+
+// ── CONFLICT LEDGER ──
+// Generates a stable fingerprint from a conflict's key text
+// so we can detect the same conflict reappearing across rounds
+function fingerprintConflict(d) {
+  // Anchor on the actual texts being debated rather than the question wording
+  // so re-worded re-raises of the same underlying conflict still match
+  const parts = [d.current || '', ...(d.options || []).map(o => o.text || '')];
+  const raw = parts.sort().join('|').toLowerCase()
+    .replace(/[^a-z0-9|]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  let h = 0;
+  for (let i = 0; i < raw.length; i++) {
+    h = (Math.imul(31, h) + raw.charCodeAt(i)) | 0;
+  }
+  return h.toString(36);
+}
+
+function updateConflictLedger(userDecisions) {
+  if (!userDecisions || userDecisions.length === 0) return;
+  const ledger = window._conflictLedger;
+  userDecisions.forEach(d => {
+    const fp = fingerprintConflict(d);
+    const existing = ledger.find(e => e.fingerprint === fp);
+    if (existing) {
+      existing.count++;
+      existing.lastRound = round;
+      existing.text = d.question || d.current || '';
+    } else {
+      ledger.push({
+        fingerprint: fp,
+        text: d.question || d.current || '',
+        count: 1,
+        firstRound: round,
+        lastRound: round,
+        suppressed: false
+      });
+    }
+  });
+  try { localStorage.setItem('aihive_conflict_ledger', JSON.stringify(ledger)); } catch(e) {}
+}
+
+function getLedgerEntry(d) {
+  return window._conflictLedger.find(e => e.fingerprint === fingerprintConflict(d));
+}
+
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
   if (!el) return;
@@ -2907,7 +2983,22 @@ function renderConflicts() {
   // Reset choices when new conflicts arrive
   window._decisionChoices = {};
 
+  // Update ledger with this round's conflicts
+  if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
+    updateConflictLedger(conflicts.userDecisions);
+  }
+
   let html = '';
+
+  // Check for repeat offenders to show summary warning
+  const repeats = (conflicts.userDecisions || [])
+    .map(d => getLedgerEntry(d))
+    .filter(e => e && e.count >= 3);
+  if (repeats.length > 0) {
+    html += `<div class="conflicts-section-header conflict-repeat-warning">
+      🔁 ${repeats.length} conflict${repeats.length > 1 ? 's have' : ' has'} appeared 3+ times — resolve ${repeats.length > 1 ? 'them' : 'it'} to stop the loop
+    </div>`;
+  }
 
   // USER DECISION cards
   if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
@@ -2916,9 +3007,19 @@ function renderConflicts() {
     </div>`;
     conflicts.userDecisions.forEach((d, di) => {
       const total = conflicts.userDecisions.length;
-      html += `<div class="decision-card" id="dcard-${di}">
+      const ledgerEntry = getLedgerEntry(d);
+      const repeatCount = ledgerEntry ? ledgerEntry.count : 1;
+      const isRepeat = repeatCount >= 2;
+      const isHot = repeatCount >= 3;
+      const repeatBadge = isRepeat
+        ? `<span class="conflict-repeat-badge ${isHot ? 'conflict-repeat-hot' : ''}">
+            🔁 Seen ${repeatCount}x
+           </span>`
+        : '';
+      html += `<div class="decision-card${isHot ? ' decision-card-hot' : ''}" id="dcard-${di}">
         <div class="decision-card-header">
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
+          ${repeatBadge}
         </div>
         <div class="decision-question">${esc(d.question)}</div>
         ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
@@ -2984,6 +3085,12 @@ function selectDecision(decisionIdx, optionIdx, total) {
     const customWrap = document.getElementById(`dcustom-${decisionIdx}`);
     if (customWrap) customWrap.style.display = 'none';
     card.classList.add('resolved');
+    // Store selected option text so Custom can pre-fill with it for easy editing
+    const optText = card.querySelector(`#dopt-${decisionIdx}-${optionIdx} .decision-opt-text`);
+    card.dataset.lastSelectedText = optText?.textContent?.replace(/^"|"$/g, '').trim() || '';
+    // Clear userEdited flag so switching options always re-pre-fills the textarea
+    const ta = document.getElementById(`dcustom-ta-${decisionIdx}`);
+    if (ta) delete ta.dataset.userEdited;
   }
 
   // Auto-scroll to next unresolved card
@@ -3001,7 +3108,17 @@ function selectCustomDecision(decisionIdx, total) {
     const customWrap = document.getElementById(`dcustom-${decisionIdx}`);
     if (customWrap) { customWrap.style.display = 'block'; }
     const ta = document.getElementById(`dcustom-ta-${decisionIdx}`);
-    if (ta) ta.focus();
+    if (ta) {
+      // Pre-fill with last selected option text if available, otherwise current doc text
+      const lastSelected = card?.dataset.lastSelectedText;
+      if (lastSelected && !ta.dataset.userEdited) {
+        ta.value = lastSelected;
+        ta.dataset.userEdited = '1';
+      }
+      ta.focus();
+      // Move cursor to end
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+    }
   }
   // Mark as custom but wait for text input before counting as complete
   const currentText = document.getElementById(`dcustom-ta-${decisionIdx}`)?.value.trim() || '';
@@ -3084,6 +3201,36 @@ function applyDecisions() {
     if (d.current && chosenText) {
       window._resolvedDecisions.push({ original: d.current, chosen: chosenText });
       localStorage.setItem('aihive_resolved_decisions', JSON.stringify(window._resolvedDecisions));
+      // Mark as suppressed in conflict ledger
+      const fp = fingerprintConflict(d);
+      const entry = window._conflictLedger.find(e => e.fingerprint === fp);
+      if (entry) {
+        entry.suppressed = true;
+        try { localStorage.setItem('aihive_conflict_ledger', JSON.stringify(window._conflictLedger)); } catch(e) {}
+
+        // If this conflict has been a repeat offender (3+), issue targeted per-AI warnings
+        // to the AIs who kept suggesting the losing option
+        if (entry.count >= 3) {
+          // Find which AIs suggested options OTHER than the chosen one
+          const losingOptions = d.options.filter(opt => opt.text !== chosenText && opt.ais);
+          losingOptions.forEach(opt => {
+            // opt.ais is a string like "Grok, DeepSeek"
+            const aiNames = opt.ais.split(',').map(n => n.trim().toLowerCase());
+            aiList.forEach(ai => {
+              if (aiNames.includes(ai.name.toLowerCase())) {
+                if (!window._aiWarnings[ai.id]) window._aiWarnings[ai.id] = [];
+                // Only add if not already warned about this exact conflict
+                const alreadyWarned = window._aiWarnings[ai.id].some(w => w.original === d.current);
+                if (!alreadyWarned) {
+                  window._aiWarnings[ai.id].push({ original: d.current, chosen: chosenText });
+                  consoleLog(`⚠️ Targeted warning issued to ${ai.name} — repeatedly raised "${d.current}" after it was resolved`, 'warn');
+                }
+              }
+            });
+          });
+          try { localStorage.setItem('aihive_ai_warnings', JSON.stringify(window._aiWarnings)); } catch(e) {}
+        }
+      }
     }
   });
 
