@@ -1080,10 +1080,6 @@ function loadSession() {
     if (s.projClockSeconds) _projClockSeconds = s.projClockSeconds;
     // If a document exists and we're still in draft, advance to refine
     if (docText && phase === 'draft' && round > 1) phase = 'refine';
-    if (s.consoleHTML) {
-      const el = document.getElementById('liveConsole');
-      if (el) el.innerHTML = s.consoleHTML;
-    }
     if (s.notes) {
       const notesEl = document.getElementById('workNotes');
       if (notesEl) notesEl.value = s.notes;
@@ -1117,7 +1113,7 @@ function renderAISetupGrid() {
           ${hasKey ? '🔑' : '⬜'}
         </div>
         <input type="password" class="ai-setup-key" id="key-${ai.id}"
-          placeholder="Paste key then press Enter to save…"
+          placeholder="Paste key — Enter to save…"
           value="${esc(key)}"
           ${!isActive ? 'disabled' : ''}
           onkeydown="if(event.key==='Enter'){saveKeyForAI('${ai.id}',this.value,this);}"
@@ -1126,9 +1122,9 @@ function renderAISetupGrid() {
         ${hasKey ? `<button class="ai-clear-key-btn" onclick="clearKeyForAI('${ai.id}')" title="Remove saved API key">✕ Key</button>` : ''}
         ${hasKey ? `<button class="ai-test-btn" id="testbtn-${ai.id}" onclick="testApiKey('${ai.id}')" title="Test this API key">Test</button>` : ''}
         <a class="ai-info-btn" href="${consoleUrl}" target="_blank" title="Get API key for ${ai.name}">↗</a>
+        <button class="ai-remove-btn" onclick="removeAI('${ai.id}')" title="Remove ${ai.name} from hive">🗑</button>
       </div>
       ${modelSelector}
-      <button class="ai-remove-btn" onclick="removeAI('${ai.id}')" title="Remove ${ai.name} from hive">🗑</button>
     </div>`;
   }).join('');
   renderBuilderPicker();
@@ -1218,7 +1214,7 @@ function renderAIRow(id) {
       ${hasKey ? '🔑' : '⬜'}
     </div>
     <input type="password" class="ai-setup-key" id="key-${ai.id}"
-      placeholder="Paste key then press Enter to save…"
+      placeholder="Paste key — Enter to save…"
       value="${esc(key)}"
       ${!isActive ? 'disabled' : ''}
       onkeydown="if(event.key==='Enter'){saveKeyForAI('${ai.id}',this.value,this);}"
@@ -1227,28 +1223,19 @@ function renderAIRow(id) {
     ${hasKey ? `<button class="ai-clear-key-btn" onclick="clearKeyForAI('${ai.id}')" title="Remove saved API key">✕ Key</button>` : ''}
     ${hasKey ? `<button class="ai-test-btn" id="testbtn-${ai.id}" onclick="testApiKey('${ai.id}')" title="Test connection">Test</button>` : ''}
     <a class="ai-info-btn" href="${consoleUrl}" target="_blank" title="Get API key for ${ai.name}">↗</a>
+    <button class="ai-remove-btn" onclick="removeAI('${ai.id}')" title="Remove ${ai.name} from hive">🗑</button>
   `;
-  // Insert/update model selector
+  // Insert/update model selector after key-wrap (its own full-width row)
   let modelSelWrap = rowEl.querySelector('.model-select-wrap');
   if (hasKey) {
     const modelSel = buildModelSelector(ai.id, ai.provider, cfg?.model || '');
     if (modelSelWrap) {
       modelSelWrap.outerHTML = modelSel;
     } else {
-      // Insert before the remove button
-      const removeBtn = rowEl.querySelector('.ai-remove-btn, .ai-remove-placeholder');
-      if (removeBtn) removeBtn.insertAdjacentHTML('beforebegin', modelSel);
+      rowEl.insertAdjacentHTML('beforeend', modelSel);
     }
   } else if (modelSelWrap) {
     modelSelWrap.remove();
-  }
-  // Update remove button outside key-wrap
-  const removeBtn = rowEl.querySelector('.ai-remove-btn, .ai-remove-placeholder');
-  if (removeBtn) {
-    removeBtn.className = 'ai-remove-btn';
-    removeBtn.title = `Remove ${ai.name} from hive`;
-    removeBtn.textContent = '🗑';
-    removeBtn.onclick = () => removeAI(id);
   }
 }
 
@@ -3293,11 +3280,6 @@ function renderConflicts() {
   // Reset choices when new conflicts arrive
   window._decisionChoices = {};
 
-  // Update ledger with this round's conflicts
-  if (conflicts.userDecisions && conflicts.userDecisions.length > 0) {
-    updateConflictLedger(conflicts.userDecisions);
-  }
-
   let html = '';
 
   // Check for repeat offenders to show summary warning
@@ -3326,7 +3308,8 @@ function renderConflicts() {
             🔁 Seen ${repeatCount}x
            </span>`
         : '';
-      html += `<div class="decision-card${isHot ? ' decision-card-hot' : ''}" id="dcard-${di}">
+      html += `<div class="decision-card${isHot ? ' decision-card-hot' : ''}" id="dcard-${di}"
+        data-option-texts="${esc(JSON.stringify(d.options.map(o => o.text || '')))}">
         <div class="decision-card-header">
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
           ${repeatBadge}
@@ -3419,10 +3402,17 @@ function selectCustomDecision(decisionIdx, total) {
     if (customWrap) { customWrap.style.display = 'block'; }
     const ta = document.getElementById(`dcustom-ta-${decisionIdx}`);
     if (ta) {
-      // Pre-fill with last selected option text if available, otherwise current doc text
+      // Pre-fill with last selected option text, or first option text, never blank
       const lastSelected = card?.dataset.lastSelectedText;
-      if (lastSelected && !ta.dataset.userEdited) {
-        ta.value = lastSelected;
+      let prefill = lastSelected;
+      if (!prefill) {
+        try {
+          const opts = JSON.parse(card?.dataset.optionTexts || '[]');
+          prefill = opts[0] || '';
+        } catch(e) {}
+      }
+      if (prefill && !ta.dataset.userEdited) {
+        ta.value = prefill;
         ta.dataset.userEdited = '1';
       }
       ta.focus();
@@ -3496,6 +3486,9 @@ function applyDecisions() {
     if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = '✅ Apply My Decisions to Document'; }
     return;
   }
+
+  // Update ledger NOW — user has committed their choices, this is the right time to count
+  updateConflictLedger(decisions);
 
   // Record resolved decisions so the Builder won't re-raise them
   Object.keys(window._decisionChoices).forEach(di => {
@@ -4076,12 +4069,20 @@ document.addEventListener('DOMContentLoaded', () => {
     projectName = proj.projectName || '';
   } catch(e) {}
 
-  if (hasSession && docText) {
-    // Active session with document — resume work screen
+  if (hasSession && (docText || history.length > 0)) {
+    // Active session — resume work screen
     goToScreen('screen-work');
     initWorkScreen();
-    _projClockRender(); // restore display
-    projectClockStart(); // resume counting
+    // Restore console HTML now that the work screen is visible
+    try {
+      const s = JSON.parse(localStorage.getItem(LS_SESSION) || '{}');
+      if (s.consoleHTML) {
+        const el = document.getElementById('liveConsole');
+        if (el) el.innerHTML = s.consoleHTML;
+      }
+    } catch(e) {}
+    _projClockRender();
+    projectClockStart();
   } else if (projectName) {
     // Named project in progress — resume at project setup
     goToScreen('screen-project');
