@@ -2233,6 +2233,7 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
+  playFlyingCarSound();
   showHiveFinish({ duration: 4000, smokeBursts: 10 });
   setTimeout(() => {
     clearProject();
