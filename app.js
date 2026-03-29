@@ -282,7 +282,7 @@ function playRoundCompleteSound() {
 function playSmokerSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.28, 0.56].forEach(offset => {
+    [0, 1.0, 2.0].forEach(offset => {
       const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
       const d = buf.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
@@ -300,7 +300,7 @@ function playSmokerSound() {
       n.start(ctx.currentTime + offset);
       n.stop(ctx.currentTime + offset + 0.52);
     });
-    setTimeout(() => ctx.close(), 1400);
+    setTimeout(() => ctx.close(), 3000);
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
