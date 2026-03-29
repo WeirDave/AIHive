@@ -676,6 +676,24 @@ function goToFree() {
   window.open('https://github.com/WeirDave/AIHive/releases/tag/v1.2', '_blank');
 }
 
+function openNavMenu() {
+  document.getElementById('navPanel')?.classList.add('open');
+  document.getElementById('navBackdrop')?.classList.add('open');
+}
+
+function closeNavMenu() {
+  document.getElementById('navPanel')?.classList.remove('open');
+  document.getElementById('navBackdrop')?.classList.remove('open');
+}
+
+function confirmGoHome() {
+  // Warn if there's an active session with rounds completed or a document loaded
+  if (history.length > 0 || docText) {
+    if (!confirm('Go back to the Home screen? Your session and document are saved — you can return to it by clicking Pro and navigating back to the work screen.')) return;
+  }
+  goToScreen('screen-welcome');
+}
+
 // ── SETTINGS PERSISTENCE (split storage) ──
 
 // saveHive — AI list + keys — persistent forever

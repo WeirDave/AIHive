@@ -860,6 +860,194 @@ html, body {
 }
 
 /* ══════════════════════════════════════
+   WORK SCREEN — HAMBURGER NAV
+══════════════════════════════════════ */
+.nav-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+  padding: 0;
+}
+.nav-hamburger:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.nav-hamburger span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--text-dim);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.nav-hamburger:hover span {
+  background: var(--accent);
+}
+
+/* Backdrop */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.nav-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+[data-theme="light"] .nav-backdrop { background: rgba(0,0,0,0.25); }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .nav-backdrop { background: rgba(0,0,0,0.25); }
+}
+
+/* Panel */
+.nav-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #0d1017;
+  border-right: 1px solid var(--border2);
+  z-index: 901;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 24px;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+}
+.nav-panel.open {
+  transform: translateX(0);
+}
+[data-theme="light"] .nav-panel {
+  background: #ffffff;
+  border-right-color: #e5e7eb;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .nav-panel {
+    background: #ffffff;
+    border-right-color: #e5e7eb;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+  }
+}
+
+/* Panel header */
+.nav-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+[data-theme="light"] .nav-panel-header { border-bottom-color: #e5e7eb; }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .nav-panel-header { border-bottom-color: #e5e7eb; }
+}
+.nav-panel-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-panel-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.nav-panel-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.nav-close-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-close-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-dim);
+}
+
+/* Section labels */
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  padding: 16px 16px 6px;
+}
+
+/* Nav items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+.nav-item:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+[data-theme="light"] .nav-item { color: #374151; }
+[data-theme="light"] .nav-item:hover { background: rgba(245,166,35,0.08); color: var(--accent); }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .nav-item { color: #374151; }
+  [data-theme="auto"] .nav-item:hover { background: rgba(245,166,35,0.08); color: var(--accent); }
+}
+
+/* Divider */
+.nav-divider {
+  height: 1px;
+  background: var(--border2);
+  margin: 8px 16px;
+}
+[data-theme="light"] .nav-divider { background: #e5e7eb; }
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] .nav-divider { background: #e5e7eb; }
+}
+
+/* ══════════════════════════════════════
    WORK SCREEN — 3-COLUMN + FOOTER LAYOUT
 ══════════════════════════════════════ */
 .work-layout {
