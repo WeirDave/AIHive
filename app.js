@@ -1302,7 +1302,7 @@ function setBuilder(id) {
   toast(`🏗️ ${ai?.name} is now the Builder`);
 }
 
-function removeAI(id) {
+async function testApiKey(id) {
   const ai = aiList.find(a => a.id === id);
   const cfg = API_CONFIGS[ai?.provider];
   if (!cfg || !cfg._key) { toast('⚠️ Save a key first'); return; }
