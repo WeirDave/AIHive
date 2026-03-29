@@ -60,7 +60,7 @@
     <img src="images/AI_Hive_Worker_Bee_v2.png" alt="" class="kyh-bee">
     <div class="kyh-intro-text">
       <h2>Know Your Hive</h2>
-      <p>Every AI in your hive has its own personality, strengths, and quirks. Knowing how each one behaves helps you pick the right Builder, get the most out of your reviewers, and know when to toggle someone off. This guide is based on real-world observations using AI Hive in production.</p>
+      <p>Every AI in your hive has its own personality, strengths, and quirks. Knowing how each one behaves helps you pick the right Builder, get the most out of your reviewers, and decide when to toggle them off. This guide is based on real-world observations using AI Hive in production.</p>
     </div>
   </div>
 
@@ -84,26 +84,26 @@
           <div class="kyh-section-title">Strengths</div>
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-good">Fast responses</span>
-            <span class="kyh-pill kyh-pill-good">Follows format precisely</span>
-            <span class="kyh-pill kyh-pill-good">Excellent Builder</span>
-            <span class="kyh-pill kyh-pill-good">Very low token cost</span>
-            <span class="kyh-pill kyh-pill-good">Handles large docs well</span>
+            <span class="kyh-pill kyh-pill-good">Strict format compliance</span>
+            <span class="kyh-pill kyh-pill-good">Minimal token cost</span>
+            <span class="kyh-pill kyh-pill-good">High reliability</span>
+            <span class="kyh-pill kyh-pill-good">Efficient handling of large documents</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Weaknesses</div>
           <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-warn">Can be overly conservative</span>
-            <span class="kyh-pill kyh-pill-warn">Occasionally redundant suggestions</span>
+            <span class="kyh-pill kyh-pill-warn">Can be overly cautious</span>
+            <span class="kyh-pill kyh-pill-warn">May provide redundant feedback</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>The default Builder choice. Fast, cheap, format-compliant, and reliable across document types. Rarely goes rogue. If you're only going to pay for one AI, make it your Builder and use Gemini as your free reviewer.</p>
+          <p>The default Builder choice. Rarely deviates from instructions, making it a stable foundation. Fast, cost-effective, and reliable across document types. If you're only paying for one AI, make it your Builder and use Gemini as your free reviewer.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
-          <p>DeepSeek's low cost per token makes long sessions with many rounds very affordable — it's the workhorse of the hive.</p>
+          <p>Use DeepSeek for high-iteration projects and large documents to keep costs low.</p>
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@
         <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" class="kyh-card-icon" onerror="this.style.display='none'">
         <div>
           <div class="kyh-card-name">Gemini</div>
-          <div class="kyh-card-model">gemini-flash-latest</div>
+          <div class="kyh-card-model">gemini-2.5-flash</div>
         </div>
         <div class="kyh-badges">
           <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
@@ -126,26 +126,27 @@
           <div class="kyh-section-title">Strengths</div>
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-good">Free API tier</span>
-            <span class="kyh-pill kyh-pill-good">Catches grammar details</span>
-            <span class="kyh-pill kyh-pill-good">Good at structural suggestions</span>
+            <span class="kyh-pill kyh-pill-good">Precise grammar corrections</span>
+            <span class="kyh-pill kyh-pill-good">Strong structural suggestions</span>
             <span class="kyh-pill kyh-pill-good">Large context window</span>
+            <span class="kyh-pill kyh-pill-good">Search-aware context integration</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Weaknesses</div>
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-warn">Slowest responder</span>
-            <span class="kyh-pill kyh-pill-warn">Occasionally non-compliant output</span>
-            <span class="kyh-pill kyh-pill-warn">Sometimes responds with NO CHANGES too early</span>
+            <span class="kyh-pill kyh-pill-warn">Prone to inconsistent formatting</span>
+            <span class="kyh-pill kyh-pill-warn">Sometimes returns NO CHANGES prematurely or with incomplete review</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>The free reviewer that costs you nothing. Great for catching grammar, word choice, and structural issues. Slow response times but it gets there. Use it as a reviewer and let a paid AI handle the building.</p>
+          <p>Your primary free reviewer. Great for catching grammar, word choice, and structural issues. Use it as a reviewer and let a paid AI serve as the Builder.</p>
         </div>
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
-          <p>Gemini + DeepSeek is the minimum viable paid hive — two AIs, one free, total cost well under a cent per round on short documents.</p>
+          <p>Gemini + DeepSeek is the minimum viable paid hive — two AIs, one free, total cost often under a cent per round for short documents.</p>
         </div>
       </div>
     </div>
