@@ -155,7 +155,7 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Choose Your Builder</h2>
               <p class="fs-col-sub">The Builder is the AI that actually rewrites your document each round. While your reviewers give numbered suggestions, the Builder reads all of those suggestions plus the full document, then produces the updated version. Because it handles the entire document every single round, the Builder uses significantly more tokens than reviewers — it <strong>must have a paid API subscription with enough capacity</strong>. Choose an AI you trust with large documents. You can change your Builder any time from the work screen.</p>
-              <p class="fs-col-tip">💡 Claude, ChatGPT, Gemini, and DeepSeek all handle large documents well — DeepSeek in particular is extremely cost-effective as a Builder. Avoid free-tier AIs as Builder — they run out of tokens fast. <a href="tokens-explainer.html" target="_blank" class="link-accent">Learn about tokens →</a></p>
+              <p class="fs-col-tip">💡 Claude, ChatGPT, Gemini, and DeepSeek all handle large documents well — DeepSeek in particular is extremely cost-effective as a Builder. Avoid free-tier AIs as Builder — they run out of tokens fast. For very large or complex documents, if a round fails with a missing output structure error, try switching to ChatGPT or Gemini as your Builder — some AIs are less reliable at following strict formatting instructions under heavy load. <a href="tokens-explainer.html" target="_blank" class="link-accent">Learn about tokens →</a></p>
             </div>
             <div class="builder-pick-grid-large" id="builderPickGrid"></div>
           </div>
@@ -717,7 +717,7 @@
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Builder</span>
-        <span class="goal-info-desc">The AI marked as Builder both reviews and builds — it reads all reviewer suggestions and rewrites the working document each round. The Builder is the only AI that actually changes the document. It uses significantly more tokens than reviewers so it should have a paid API key with enough capacity.</span>
+        <span class="goal-info-desc">The AI marked as Builder both reviews and builds — it reads all reviewer suggestions and rewrites the working document each round. The Builder is the only AI that actually changes the document. It uses significantly more tokens than reviewers so it should have a paid API key with enough capacity. DeepSeek is the best value for most documents. If a round fails with a missing output structure error on a large or complex document, try switching to ChatGPT or Gemini — some AIs are less consistent at following strict formatting instructions under heavy load.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Idle</span>
@@ -843,6 +843,7 @@
         <span class="goal-info-desc">Don't have anything yet? The hive will generate a first draft based entirely on your project goal. The more specific your goal, the better the first draft will be.</span>
       </div>
       <p class="goal-info-tip">💡 <strong>PDF tip:</strong> PDF extraction works best with standard digitally-created documents — like those exported from Word or Google Docs. Heavily designed resumes, scanned documents, or PDFs built from images may produce garbled or incomplete text. If that happens, try copying and pasting the text directly using the Paste Text option instead.</p>
+      <p class="goal-info-tip">⚠️ <strong>Large file tip:</strong> If you're importing a dense report, a long PowerPoint, or any file that produces a lot of text — and a round fails with a missing output structure error, try switching your Builder to ChatGPT or Gemini and retrying. Some AIs are less consistent at following strict formatting instructions on large or complex documents.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoUploadModal').classList.remove('active')">Got it →</button>
   </div>

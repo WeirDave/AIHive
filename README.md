@@ -154,7 +154,7 @@ Two clocks sit above the Live Console:
 | Copilot | Microsoft | `gpt-4o` — OpenAI-compatible endpoint |
 | Custom | Any | Add any AI with an OpenAI-compatible API endpoint |
 
-Any AI can act as either a reviewer or Builder. Mix and match however you like.
+Any AI can act as either a reviewer or Builder. Mix and match however you like. If a round fails with a missing output structure error, try switching to a different Builder — some AIs are less consistent at following strict formatting instructions on large or complex documents.
 
 ---
 
@@ -194,6 +194,8 @@ For step-by-step instructions and direct billing links, open the **API Key Guide
 If you're using Pro mode, tokens matter — especially for your Builder. Every round, your Builder reads the entire document plus all reviewer suggestions and rewrites the full document. On a 2,000-word document with 5 reviewers that's roughly **8,000–12,000 tokens per Builder call**.
 
 **Gemini's free tier is genuinely generous** and a great way to get started with zero cost. For paid options, DeepSeek is the most cost-effective Builder by a wide margin.
+
+If a round fails with a missing output structure error — especially on a large or complex document — try switching your Builder to ChatGPT or Gemini and retrying. Some AIs are less consistent at following strict formatting instructions under heavy load. This is a behavioral difference between models, not a hard size limit.
 
 Open the **Token Guide** inside the app for a full cost breakdown by provider.
 
