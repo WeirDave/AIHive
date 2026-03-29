@@ -666,6 +666,8 @@ function goToScreen(id) {
         status.style.borderColor = 'var(--green)';
         status.style.color = 'var(--green)';
       }
+      const clearRow = document.getElementById('fileClearRow');
+      if (clearRow) clearRow.style.display = 'block';
     }
   }
 }
@@ -1326,6 +1328,19 @@ function handleFileSelect(e) {
   if (file) processFile(file);
 }
 
+function clearUploadedFile() {
+  docText = '';
+  saveSession();
+  try { localStorage.removeItem('aihive_v2_filename'); } catch(e) {}
+  const status = document.getElementById('fileStatus');
+  if (status) { status.style.display = 'none'; status.textContent = ''; }
+  const clearRow = document.getElementById('fileClearRow');
+  if (clearRow) clearRow.style.display = 'none';
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) fileInput.value = '';
+  updateLaunchRequirements();
+}
+
 async function processFile(file) {
   const status = document.getElementById('fileStatus');
   const ext = file.name.split('.').pop().toLowerCase();
@@ -1358,6 +1373,8 @@ async function processFile(file) {
     status.style.background = 'var(--green-dim)';
     status.style.borderColor = 'var(--green)';
     status.style.color = 'var(--green)';
+    const clearRow = document.getElementById('fileClearRow');
+    if (clearRow) clearRow.style.display = 'block';
   } catch(e) {
     status.textContent = `❌ Could not read file: ${e.message}. Try pasting the text instead.`;
     status.style.background = 'var(--red-dim)';

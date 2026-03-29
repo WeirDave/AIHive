@@ -274,6 +274,9 @@
                 <input type="file" id="fileInput" accept=".docx,.pdf,.pptx,.txt" style="display:none" onchange="handleFileSelect(event)">
               </div>
               <div id="fileStatus" class="file-status" style="display:none;"></div>
+              <div id="fileClearRow" style="display:none; margin-top:6px;">
+                <button class="btn btn-sm" onclick="clearUploadedFile()">✕ Remove file</button>
+              </div>
             </div>
 
             <div class="doc-tab-panel" id="panel-paste">
