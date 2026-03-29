@@ -39,16 +39,14 @@
       <div class="welcome-card free" onclick="goToFree()">
         <div class="welcome-card-icon">🆓</div>
         <div class="welcome-card-body">
-          <div class="welcome-card-title">Free Version</div>
-          <div class="welcome-card-desc">Manual copy/paste workflow. No API keys needed — free tier AIs work fine. You copy prompts to each AI tab yourself and paste responses back. Mix paid and free AIs however you like.</div>
+          <div class="welcome-card-title">Free Version <button class="welcome-info-btn" onclick="event.stopPropagation();document.getElementById('infoFreeModal').classList.add('active')" title="About the Free Version"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:22px;height:22px;display:block;"></button></div>
         </div>
         <div class="welcome-card-arrow">→</div>
       </div>
       <div class="welcome-card pro" onclick="goToScreen('screen-setup')">
         <div class="welcome-card-icon">⚡</div>
         <div class="welcome-card-body">
-          <div class="welcome-card-title">Pro Version <span class="badge-api">API</span></div>
-          <div class="welcome-card-desc">Fully automated — one button does everything. Each AI you want to use needs its own API key. Start with just 2 if you like, or use all 6. Your Builder AI processes the full document every round. <strong>Gemini's API is currently free</strong> — pair it with one paid AI and you're up and running for as little as $5.</div>
+          <div class="welcome-card-title">Pro Version <span class="badge-api">API</span> <button class="welcome-info-btn" onclick="event.stopPropagation();document.getElementById('infoProModal').classList.add('active')" title="About the Pro Version"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:22px;height:22px;display:block;"></button></div>
         </div>
         <div class="welcome-card-arrow">→</div>
       </div>
@@ -738,6 +736,56 @@
 <!-- ============================================================
      INFO MODALS — Section explainers
      ============================================================ -->
+
+<!-- FREE VERSION INFO -->
+<div class="finish-modal-overlay" id="infoFreeModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div style="text-align:center;margin-bottom:8px;">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:72px;height:72px;">
+    </div>
+    <h2 class="finish-modal-title">Free Version</h2>
+    <div class="goal-info-body">
+      <p>The Free Version is a fully manual workflow — no API keys required. AI Hive generates the prompts for you, and you handle the copy/paste between your AI tabs and the app yourself.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">How it works</span>
+        <span class="goal-info-desc">AI Hive builds the reviewer and builder prompts each round. You copy each prompt, paste it into the AI of your choice, then paste the response back in. The hive guides you through it step by step.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">No limits</span>
+        <span class="goal-info-desc">Free-tier AIs work perfectly — Gemini, ChatGPT, Claude, and others all have free web interfaces. Mix and match however you like. No sign-ups, no billing, no API keys needed.</span>
+      </div>
+      <p class="goal-info-tip">💡 The Free Version is a great way to learn how AI Hive works before committing to the Pro version.</p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('infoFreeModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
+
+<!-- PRO VERSION INFO -->
+<div class="finish-modal-overlay" id="infoProModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div style="text-align:center;margin-bottom:8px;">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:72px;height:72px;">
+    </div>
+    <h2 class="finish-modal-title">Pro Version</h2>
+    <div class="goal-info-body">
+      <p>The Pro Version is fully automated — one button runs the entire round. Each AI calls its API directly from your browser using keys you provide. No copy/paste, no tab switching.</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">API Keys</span>
+        <span class="goal-info-desc">Each AI you want to use needs its own API key. Start with just 2 if you like, or run all 6. <strong>Gemini's API is currently free</strong> — pair it with one paid AI and you're up and running for as little as $5.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine">Free Trial</span>
+        <span class="goal-info-desc">Pro includes <strong>3 free rounds</strong> so you can try it out before purchasing. After your free rounds are used, you'll be prompted to enter a license key to continue.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">License Key</span>
+        <span class="goal-info-desc">License keys are available via <strong>Gumroad</strong>. A one-time purchase unlocks unlimited rounds. Visit <a href="https://gumroad.com" target="_blank" class="link-accent">gumroad.com</a> to get yours.</span>
+      </div>
+      <p class="goal-info-tip">💡 Your API keys and project data are stored locally in your browser — nothing is sent to any server except the AI APIs you've configured.</p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('infoProModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
 
 <!-- THE HIVE -->
 <div class="finish-modal-overlay" id="infoHiveModal" onclick="if(event.target===this)this.classList.remove('active')">
