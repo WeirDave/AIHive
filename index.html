@@ -893,8 +893,10 @@
   <button onclick="showBuilderOverlay()">Builder</button>
   <button onclick="playSmokerSound()">💨 Puffs</button>
   <button onclick="playBuilderSound()">⚡ Builder</button>
-  <button onclick="playRoundCompleteSound()">🔔 Sound</button>
-  <button onclick="hideSmokerOverlay();hideBuilderOverlay()">✕ Hide</button>
+  <button onclick="playRoundCompleteSound()">🔔 Round</button>
+  <button onclick="playRosieSound();showHiveFinish({duration:4000,smokeBursts:10})">🤖 Rosie</button>
+  <button onclick="playFlyingCarSound();showHiveFinish({duration:4000,smokeBursts:10})">🚗 Fly-in</button>
+  <button onclick="hideSmokerOverlay();hideBuilderOverlay();hideHiveFinish()">✕ Hide</button>
 </div>
 
 </body>

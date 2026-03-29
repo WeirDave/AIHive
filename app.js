@@ -505,6 +505,47 @@ function playBuilderSound() {
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
+// ── ROSIE THE ROBOT — ascending square-wave beeps ──
+function playRosieSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [440, 660, 880, 1100].forEach((freq, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'square';
+      const t = ctx.currentTime + i * 0.14;
+      o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t + 0.02);
+      g.gain.linearRampToValueAtTime(0, t + 0.12);
+      o.start(t); o.stop(t + 0.15);
+    });
+    setTimeout(() => ctx.close(), 800);
+  } catch(e) { /* audio not supported — fail silently */ }
+}
+
+// ── FLYING CAR ARRIVAL — doppler-style descending swoop ──
+function playFlyingCarSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), o2 = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); o2.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o2.type = 'triangle';
+    const t = ctx.currentTime;
+    o.frequency.setValueAtTime(900, t);
+    o.frequency.exponentialRampToValueAtTime(200, t + 0.8);
+    o2.frequency.setValueAtTime(1100, t);
+    o2.frequency.exponentialRampToValueAtTime(220, t + 0.9);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.25, t + 0.05);
+    g.gain.linearRampToValueAtTime(0.15, t + 0.7);
+    g.gain.linearRampToValueAtTime(0, t + 1.3);
+    o.start(t); o2.start(t); o.stop(t + 1.4); o2.stop(t + 1.4);
+    setTimeout(() => ctx.close(), 1800);
+  } catch(e) { /* audio not supported — fail silently */ }
+}
+
 let _roundTimerInterval = null;
 let _roundTimerStart    = null;
 let _clockInterval      = null; // reserved for future use
