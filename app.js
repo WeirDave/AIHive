@@ -2153,7 +2153,7 @@ async function runBuilderOnly() {
       builderHadError = true;
       setBeeStatus(builderAI.id, 'error', 'Missing conflicts block');
       setStatus(`⚠️ Builder did not return a %%CONFLICTS_START%% block — round rejected`);
-      consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved.`, 'warn');
+      consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved. If your document is large or complex, try switching to a different Builder and retrying.`, 'warn');
     } else if (conflicts) {
       consoleLog(`⚡ Conflicts detected — see Conflicts panel`, 'warn');
     } else {
@@ -2397,7 +2397,7 @@ async function runRound() {
         builderHadError = true;
         setBeeStatus(builderAI.id, 'error', 'Missing conflicts block');
         setStatus(`⚠️ Builder did not return a %%CONFLICTS_START%% block — round rejected`);
-        consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved. Retry or check your Builder prompt.`, 'warn');
+        consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved. If your document is large or complex, try switching to a different Builder and retrying.`, 'warn');
       } else if (conflicts) {
         consoleLog(`⚡ Conflicts detected — see Conflicts panel`, 'warn');
       } else {
