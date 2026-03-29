@@ -278,78 +278,65 @@ function playRoundCompleteSound() {
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
-// ── SMOKER START SOUND — three soft billowing puffs ──
+// ── SMOKER START SOUND — soft breath of smoke ──
 function playSmokerSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const now = ctx.currentTime;
-    [0, 1.0, 2.0].forEach(offset => {
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
-      const n = ctx.createBufferSource(); n.buffer = buf;
-      const f = ctx.createBiquadFilter(); f.type = 'lowpass';
-      f.frequency.setValueAtTime(400, now + offset);
-      f.frequency.exponentialRampToValueAtTime(150, now + offset + 0.45);
-      f.Q.value = 1.2;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0, now + offset);
-      g.gain.linearRampToValueAtTime(0.18, now + offset + 0.06);
-      g.gain.setValueAtTime(0.18, now + offset + 0.25);
-      g.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.5);
-      n.connect(f); f.connect(g); g.connect(ctx.destination);
-      n.start(now + offset);
-      n.stop(now + offset + 0.52);
-    });
-    setTimeout(() => ctx.close(), 3000);
+    const now = ctx.currentTime, dur = 1.6;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const n = ctx.createBufferSource(); n.buffer = buf;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass';
+    f.frequency.setValueAtTime(400, now);
+    f.frequency.exponentialRampToValueAtTime(200, now + dur);
+    f.Q.value = 2.5;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.10, now + 0.2);
+    g.gain.setValueAtTime(0.10, now + 1.0);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    n.connect(f); f.connect(g); g.connect(ctx.destination);
+    n.start(now); n.stop(now + dur);
+    setTimeout(() => ctx.close(), 2000);
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
-// ── BUILDER START SOUND — power-up hum then heavy clank ──
+// ── BUILDER START SOUND — pneumatic hiss + belt rolling ──
 function playBuilderSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const now = ctx.currentTime;
 
-    // Power-up hum — rising sine pair
-    const osc1 = ctx.createOscillator(), g1 = ctx.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(80, now);
-    osc1.frequency.exponentialRampToValueAtTime(440, now + 0.5);
+    // Pneumatic hiss
+    const buf1 = ctx.createBuffer(1, ctx.sampleRate * 0.35, ctx.sampleRate);
+    const d1 = buf1.getChannelData(0);
+    for (let i = 0; i < d1.length; i++) d1[i] = (Math.random() * 2 - 1);
+    const n1 = ctx.createBufferSource(); n1.buffer = buf1;
+    const f1 = ctx.createBiquadFilter(); f1.type = 'highpass';
+    f1.frequency.setValueAtTime(1500, now);
+    f1.frequency.exponentialRampToValueAtTime(400, now + 0.3);
+    const g1 = ctx.createGain();
     g1.gain.setValueAtTime(0, now);
-    g1.gain.linearRampToValueAtTime(0.15, now + 0.05);
-    g1.gain.setValueAtTime(0.15, now + 0.35);
-    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-    osc1.connect(g1); g1.connect(ctx.destination);
-    osc1.start(now); osc1.stop(now + 0.6);
+    g1.gain.linearRampToValueAtTime(0.22, now + 0.02);
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    n1.connect(f1); f1.connect(g1); g1.connect(ctx.destination);
+    n1.start(now); n1.stop(now + 0.37);
 
-    const osc2 = ctx.createOscillator(), g2 = ctx.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(160, now);
-    osc2.frequency.exponentialRampToValueAtTime(880, now + 0.5);
-    g2.gain.setValueAtTime(0, now);
-    g2.gain.linearRampToValueAtTime(0.07, now + 0.05);
-    g2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-    osc2.connect(g2); g2.connect(ctx.destination);
-    osc2.start(now); osc2.stop(now + 0.6);
+    // Belt motor rolling
+    [50, 100, 150].forEach((freq, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.value = freq;
+      const vol = [0.10, 0.06, 0.03][i];
+      g.gain.setValueAtTime(0, now + 0.3);
+      g.gain.linearRampToValueAtTime(vol, now + 0.5);
+      g.gain.setValueAtTime(vol, now + 1.1);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now + 0.3); o.stop(now + 1.65);
+    });
 
-    // Heavy clank — distorted sawtooth drop after the hum
-    const clankAt = now + 0.52;
-    const osc3 = ctx.createOscillator(), g3 = ctx.createGain();
-    osc3.type = 'sawtooth';
-    osc3.frequency.setValueAtTime(120, clankAt);
-    osc3.frequency.exponentialRampToValueAtTime(40, clankAt + 0.3);
-    const dist = ctx.createWaveShaper();
-    const curve = new Float32Array(256);
-    for (let i = 0; i < 256; i++) { const x = i * 2 / 256 - 1; curve[i] = Math.tanh(x * 4); }
-    dist.curve = curve;
-    g3.gain.setValueAtTime(0, clankAt);
-    g3.gain.linearRampToValueAtTime(0.3, clankAt + 0.005);
-    g3.gain.exponentialRampToValueAtTime(0.001, clankAt + 0.35);
-    osc3.connect(dist); dist.connect(g3); g3.connect(ctx.destination);
-    osc3.start(clankAt); osc3.stop(clankAt + 0.4);
-
-    setTimeout(() => ctx.close(), 1200);
+    setTimeout(() => ctx.close(), 2000);
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
