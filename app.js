@@ -2024,9 +2024,9 @@ function buildPromptForAI(ai, reviewerResponses) {
 
     // Inject previously resolved decisions so the Builder doesn't re-raise them
     if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
-      prompt += `PREVIOUSLY RESOLVED DECISIONS (do NOT re-raise these as conflicts):\n${sep}\n`;
+      prompt += `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\n${sep}\nThe user has made final decisions on the following. Do NOT re-raise these as conflicts under any circumstances, even if reviewers suggest changes to them. The chosen text is final.\n`;
       window._resolvedDecisions.forEach((rd, i) => {
-        prompt += `${i + 1}. "${rd.original}" → resolved as "${rd.chosen}"\n`;
+        prompt += `${i + 1}. Original: "${rd.original}" → User chose: "${rd.chosen}" — THIS IS FINAL. Do not flag or change.\n`;
       });
       prompt += `\n`;
     }
@@ -2047,9 +2047,9 @@ function buildPromptForAI(ai, reviewerResponses) {
 
     // Inject previously resolved decisions so reviewers don't re-raise them
     if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
-      prompt += `PREVIOUSLY RESOLVED DECISIONS (do NOT suggest changes to these — they have already been decided by the user):\n${sep}\n`;
+      prompt += `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\n${sep}\nThe user has made final decisions on the following. Do NOT suggest any changes to the chosen text or to the same concept, even using different wording. These are closed.\n`;
       window._resolvedDecisions.forEach((rd, i) => {
-        prompt += `${i + 1}. "${rd.original}" → resolved as "${rd.chosen}"\n`;
+        prompt += `${i + 1}. Original: "${rd.original}" → User chose: "${rd.chosen}" — do NOT suggest changing "${rd.chosen}" or any equivalent phrasing.\n`;
       });
       prompt += `\n`;
     }
