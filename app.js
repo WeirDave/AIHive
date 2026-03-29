@@ -851,8 +851,6 @@ function goToScreen(id) {
       activeAIs = [...aiList];
     }
     renderAISetupGrid();
-  }
-  if (id === 'screen-setup') {
     renderBuilderPicker();
     setTimeout(updateSetupRequirements, 0);
   }
@@ -1304,20 +1302,7 @@ function setBuilder(id) {
   toast(`🏗️ ${ai?.name} is now the Builder`);
 }
 
-function removeCustomAI(id) {
-  const ai = aiList.find(a => a.id === id);
-  if (!ai) return;
-  if (!confirm(`Remove "${ai.name}" from your hive? This cannot be undone.`)) return;
-  aiList    = aiList.filter(a => a.id !== id);
-  activeAIs = activeAIs.filter(a => a.id !== id);
-  if (builder === id) builder = null;
-  if (API_CONFIGS[id]) delete API_CONFIGS[id];
-  saveSettings();
-  renderAISetupGrid();
-  toast(`🗑 ${ai.name} removed from your hive`);
-}
-
-async function testApiKey(id) {
+function removeAI(id) {
   const ai = aiList.find(a => a.id === id);
   const cfg = API_CONFIGS[ai?.provider];
   if (!cfg || !cfg._key) { toast('⚠️ Save a key first'); return; }
@@ -1517,7 +1502,7 @@ function openSettings() {
   }
   goToScreen('screen-setup');
   renderAISetupGrid();
-  renderBuilderPickGrid();
+  renderBuilderPicker();
 }
 
 function validateAndContinue() {
@@ -2848,7 +2833,6 @@ async function runRound() {
   // Phase 1: Everyone reviews — Builder gets reviewer prompt too
   const reviewerPromises = allReviewers.map(async ai => {
     const prompt = buildPromptForAI(ai, []); // everyone gets reviewer prompt
-    // consoleLog(`🔍 DEBUG ${ai.name} prompt preview: ${prompt.substring(0, 500).replace(/\n/g, '↵')}`, 'warn');
     const cfg = API_CONFIGS[ai.provider];
     const keyHint = cfg?._key?.length > 8 ? cfg._key.slice(0,4) + '••••' + cfg._key.slice(-4) : '••••';
     consoleLog(`📤 ${ai.name} — sending request (${prompt.length.toLocaleString()} chars · key: ${keyHint})`, 'send');
@@ -2931,9 +2915,7 @@ async function runRound() {
   }
 
   if (builderAI && successfulReviews.length > 0) {
-    // Include all responses — Builder's own review is in there too
-    const allForBuilder = successfulReviews;
-    consoleLog(`🔨 ${builderAI.name} (Builder) — compiling document from ${allForBuilder.length} review${allForBuilder.length!==1?'s':''} (including its own)…`, 'info');
+    consoleLog(`🔨 ${builderAI.name} (Builder) — compiling document from ${successfulReviews.length} review${successfulReviews.length!==1?'s':''} (including its own)…`, 'info');
     setBeeStatus(builderAI.id, 'sending', 'Building…');
     setStatus(`🏗️ ${builderAI.name} is building the updated document…`);
     // Update label to BUILDING… without resetting the clock
@@ -2942,8 +2924,7 @@ async function runRound() {
     hideSmokerOverlay();
     showBuilderOverlay();
 
-    const builderPrompt = buildPromptForAI(builderAI, allForBuilder);
-    // consoleLog(`🔍 DEBUG BUILDER (${builderAI.name}) prompt preview: ${builderPrompt.substring(0, 500).replace(/\n/g, '↵')}`, 'warn');
+    const builderPrompt = buildPromptForAI(builderAI, successfulReviews);
     const bCfg = API_CONFIGS[builderAI.provider];
     const bKeyHint = bCfg?._key?.length > 8 ? bCfg._key.slice(0,4) + '••••' + bCfg._key.slice(-4) : '••••';
     consoleLog(`📤 ${builderAI.name} (Builder) — sending request (${builderPrompt.length.toLocaleString()} chars · key: ${bKeyHint})`, 'send');
@@ -3060,7 +3041,6 @@ async function runRound() {
     toast('⚠️ Round not saved — Builder output was invalid', 5000);
   } else {
     toast(`✅ Round ${round - 1} complete!`);
-    playRoundCompleteSound();
   }
 }
 

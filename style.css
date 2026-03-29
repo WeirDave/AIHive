@@ -1,8 +1,8 @@
 /* =============================================================
-   AI HIVE v2.0 — style.css
+   AI HIVE v2.1 — style.css
    ============================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 /* ══════════════════════════════════════
    RESET & BASE
@@ -1903,6 +1903,9 @@ html, body {
   gap: 8px;
   padding: 0 0 0 48px; /* align with key input area */
   width: 100%;
+  flex-basis: 100%;  /* force to own row */
+  flex-shrink: 0;
+  flex-wrap: wrap;
   box-sizing: border-box;
 }
 .model-select {
@@ -4705,39 +4708,3 @@ kbd {
   border-color: var(--accent);
 }
 
-/* ── MODEL SELECTOR ── */
-.model-select-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 0 2px 42px; /* indent to align under key input (past icon+name) */
-  flex-basis: 100%;         /* force to own row */
-  flex-shrink: 0;
-  flex-wrap: wrap;
-}
-.model-select {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text);
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  padding: 3px 6px;
-  cursor: pointer;
-  min-width: 200px;
-  max-width: 320px;
-  transition: border-color 0.15s;
-}
-.model-select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.model-select-note {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-style: italic;
-}
-[data-theme="light"] .model-select { background: #f4f4f4; }
-@media (prefers-color-scheme: light) {
-  [data-theme="auto"] .model-select { background: #f4f4f4; }
-}
