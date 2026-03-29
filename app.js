@@ -282,23 +282,24 @@ function playRoundCompleteSound() {
 function playSmokerSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
     [0, 1.0, 2.0].forEach(offset => {
       const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
       const d = buf.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
       const n = ctx.createBufferSource(); n.buffer = buf;
       const f = ctx.createBiquadFilter(); f.type = 'lowpass';
-      f.frequency.setValueAtTime(400, ctx.currentTime + offset);
-      f.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + offset + 0.45);
+      f.frequency.setValueAtTime(400, now + offset);
+      f.frequency.exponentialRampToValueAtTime(150, now + offset + 0.45);
       f.Q.value = 1.2;
       const g = ctx.createGain();
-      g.gain.setValueAtTime(0, ctx.currentTime + offset);
-      g.gain.linearRampToValueAtTime(0.18, ctx.currentTime + offset + 0.06);
-      g.gain.setValueAtTime(0.18, ctx.currentTime + offset + 0.25);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.5);
+      g.gain.setValueAtTime(0, now + offset);
+      g.gain.linearRampToValueAtTime(0.18, now + offset + 0.06);
+      g.gain.setValueAtTime(0.18, now + offset + 0.25);
+      g.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.5);
       n.connect(f); f.connect(g); g.connect(ctx.destination);
-      n.start(ctx.currentTime + offset);
-      n.stop(ctx.currentTime + offset + 0.52);
+      n.start(now + offset);
+      n.stop(now + offset + 0.52);
     });
     setTimeout(() => ctx.close(), 3000);
   } catch(e) { /* audio not supported — fail silently */ }
