@@ -1396,7 +1396,25 @@ async function extractPDF(file) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    text += content.items.map(item => item.str).join(' ') + '\n';
+    // Use position-aware joining — only insert a space when there's a meaningful
+    // horizontal gap between text runs, avoiding the character-spacing artifact
+    // where Word-exported PDFs split every character into its own run.
+    let pageText = '';
+    let lastX = null;
+    let lastWidth = 0;
+    for (const item of content.items) {
+      if (!item.str) continue;
+      const x = item.transform ? item.transform[4] : null;
+      if (lastX !== null && x !== null) {
+        const gap = x - (lastX + lastWidth);
+        // Only insert space if gap is larger than ~1 unit (real word gap vs character spacing)
+        if (gap > 1) pageText += ' ';
+      }
+      pageText += item.str;
+      lastX = x;
+      lastWidth = item.width || 0;
+    }
+    text += pageText + '\n';
   }
   text = text.trim();
 
