@@ -1499,13 +1499,12 @@ async function extractPDF(file) {
   window._lastPDFPages = pageImages;
   try { localStorage.setItem('aihive_v2_has_pdf_pages', '1'); } catch(e) {}
 
-  // Find vision-capable AI
+  // Find vision-capable AI — ONLY chatgpt and gemini support vision
+  // Do not use Builder if it's not a vision-capable provider
   const visionProviders = ['chatgpt', 'gemini'];
-  const builderAI = aiList.find(a => a.id === builder);
-  const candidateIds = [...(builderAI ? [builderAI.provider] : []), ...visionProviders];
   let visionCfg = null;
   let visionKey = null;
-  for (const provider of candidateIds) {
+  for (const provider of visionProviders) {
     const cfg = API_CONFIGS[provider];
     if (cfg?._key) { visionCfg = { ...cfg, provider }; visionKey = cfg._key; break; }
   }
@@ -1702,13 +1701,11 @@ async function reExtractWithVision() {
   const banner = document.getElementById('reExtractBanner');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Extracting…'; }
 
-  // Find vision AI
+  // Find vision AI — only chatgpt and gemini support vision
   const visionProviders = ['chatgpt', 'gemini'];
-  const builderAI = aiList.find(a => a.id === builder);
-  const candidateIds = [...(builderAI ? [builderAI.provider] : []), ...visionProviders];
   let visionCfg = null;
   let visionKey = null;
-  for (const provider of candidateIds) {
+  for (const provider of visionProviders) {
     const cfg = API_CONFIGS[provider];
     if (cfg?._key) { visionCfg = { ...cfg, provider }; visionKey = cfg._key; break; }
   }
