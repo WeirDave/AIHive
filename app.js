@@ -1488,7 +1488,7 @@ async function extractPDF(file) {
   const reason = isScanned ? 'scanned/image-based PDF detected' : 'character-spacing artifacts detected';
   const status = document.getElementById('fileStatus');
   if (status) {
-    status.textContent = `⏳ ${reason.charAt(0).toUpperCase() + reason.slice(1)} — attempting AI vision transcription…`;
+    status.textContent = `⏳ ${reason.charAt(0).toUpperCase() + reason.slice(1)} — sending to AI for vision transcription. This may take 15–30 seconds…`;
     status.style.background = 'var(--blue-dim)';
     status.style.borderColor = 'var(--blue)';
     status.style.color = 'var(--blue)';
@@ -1699,7 +1699,7 @@ function showReExtractBanner() {
 async function reExtractWithVision() {
   const btn = document.getElementById('reExtractBtn');
   const banner = document.getElementById('reExtractBanner');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Extracting…'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Extracting — this may take 15–30 seconds…'; }
 
   // Find vision AI — only chatgpt and gemini support vision
   const visionProviders = ['chatgpt', 'gemini'];
