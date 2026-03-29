@@ -2252,7 +2252,7 @@ function finishAndNew() {
   setTimeout(() => {
     clearProject();
     goToScreen('screen-project');
-  }, 6200);
+  }, 4200);
 }
 
 /* =========================================
