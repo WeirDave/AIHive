@@ -278,7 +278,80 @@ function playRoundCompleteSound() {
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
-// ── ROUND TIMER ──
+// ── SMOKER START SOUND — three soft billowing puffs ──
+function playSmokerSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.28, 0.56].forEach(offset => {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+      const n = ctx.createBufferSource(); n.buffer = buf;
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass';
+      f.frequency.setValueAtTime(400, ctx.currentTime + offset);
+      f.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + offset + 0.45);
+      f.Q.value = 1.2;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime + offset);
+      g.gain.linearRampToValueAtTime(0.18, ctx.currentTime + offset + 0.06);
+      g.gain.setValueAtTime(0.18, ctx.currentTime + offset + 0.25);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.5);
+      n.connect(f); f.connect(g); g.connect(ctx.destination);
+      n.start(ctx.currentTime + offset);
+      n.stop(ctx.currentTime + offset + 0.52);
+    });
+    setTimeout(() => ctx.close(), 1400);
+  } catch(e) { /* audio not supported — fail silently */ }
+}
+
+// ── BUILDER START SOUND — power-up hum then heavy clank ──
+function playBuilderSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+
+    // Power-up hum — rising sine pair
+    const osc1 = ctx.createOscillator(), g1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(80, now);
+    osc1.frequency.exponentialRampToValueAtTime(440, now + 0.5);
+    g1.gain.setValueAtTime(0, now);
+    g1.gain.linearRampToValueAtTime(0.15, now + 0.05);
+    g1.gain.setValueAtTime(0.15, now + 0.35);
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc1.connect(g1); g1.connect(ctx.destination);
+    osc1.start(now); osc1.stop(now + 0.6);
+
+    const osc2 = ctx.createOscillator(), g2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(160, now);
+    osc2.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+    g2.gain.setValueAtTime(0, now);
+    g2.gain.linearRampToValueAtTime(0.07, now + 0.05);
+    g2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc2.connect(g2); g2.connect(ctx.destination);
+    osc2.start(now); osc2.stop(now + 0.6);
+
+    // Heavy clank — distorted sawtooth drop after the hum
+    const clankAt = now + 0.52;
+    const osc3 = ctx.createOscillator(), g3 = ctx.createGain();
+    osc3.type = 'sawtooth';
+    osc3.frequency.setValueAtTime(120, clankAt);
+    osc3.frequency.exponentialRampToValueAtTime(40, clankAt + 0.3);
+    const dist = ctx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) { const x = i * 2 / 256 - 1; curve[i] = Math.tanh(x * 4); }
+    dist.curve = curve;
+    g3.gain.setValueAtTime(0, clankAt);
+    g3.gain.linearRampToValueAtTime(0.3, clankAt + 0.005);
+    g3.gain.exponentialRampToValueAtTime(0.001, clankAt + 0.35);
+    osc3.connect(dist); dist.connect(g3); g3.connect(ctx.destination);
+    osc3.start(clankAt); osc3.stop(clankAt + 0.4);
+
+    setTimeout(() => ctx.close(), 1200);
+  } catch(e) { /* audio not supported — fail silently */ }
+}
+
 let _roundTimerInterval = null;
 let _roundTimerStart    = null;
 let _clockInterval      = null; // reserved for future use
@@ -2983,6 +3056,7 @@ function showSmokerOverlay(label = "Smokin' the Hive…") {
   }
 
   overlay.classList.add('active');
+  playSmokerSound();
 }
 
 function hideSmokerOverlay() {
@@ -3035,6 +3109,7 @@ function showBuilderOverlay() {
 
   overlay.setAttribute('aria-hidden', 'false');
   overlay.classList.add('active');
+  playBuilderSound();
 }
 
 function hideBuilderOverlay() {
