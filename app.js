@@ -2291,7 +2291,7 @@ async function runRound() {
     consoleLog(`📤 ${ai.name} — sending request (${prompt.length.toLocaleString()} chars · key: ${keyHint})`, 'send');
     try {
       const response = await callAPI(ai, prompt);
-      const noChanges = response.trim() === 'NO CHANGES NEEDED';
+      const noChanges = /^no changes needed/i.test(response.trim());
       const summary = noChanges ? 'No changes needed ✓' : extractSummary(response);
       setBeeStatus(ai.id, 'done', summary);
       if (noChanges) {
