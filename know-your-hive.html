@@ -66,6 +66,89 @@
 
   <div class="kyh-grid">
 
+    <!-- CHATGPT -->
+    <div class="kyh-card">
+      <div class="kyh-card-header">
+        <img src="images/chatgpt.ico" class="kyh-card-icon" onerror="this.style.display='none'">
+        <div>
+          <div class="kyh-card-name">ChatGPT</div>
+          <div class="kyh-card-model">gpt-4.1</div>
+        </div>
+        <div class="kyh-badges">
+          <span class="kyh-badge kyh-badge-builder">Strong Builder</span>
+          <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
+        </div>
+      </div>
+      <div class="kyh-body">
+        <div class="kyh-section">
+          <div class="kyh-section-title">Strengths</div>
+          <div class="kyh-pills">
+            <span class="kyh-pill kyh-pill-good">Fast responses</span>
+            <span class="kyh-pill kyh-pill-good">Versatile across doc types</span>
+            <span class="kyh-pill kyh-pill-good">Good at concise rewrites</span>
+            <span class="kyh-pill kyh-pill-good">Reliable format compliance</span>
+          </div>
+        </div>
+        <div class="kyh-section">
+          <div class="kyh-section-title">Weaknesses</div>
+          <div class="kyh-pills">
+            <span class="kyh-pill kyh-pill-warn">Can converge early (NO CHANGES too soon)</span>
+            <span class="kyh-pill kyh-pill-warn">Less distinctive voice than Claude</span>
+          </div>
+        </div>
+        <div class="kyh-section">
+          <div class="kyh-section-title">Best role</div>
+          <p>A solid all-rounder for both Builder and Reviewer roles — fast, reliable, and consistent. A strong alternative Builder if DeepSeek is unavailable. As a reviewer, it effectively signals document convergence during final refinement rounds.</p>
+        </div>
+        <div class="kyh-tip">
+          <span class="kyh-tip-icon">💡</span>
+          <p>When ChatGPT returns NO CHANGES in later rounds, treat this as a sign of document convergence rather than a reason to toggle it off.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDE -->
+    <div class="kyh-card">
+      <div class="kyh-card-header">
+        <img src="images/claude.ico" class="kyh-card-icon" onerror="this.style.display='none'">
+        <div>
+          <div class="kyh-card-name">Claude</div>
+          <div class="kyh-card-model">claude-sonnet-4-6</div>
+        </div>
+        <div class="kyh-badges">
+          <span class="kyh-badge kyh-badge-builder">Strong Builder</span>
+          <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
+        </div>
+      </div>
+      <div class="kyh-body">
+        <div class="kyh-section">
+          <div class="kyh-section-title">Strengths</div>
+          <div class="kyh-pills">
+            <span class="kyh-pill kyh-pill-good">Precise instruction following</span>
+            <span class="kyh-pill kyh-pill-good">Nuanced language suggestions</span>
+            <span class="kyh-pill kyh-pill-good">Mastery of tone and flow</span>
+            <span class="kyh-pill kyh-pill-good">Large context window</span>
+            <span class="kyh-pill kyh-pill-good">Consistent format compliance</span>
+          </div>
+        </div>
+        <div class="kyh-section">
+          <div class="kyh-section-title">Weaknesses</div>
+          <div class="kyh-pills">
+            <span class="kyh-pill kyh-pill-warn">Higher cost per token</span>
+            <span class="kyh-pill kyh-pill-warn">May overemphasize minor details</span>
+          </div>
+        </div>
+        <div class="kyh-section">
+          <div class="kyh-section-title">Best role</div>
+          <p>A versatile choice for both Builder and Reviewer roles. As a reviewer, Claude excels at catching subtle issues with tone, redundancy, and flow that others miss. As a Builder, it is reliable and format-compliant. Higher cost, but worth it for quality-sensitive projects.</p>
+        </div>
+        <div class="kyh-tip">
+          <span class="kyh-tip-icon">💡</span>
+          <p>Claude tends to give the most thoughtful reasoning for its suggestions — clarifying the logic behind each change.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- DEEPSEEK -->
     <div class="kyh-card">
       <div class="kyh-card-header">
@@ -151,58 +234,15 @@
       </div>
     </div>
 
-    <!-- CLAUDE -->
+    <!-- GROK -->
     <div class="kyh-card">
       <div class="kyh-card-header">
-        <img src="images/claude.ico" class="kyh-card-icon" onerror="this.style.display='none'">
+        <img src="https://www.google.com/s2/favicons?domain=grok.com&sz=64" class="kyh-card-icon" onerror="this.style.display='none'">
         <div>
-          <div class="kyh-card-name">Claude</div>
-          <div class="kyh-card-model">claude-sonnet-4-6</div>
+          <div class="kyh-card-name">Grok</div>
+          <div class="kyh-card-model">grok-3</div>
         </div>
         <div class="kyh-badges">
-          <span class="kyh-badge kyh-badge-builder">Strong Builder</span>
-          <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
-        </div>
-      </div>
-      <div class="kyh-body">
-        <div class="kyh-section">
-          <div class="kyh-section-title">Strengths</div>
-          <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-good">Precise instruction following</span>
-            <span class="kyh-pill kyh-pill-good">Nuanced language suggestions</span>
-            <span class="kyh-pill kyh-pill-good">Mastery of tone and flow</span>
-            <span class="kyh-pill kyh-pill-good">Large context window</span>
-            <span class="kyh-pill kyh-pill-good">Consistent format compliance</span>
-          </div>
-        </div>
-        <div class="kyh-section">
-          <div class="kyh-section-title">Weaknesses</div>
-          <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-warn">Higher cost per token</span>
-            <span class="kyh-pill kyh-pill-warn">May overemphasize minor details</span>
-          </div>
-        </div>
-        <div class="kyh-section">
-          <div class="kyh-section-title">Best role</div>
-          <p>A versatile choice for both Builder and Reviewer roles. As a reviewer, Claude excels at catching subtle issues with tone, redundancy, and flow that others miss. As a Builder, it is reliable and format-compliant. Higher cost, but worth it for quality-sensitive projects.</p>
-        </div>
-        <div class="kyh-tip">
-          <span class="kyh-tip-icon">💡</span>
-          <p>Claude tends to give the most thoughtful reasoning for its suggestions — clarifying the logic behind each change.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHATGPT -->
-    <div class="kyh-card">
-      <div class="kyh-card-header">
-        <img src="images/chatgpt.ico" class="kyh-card-icon" onerror="this.style.display='none'">
-        <div>
-          <div class="kyh-card-name">ChatGPT</div>
-          <div class="kyh-card-model">gpt-4.1</div>
-        </div>
-        <div class="kyh-badges">
-          <span class="kyh-badge kyh-badge-builder">Strong Builder</span>
           <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
         </div>
       </div>
@@ -211,25 +251,27 @@
           <div class="kyh-section-title">Strengths</div>
           <div class="kyh-pills">
             <span class="kyh-pill kyh-pill-good">Fast responses</span>
-            <span class="kyh-pill kyh-pill-good">Versatile across doc types</span>
-            <span class="kyh-pill kyh-pill-good">Good at concise rewrites</span>
-            <span class="kyh-pill kyh-pill-good">Reliable format compliance</span>
+            <span class="kyh-pill kyh-pill-good">Aggressive early-round suggestions</span>
+            <span class="kyh-pill kyh-pill-good">Good at strong action verb improvements</span>
+            <span class="kyh-pill kyh-pill-good">Pushes for precision and impact</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Weaknesses</div>
           <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-warn">Can converge early (NO CHANGES too soon)</span>
-            <span class="kyh-pill kyh-pill-warn">Less distinctive voice than Claude</span>
+            <span class="kyh-pill kyh-pill-bad">Stubborn — re-raises resolved decisions</span>
+            <span class="kyh-pill kyh-pill-bad">Confidence bias — pushes its view assertively</span>
+            <span class="kyh-pill kyh-pill-warn">Skims context rather than reading carefully</span>
+            <span class="kyh-pill kyh-pill-warn">Not recommended as Builder</span>
           </div>
         </div>
         <div class="kyh-section">
           <div class="kyh-section-title">Best role</div>
-          <p>A solid all-rounder for both Builder and Reviewer roles — fast, reliable, and consistent. A strong alternative Builder if DeepSeek is unavailable. As a reviewer, it effectively signals document convergence during final refinement rounds.</p>
+          <p>A valuable reviewer in early rounds, pushing hard for stronger phrasing and action verbs. However, its tendency to revisit resolved points may prolong final convergence.</p>
         </div>
         <div class="kyh-tip">
-          <span class="kyh-tip-icon">💡</span>
-          <p>When ChatGPT returns NO CHANGES in later rounds, treat this as a sign of document convergence rather than a reason to toggle it off.</p>
+          <span class="kyh-tip-icon">⚠️</span>
+          <p>Toggle Grok off in later refinement rounds once key decisions are finalized to avoid repetitive suggestions.</p>
         </div>
       </div>
     </div>
@@ -271,48 +313,6 @@
         <div class="kyh-tip">
           <span class="kyh-tip-icon">💡</span>
           <p>Perplexity is particularly useful early in a project when the document is rough and needs fact-checking input from the hive.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- GROK -->
-    <div class="kyh-card">
-      <div class="kyh-card-header">
-        <img src="https://www.google.com/s2/favicons?domain=grok.com&sz=64" class="kyh-card-icon" onerror="this.style.display='none'">
-        <div>
-          <div class="kyh-card-name">Grok</div>
-          <div class="kyh-card-model">grok-3</div>
-        </div>
-        <div class="kyh-badges">
-          <span class="kyh-badge kyh-badge-reviewer">Reviewer</span>
-        </div>
-      </div>
-      <div class="kyh-body">
-        <div class="kyh-section">
-          <div class="kyh-section-title">Strengths</div>
-          <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-good">Fast responses</span>
-            <span class="kyh-pill kyh-pill-good">Aggressive early-round suggestions</span>
-            <span class="kyh-pill kyh-pill-good">Good at strong action verb improvements</span>
-            <span class="kyh-pill kyh-pill-good">Pushes for precision and impact</span>
-          </div>
-        </div>
-        <div class="kyh-section">
-          <div class="kyh-section-title">Weaknesses</div>
-          <div class="kyh-pills">
-            <span class="kyh-pill kyh-pill-bad">Stubborn — re-raises resolved decisions</span>
-            <span class="kyh-pill kyh-pill-bad">Confidence bias — pushes its view assertively</span>
-            <span class="kyh-pill kyh-pill-warn">Skims context rather than reading carefully</span>
-            <span class="kyh-pill kyh-pill-warn">Not recommended as Builder</span>
-          </div>
-        </div>
-        <div class="kyh-section">
-          <div class="kyh-section-title">Best role</div>
-          <p>A valuable reviewer in early rounds, pushing hard for stronger phrasing and action verbs. However, its tendency to revisit resolved points may prolong final convergence.</p>
-        </div>
-        <div class="kyh-tip">
-          <span class="kyh-tip-icon">⚠️</span>
-          <p>Toggle Grok off in later refinement rounds once key decisions are finalized to avoid repetitive suggestions.</p>
         </div>
       </div>
     </div>
