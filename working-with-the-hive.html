@@ -44,6 +44,9 @@
     .wh-tag-green { background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.4); color:#34d399; }
     .wh-tag-red { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.4); color:#f87171; }
 
+    .wh-back-top { display:block; text-align:right; font-size:12px; color:var(--text-dim); text-decoration:none; padding:6px 0 2px; transition:color 0.12s; }
+    .wh-back-top:hover { color:var(--accent); }
+
     [data-theme="light"] .wh-intro,
     [data-theme="light"] .wh-toc,
     [data-theme="light"] .wh-block { background:#ffffff; }
@@ -68,7 +71,7 @@
   <button class="close-btn" onclick="window.close()">✕ Close this tab</button>
 </div>
 
-<div class="page-main">
+<div class="page-main" id="top">
 
   <div class="wh-intro">
     <img src="images/AI_Hive_Worker_Bee_v2.png" alt="" class="wh-bee">
@@ -123,7 +126,7 @@
       </div>
     </div>
   </div>
-
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
   <!-- SECTION: ROUNDS -->
   <div class="wh-section" id="rounds">
@@ -155,7 +158,7 @@
       </div>
     </div>
   </div>
-
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
   <!-- SECTION: CONFLICTS -->
   <div class="wh-section" id="conflicts">
@@ -195,7 +198,7 @@
       <p>Conflicts aren't just for tiebreaking — they're one of your most direct tools for steering the document mid-session. If a conflict surfaces content that's out of scope, use the Custom option to replace it with something tighter, or Decline to leave the current text and suppress the suggestion. Either way, the decision gets locked and the AIs won't push it again.</p>
     </div>
   </div>
-
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
   <!-- SECTION: COURSE CORRECTING -->
   <div class="wh-section" id="coursecorrect">
@@ -235,7 +238,7 @@
       </div>
     </div>
   </div>
-
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
   <!-- SECTION: NOTES -->
   <div class="wh-section" id="notes">
@@ -261,7 +264,7 @@
       </div>
     </div>
   </div>
-
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
   <!-- SECTION: CONVERGENCE -->
   <div class="wh-section" id="convergence">
@@ -290,6 +293,7 @@
       <p>When you hit Finish, AI Hive will prompt you to export your document before starting a new project — your working document and round history will be cleared when you do. Export as a <code>.txt</code> file, complete with a project byline showing how many rounds it took and how long the session ran.</p>
     </div>
   </div>
+  <a href="#top" class="wh-back-top">↑ Back to top</a>
 
 </div>
 </body>
