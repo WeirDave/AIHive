@@ -213,7 +213,6 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Your Project <button class="goal-info-btn" onclick="document.getElementById('goalInfoModal').classList.add('active')" title="About the project goal"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Give your project a name, version, and a detailed goal. The goal frames your project — it tells every AI what this document is, what it's trying to achieve, and what direction to take. It is used when generating the first draft and as context throughout the session. The more specific and detailed your goal, the better your results will be from the very first round.</p>
-              <p class="fs-col-tip">💡 The more specific your goal, the better your first draft will be. Include tone, audience, length, and purpose.</p>
             </div>
 
             <div class="project-fields">
@@ -237,7 +236,10 @@
             </div>
           </div>
         </div>
-        </div><!-- /fs-col-left -->
+        <div class="setup-col-tip">
+          💡 <strong>Tip:</strong> The more specific your goal, the better your first draft will be. Include tone, audience, length, and purpose.
+        </div>
+      </div>
 
         <!-- ── Divider ── -->
       <div class="fs-divider"></div>
@@ -250,7 +252,6 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Starting Document <button class="goal-info-btn" onclick="document.getElementById('infoUploadModal').classList.add('active')" title="About file uploads"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Choose how you want to start. Upload an existing file, paste text, or let the AIs create a first draft from scratch using your goal above.</p>
-              <p class="fs-col-tip">💡 Upload or paste an existing draft to refine it, or start from scratch and let your AIs build it from your goal.</p>
             </div>
 
             <div class="doc-input-tabs">
@@ -261,6 +262,7 @@
 
             <div class="export-mask-row">
               <label class="export-mask-label">💾 Export filename</label>
+              <button class="welcome-info-btn" onclick="document.getElementById('infoExportMaskModal').classList.add('active')" title="About the export filename" style="flex-shrink:0;"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:16px;height:16px;display:block;opacity:0.5;"></button>
               <input type="text" id="exportMask" class="export-mask-input" placeholder="{name}_{version}" oninput="saveProject();updateMaskPreview()" title="Use {name} and {version} as placeholders">
               <span class="export-mask-preview" id="exportMaskPreview"></span>
             </div>
@@ -299,7 +301,10 @@
 
           </div>
         </div>
-        </div><!-- /fs-col-right -->
+        <div class="setup-col-tip">
+          💡 <strong>Tip:</strong> Upload or paste an existing draft to refine it, or start from scratch and let your AIs build it from your goal.
+        </div>
+      </div>
 
     </div><!-- /fs-body -->
 
@@ -736,6 +741,30 @@
 <!-- ============================================================
      INFO MODALS — Section explainers
      ============================================================ -->
+
+<!-- EXPORT FILENAME INFO -->
+<div class="finish-modal-overlay" id="infoExportMaskModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="finish-modal goal-info-modal">
+    <div style="text-align:center;margin-bottom:8px;">
+      <img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:72px;height:72px;">
+    </div>
+    <h2 class="finish-modal-title">Export Filename</h2>
+    <div class="goal-info-body">
+      <p>This field controls what your exported document will be named when you hit Finish. It uses two placeholders that get filled in automatically:</p>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft" style="font-family:var(--font-mono);">{name}</span>
+        <span class="goal-info-desc">Your project name, with spaces and special characters replaced by underscores. Example: <em>Wireless Products Comparison</em> becomes <code>Wireless_Products_Comparison</code>.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase refine" style="font-family:var(--font-mono);">{version}</span>
+        <span class="goal-info-desc">Your project version number exactly as entered. Example: <em>v1.0</em> stays as <code>v1.0</code>.</span>
+      </div>
+      <p>The default mask is <code>{name}_{version}</code> — so a project named <em>Q3 Summary</em> at version <em>v2</em> exports as <code>Q3_Summary_v2.txt</code>. You can type anything you like — just use <code>{name}</code> and <code>{version}</code> wherever you want those values inserted.</p>
+      <p class="goal-info-tip">💡 The preview next to the field updates live as you type, showing exactly what the filename will be.</p>
+    </div>
+    <button class="finish-modal-cancel" onclick="document.getElementById('infoExportMaskModal').classList.remove('active')">Got it →</button>
+  </div>
+</div>
 
 <!-- THE HIVE -->
 <div class="finish-modal-overlay" id="infoHiveModal" onclick="if(event.target===this)this.classList.remove('active')">
