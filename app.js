@@ -2189,7 +2189,13 @@ function showProjectGoalModal() {
   if (editTa) editTa.value = goal;
   updateProjectGoalModalPreview();
   modal.classList.add('active');
-  setTimeout(() => editTa?.focus(), 100);
+  setTimeout(() => {
+    if (editTa) {
+      editTa.focus();
+      editTa.setSelectionRange(0, 0);
+      editTa.scrollTop = 0;
+    }
+  }, 100);
 }
 
 function updateProjectGoalModalPreview() {
