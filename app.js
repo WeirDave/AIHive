@@ -731,10 +731,6 @@ function consoleLog(msg, type = 'info') {
   el.prepend(entry);
 }
 
-function toggleConsoleLegend() {
-  const el = document.getElementById('consoleLegend');
-  if (el) el.classList.toggle('show');
-}
 
 function copyConsole() {
   const el = document.getElementById('liveConsole');
@@ -1494,8 +1490,6 @@ function removeAI(id) {
   toast(`🗑 ${ai.name} removed`);
 }
 
-function removeCustomAI(id) { removeAI(id); } // legacy alias
-
 function clearKeyForAI(id) {
   const ai = aiList.find(a => a.id === id);
   if (!ai) return;
@@ -1505,23 +1499,6 @@ function clearKeyForAI(id) {
   saveSettings();
   renderAISetupGrid();
   toast(`🗑 ${ai.name} API key removed`);
-}
-
-function goToBuilderStep() {
-  // Count AIs with saved keys
-  const keyed = aiList.filter(ai => {
-    const cfg = API_CONFIGS[ai.provider];
-    return cfg?._key;
-  });
-  if (keyed.length < 2) {
-    toast('⚠️ You need API keys for at least 2 AIs — that\'s what makes the collaboration work!');
-    return;
-  }
-  // Make sure activeAIs reflects who has keys
-  activeAIs = keyed;
-  saveHive();
-  goToScreen('screen-setup');
-  renderBuilderPicker();
 }
 
 function toggleKeyVis(id) {
@@ -2971,14 +2948,11 @@ async function runBuilderOnly() {
   stopRoundTimer();
   hideBuilderOverlay();
   if (smokeBtn) smokeBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
-  const hiveStatus = document.getElementById('hiveStatus');
-  if (hiveStatus) hiveStatus.textContent = 'Ready';
 }
 
 // ── RUN ROUND ──
 async function runRound() {
   const btn = document.getElementById('runRoundBtn');
-  const hiveStatus = document.getElementById('hiveStatus');
 
   if (btn?.classList.contains('running')) return;
 
@@ -3010,7 +2984,6 @@ async function runRound() {
   showSmokerOverlay("Smokin' the Hive…");
   startRoundTimer(btn, 'Smoking…');
   projectClockStart(); // start/resume project clock on every round
-  if (hiveStatus) hiveStatus.textContent = 'Working…';
   setStatus(`⚡ Round ${round} in progress — AI Hive is thinking…`);
   consoleLog(`═══ Round ${round} · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase} ═══`, 'divider');
 
@@ -3236,7 +3209,6 @@ async function runRound() {
     hideBuilderOverlay();
     btn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
   }
-  if (hiveStatus) hiveStatus.textContent = 'Ready';
   if (builderHadError) {
     toast('⚠️ Round not saved — Builder output was invalid', 5000);
   } else {
