@@ -1,6 +1,7 @@
 // ============================================================
-//  AI Hive v2.1 — app.js
-//  Author: WeirDave | License: AGPL-3.0
+//  AI Hive v2 — app.js
+//  Build: 20260330-001
+//  Author: WeirDave (R David Paine III) | License: AGPL-3.0
 //  GitHub: github.com/WeirDave/AIHive
 //
 //  Storage keys:
@@ -374,6 +375,7 @@ let docTab    = 'upload';
 let workDocSaveTimer = null;
 
 // ── STORAGE KEYS ──
+const BUILD       = '20260330-001';         // build stamp — update each session
 const LS_HIVE     = 'aihive_v2_hive';      // AI list + API keys — persistent across projects
 const LS_PROJECT  = 'aihive_v2_project';   // project name/version/goal/docTab — per project
 const LS_SESSION  = 'aihive_v2_session';   // round state — per session
@@ -4178,7 +4180,7 @@ function exportSession() {
 
   if (history.length === 0 && !doc) { toast('⚠️ Nothing to export'); return; }
 
-  let out = `${eq}\nAI HIVE v2.1 — SESSION TRANSCRIPT\nProject: ${name}\nExported: ${new Date().toLocaleString()}\n${eq}\n\n`;
+  let out = `${eq}\nAI HIVE v2 — SESSION TRANSCRIPT\nBuild: ${BUILD}\nProject: ${name}\nExported: ${new Date().toLocaleString()}\n${eq}\n\n`;
   history.forEach(h => {
     const phaseLabel = PHASES.find(p => p.id === h.phase)?.label || h.phase || '';
     out += `${eq}\nROUND ${h.round} · ${phaseLabel} — ${h.timestamp}\n${eq}\n\n`;
@@ -4246,6 +4248,9 @@ function initTheme() {
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   loadSettings(); // always load hive (AI keys) silently
+  // Stamp build number into About modal
+  const buildEl = document.getElementById('aboutBuild');
+  if (buildEl) buildEl.textContent = BUILD;
   updateSetupRequirements();
 
   // Show dev toolbar and admin nav items if dev mode is active
