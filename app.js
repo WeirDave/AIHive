@@ -1522,7 +1522,7 @@ function validateAndContinue() {
     _settingsReturnToWork = false;
     // Reset button text
     const btn = document.getElementById('setupContinueBtn');
-    if (btn) btn.innerHTML = '<img src="images/AI_Hive_Project_Bee_v1.png" style="width:36px;height:36px;object-fit:contain;vertical-align:middle;margin-right:8px;"> Continue to Project Setup →';
+    if (btn) btn.innerHTML = '<img src="images/AI_Hive_Project_Bee_v2.png" style="width:36px;height:36px;object-fit:contain;vertical-align:middle;margin-right:8px;"> Continue to Project Setup →';
     renderBeeStatusGrid();
     goToScreen('screen-work');
     showReExtractBanner();
@@ -1580,6 +1580,13 @@ function clearUploadedFile() {
 }
 
 async function processFile(file) {
+  // Guard: if a session is already running, warn before overwriting the live document
+  if (history.length > 0 || docText) {
+    const proceed = confirm(
+      `⚠️ You have an active session with a working document.\n\nLoading a new file will replace your current document. This cannot be undone.\n\nIf you want to refine this file instead, consider clearing your working document first and pasting the text in, then continuing from there.\n\nProceed and replace the document?`
+    );
+    if (!proceed) return;
+  }
   const status = document.getElementById('fileStatus');
   const ext = file.name.split('.').pop().toLowerCase();
   status.style.display = 'block';
@@ -2749,7 +2756,7 @@ async function runBuilderOnly() {
       builderHadError = true;
       setBeeStatus(builderAI.id, 'error', 'Missing conflicts block');
       setStatus(`⚠️ Builder did not return a %%CONFLICTS_START%% block — round rejected`);
-      consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved. If your document is large or complex, try switching to a different Builder and retrying.`, 'warn');
+      consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round rejected (hard stop). If this keeps happening, try switching to a different Builder.`, 'error');
     } else if (conflicts) {
       consoleLog(`⚡ Conflicts detected — see Conflicts panel`, 'warn');
     } else {
@@ -2989,7 +2996,7 @@ async function runRound() {
         builderHadError = true;
         setBeeStatus(builderAI.id, 'error', 'Missing conflicts block');
         setStatus(`⚠️ Builder did not return a %%CONFLICTS_START%% block — round rejected`);
-        consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round not saved. If your document is large or complex, try switching to a different Builder and retrying.`, 'warn');
+        consoleLog(`⚠️ Builder output missing %%CONFLICTS_START%% block — round rejected (hard stop). If this keeps happening, try switching to a different Builder.`, 'error');
       } else if (conflicts) {
         consoleLog(`⚡ Conflicts detected — see Conflicts panel`, 'warn');
       } else {

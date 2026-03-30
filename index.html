@@ -866,7 +866,7 @@
         <span class="goal-info-desc">The AI encountered an error — usually an expired API key, rate limit, or network issue. Check the Live Console for details.</span>
       </div>
       <p>You can toggle individual AIs on or off between rounds using the checkboxes without losing their saved keys. Use <strong>Change Builder</strong> to swap which AI does the building.</p>
-      <p>The <strong>API Keys</strong> button in the top bar opens the API key setup guide. The <strong>Prompts</strong> button lets you view and customize the exact instructions sent to your AIs each round. The <strong>Notes</strong> button lets you leave notes that are passed to the Builder at the start of the next round.</p>
+      <p>The <strong>☰ navigation menu</strong> (top left) gives you access to API key setup, the Prompt Editor, and navigation back to project or key setup screens. The <strong>📝 Notes</strong> button in the top bar lets you leave instructions that are passed to the Builder at the start of the next round.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoHiveModal').classList.remove('active')">Got it →</button>
   </div>
@@ -881,11 +881,15 @@
       <p>This section displays conflicts that occur when AIs disagree on what changes need to be made. When the Builder can't determine the right path forward on its own, it flags it here for you to decide.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">User Decision</span>
-        <span class="goal-info-desc">The Builder found competing suggestions from different AIs and needs you to choose. Pick one of the options, type your own, or decline. Your choice is then automatically applied by the Builder to produce a revised working document and keep the project moving forward.</span>
+        <span class="goal-info-desc">The Builder found competing suggestions from different AIs and needs you to choose. Pick one of the options, type your own, or bypass if you've already edited the document directly. Your choice is locked so the AIs won't re-raise it.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Builder Decision</span>
         <span class="goal-info-desc">The Builder is flagging a judgment call it made on your behalf. Review what it chose and override it by selecting a different option or typing your own — then hit Apply to have the Builder revise the document with your correction.</span>
+      </div>
+      <div class="goal-info-row">
+        <span class="goal-info-phase draft">Bypass</span>
+        <span class="goal-info-desc">If you've already fixed something directly in the working document, choose "I edited the document directly — skip this conflict" to lock it without triggering another Builder pass. If all conflicts are bypassed, the round advances immediately with no Builder call.</span>
       </div>
       <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Click the "Current:" text on any conflict card to scroll the working document directly to that line and highlight it.</p>
     </div>
@@ -917,8 +921,8 @@
         <span class="goal-info-desc">You do not have to wait for the hive to converge on its own. If the document looks good to you at any point, hit the Finish button in the top bar. You can export your document, start a fresh project, or go back and keep refining — the choice is always yours.</span>
       </div>
       <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Export saves your document as a .txt file with a byline noting the number of rounds it took and how long the session ran.</p>
-      <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Use the <strong>← Project</strong> button in the top bar to go back to project setup at any time — to swap your document, change your goal, or re-upload a file. Use <strong>← Keys</strong> to go back to AI and Builder selection.</p>
-      <p class="goal-info-tip">⚠️ If your document looks garbled — especially after uploading a PDF — the file was likely too design-heavy to extract cleanly. Use the <strong>← Project</strong> button in the top bar to go back, then try the Paste Text option instead and copy your text in manually.</p>
+      <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Use the <strong>☰ navigation menu</strong> (top left) to go back to Project Setup to change your goal, or to Keys &amp; Builder to swap your AI configuration. Your session is saved automatically when you navigate away.</p>
+      <p class="goal-info-tip">⚠️ If your document looks garbled — especially after uploading a PDF — the file was likely too design-heavy to extract cleanly. Use the <strong>☰ menu → Project — Goal &amp; Document</strong> to go back, then try the Paste Text option instead and copy your text in manually.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoDocModal').classList.remove('active')">Got it →</button>
   </div>
@@ -933,17 +937,17 @@
       <p>The console shows you everything happening in real time — which AIs are sending requests, responding, succeeding, or failing, and a preview of what each one said.</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Round Clock</span>
-        <span class="goal-info-desc">Displayed above the console, this clock tracks how long the current round is taking. It resets automatically at the start of each new round.</span>
+        <span class="goal-info-desc">Tracks how long the current round is taking. Displays in <strong style="color:#34d399;">green</strong> when running. Resets automatically at the start of each new round.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Project Clock</span>
-        <span class="goal-info-desc">Also displayed above the console, this clock tracks the total time you have spent on the project since your first round. It persists if you close and reopen the browser. It pauses automatically when you click the Finish button. If you need to step away from the screen — to review something, take a break, or handle something else — use the pause button next to the project clock so your time remains an accurate picture of how long the project actually took.</span>
+        <span class="goal-info-desc">Tracks total time spent on the project since your first round. Displays in <strong style="color:var(--accent);">amber</strong> when running, flashes amber when paused. Persists if you close and reopen the browser. Use the pause button if you need to step away so your time stays accurate.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Legend</span>
-        <span class="goal-info-desc">The legend is located directly above the console and explains what the different colors of text in the log mean: green is a success, amber is a warning, red is an error, and blue is general info.</span>
+        <span class="goal-info-desc">Located directly above the console log. <strong style="color:#34d399;">Green</strong> = success · <strong style="color:#fbbf24;">Amber</strong> = warning · <strong style="color:#f87171;">Red</strong> = error · <strong style="color:#60a5fa;">Blue</strong> = sending · <strong style="color:#a78bfa;">Purple</strong> = AI response preview · <strong style="color:#f5a623;">Orange</strong> = round divider.</span>
       </div>
-      <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Using the Copy button you can copy the full console log at any time — useful for keeping a record of what happened during your session or for troubleshooting an issue.</p>
+      <p class="goal-info-tip"><img src="images/AI_Hive_TipButton_v1.png" alt="💡" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"> Use the Copy button to grab the full console log at any time — useful for troubleshooting or keeping a record of your session.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoConsoleModal').classList.remove('active')">Got it →</button>
   </div>
