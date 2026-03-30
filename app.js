@@ -2177,13 +2177,13 @@ function showProjectGoalModal() {
   const name = document.getElementById('projectName')?.value.trim() || '';
   const version = document.getElementById('projectVersion')?.value.trim() || '';
   const metaEl = document.getElementById('projectGoalModalMeta');
+  const nameEl = document.getElementById('projectGoalModalName');
   const editTa = document.getElementById('projectGoalModalEdit');
+  if (nameEl) nameEl.textContent = [name, version].filter(Boolean).join(' · ');
   if (metaEl) {
-    const parts = [name, version].filter(Boolean).join(' · ');
-    const charNote = goal.length > 300
-      ? `${parts ? parts + ' — ' : ''}${goal.length} characters · amber text exceeds the 300-character Refine Text limit`
-      : `${parts}${goal.length ? ' — ' + goal.length + ' characters' : ''}`;
-    metaEl.textContent = charNote;
+    metaEl.textContent = goal.length > 300
+      ? `${goal.length} characters — exceeds 300-character Refine limit`
+      : `${goal.length} characters`;
     metaEl.style.color = 'var(--text-dim)';
   }
   if (editTa) editTa.value = goal;
@@ -2201,12 +2201,9 @@ function updateProjectGoalModalPreview() {
   const goal = editTa.value;
   const truncated = goal.length > 300;
   if (metaEl) {
-    const name = document.getElementById('projectName')?.value.trim() || '';
-    const version = document.getElementById('projectVersion')?.value.trim() || '';
-    const parts = [name, version].filter(Boolean).join(' · ');
     metaEl.textContent = truncated
-      ? `${parts ? parts + ' — ' : ''}${goal.length} characters · exceeds 300-character Refine limit`
-      : `${parts}${goal.length ? ' — ' + goal.length + ' characters' : ''}`;
+      ? `${goal.length} characters — exceeds 300-character Refine limit`
+      : `${goal.length} characters`;
   }
   if (refineWrap && refineText) {
     if (truncated) {
