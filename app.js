@@ -2094,9 +2094,16 @@ function updateGoalCounter() {
     `<span class="goal-stat-sep">·</span>` +
     `<span class="goal-stat ${truncated ? 'goal-stat-warn' : ''}">${len} <span class="goal-stat-label">chars</span></span>` +
     (truncated ? `<span class="goal-trunc-note"> * Refine sends first ${truncateGoalForRefine(ta.value).length} chars (to sentence boundary)</span>` : '');
-  // Show/hide the refine preview button
-  const previewBtn = document.getElementById('goalRefinePreviewBtn');
-  if (previewBtn) previewBtn.style.display = truncated ? 'inline-flex' : 'none';
+  // Show/hide inline refine preview box
+  const previewWrap = document.getElementById('goalRefinePreview');
+  const previewText = document.getElementById('goalRefinePreviewText');
+  const previewCount = document.getElementById('goalRefinePreviewCount');
+  if (previewWrap) previewWrap.style.display = truncated ? 'block' : 'none';
+  if (truncated && previewText && previewCount) {
+    const refined = truncateGoalForRefine(ta.value);
+    previewText.textContent = refined;
+    previewCount.textContent = `${refined.length} chars`;
+  }
 }
 
 function updateProjLineNums(numsId, ta) {
