@@ -9,7 +9,8 @@
 AI Hive orchestrates a team of AIs around your document — every round, all of them review, one of them builds, and the result gets better each time.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.0-orange.svg)](https://github.com/WeirDave/AIHive/releases)
+[![Version](https://img.shields.io/badge/Version-2.0-orange.svg)](https://github.com/WeirDave/AIHive/releases)
+[![Build](https://img.shields.io/badge/Build-20260330--001-blue.svg)](https://github.com/WeirDave/AIHive)
 [![Runs In Browser](https://img.shields.io/badge/Runs_In_Browser-No_Install-green.svg)](https://weirdave.github.io/AIHive/)
 
 <a href="https://weirdave.github.io/AIHive/" target="_blank"><strong>→ Launch AI Hive</strong></a>
@@ -53,7 +54,9 @@ When AIs disagree on something, the Builder flags it in the **Conflicts panel** 
 Add notes before each round to steer the hive. Keep going as long as you want. There's no magic number of rounds. When *you* think the document is done, hit **Finish**. The hive works for you, not the other way around.
 
 **7. Export**
-Export your clean final document as a `.txt` file, complete with a project byline showing how many rounds it took and how long the session ran.
+Export your clean final document as a `.txt` file, complete with a project byline showing how many rounds it took and how long the session ran. You can also export a **Full Transcript** — a complete record of every round, every AI response, and every document version — from the History panel or the Finish screen.
+
+> 💾 **Your session is saved automatically** using IndexedDB — no size limits, no data loss even on long multi-round sessions. If storage ever approaches its limit, AI Hive will warn you and offer an immediate export.
 
 ---
 
@@ -63,7 +66,7 @@ Export your clean final document as a `.txt` file, complete with a project bylin
 No API keys needed. AI Hive generates the prompts for you. Open each AI in its own tab, copy the prompt in, paste the response back. AI Hive assembles the Builder prompt automatically and tells you what to do at every step. Works with any AI — free tiers included, no subscriptions required.
 
 ### ⚡ Pro — Fully Automated
-One button does everything. Each AI needs its own API key. AI Hive sends every prompt, collects every response, and runs the full round automatically — no copy/paste, no tab switching. **Gemini's API is currently free** — pair it with one paid AI and you're running full automated rounds for as little as $5 in credits.
+One button does everything. Each AI needs its own API key. AI Hive sends every prompt, collects every response, and runs the full round automatically — no copy/paste, no tab switching. **3 free rounds included** — try it before you buy. After that, a license key from [Gumroad](https://weirdave.gumroad.com/l/aihive-pro) unlocks unlimited rounds. **Gemini's API is currently free** — pair it with one paid AI and you're running full automated rounds for as little as $5 in credits.
 
 ---
 
@@ -121,11 +124,11 @@ The **Live Console** on the right shows everything happening in real time: which
 
 When AIs disagree, the Builder flags it rather than making an arbitrary call. There are two kinds:
 
-**User Decision** — the Builder found competing suggestions and needs you to choose. Pick one of the AI-generated options, type your own, or decline. Your decision is applied to the document immediately.
+**User Decision** — the Builder found competing suggestions and needs you to choose. Pick one of the AI-generated options, type your own, bypass if you've already edited the document directly, or decline. Your decision is applied to the document immediately and locked — the AIs won't re-raise it.
 
 **Builder Decision** — the Builder made a judgment call on your behalf. Review what it chose. If you disagree, select a different option or type your own and hit Apply.
 
-Once you resolve a conflict, it's locked in. The AIs won't re-raise it — your decision is injected into every subsequent round so the hive respects it going forward.
+**Bypass** — if you've already fixed something directly in the working document, choose "I edited the document directly — skip this conflict" to lock it without triggering another Builder pass. If all conflicts are bypassed, the round advances immediately.
 
 > 💡 Click the "Current:" text on any conflict card to scroll the working document directly to that line and highlight it.
 
