@@ -3311,6 +3311,28 @@ kbd {
   background: rgba(245,166,35,0.15) !important;
   color: var(--amber) !important;
 }
+.decision-opt-bypass {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.decision-opt-bypass:hover { opacity: 1; }
+.decision-opt-bypass.selected {
+  border-color: var(--text-dim) !important;
+  background: rgba(255,255,255,0.04) !important;
+  opacity: 1;
+}
+.decision-opt-bypass.selected .decision-opt-num {
+  background: rgba(255,255,255,0.08) !important;
+  color: var(--text-dim) !important;
+}
+.decision-card.bypassed {
+  border-color: var(--border2) !important;
+  opacity: 0.65;
+}
+.decision-card.bypassed .decision-badge {
+  background: var(--surface3) !important;
+  color: var(--text-dim) !important;
+}
 .decision-custom-wrap {
   margin-top: 8px;
 }

@@ -2070,6 +2070,15 @@ function initWorkScreen(isNewSession = false) {
   updateLineNumbers();
 }
 
+function truncateGoalForRefine(goal) {
+  if (!goal || goal.length <= 300) return goal;
+  // Find last sentence boundary at or before 300 chars (must be past 200 to avoid very short context)
+  const slice = goal.slice(0, 300);
+  const lastBoundary = Math.max(slice.lastIndexOf('.'), slice.lastIndexOf('!'), slice.lastIndexOf('?'));
+  if (lastBoundary > 200) return goal.slice(0, lastBoundary + 1).trim();
+  return slice.trim();
+}
+
 function updateGoalCounter() {
   const ta = document.getElementById('projectGoal');
   const el = document.getElementById('goalCounter');
@@ -2084,7 +2093,7 @@ function updateGoalCounter() {
     `<span class="goal-stat">${words} <span class="goal-stat-label">words</span></span>` +
     `<span class="goal-stat-sep">·</span>` +
     `<span class="goal-stat ${truncated ? 'goal-stat-warn' : ''}">${len} <span class="goal-stat-label">chars</span></span>` +
-    (truncated ? `<span class="goal-trunc-note"> * truncated to 300 in Refine</span>` : '');
+    (truncated ? `<span class="goal-trunc-note"> * Refine sends first ${truncateGoalForRefine(ta.value).length} chars (to sentence boundary)</span>` : '');
   // Show/hide the refine preview button
   const previewBtn = document.getElementById('goalRefinePreviewBtn');
   if (previewBtn) previewBtn.style.display = truncated ? 'inline-flex' : 'none';
@@ -2168,6 +2177,7 @@ function showProjectGoalModal() {
       ? `${parts ? parts + ' — ' : ''}${goal.length} characters · amber text exceeds the 300-character Refine Text limit`
       : `${parts}${goal.length ? ' — ' + goal.length + ' characters' : ''}`;
     metaEl.textContent = charNote;
+    metaEl.style.color = 'var(--text-dim)';
   }
   if (textEl) {
     const LIMIT = 300;
@@ -2185,6 +2195,17 @@ function showProjectGoalModal() {
       beyond.title = 'This text exceeds the 300-character limit and is not sent to AIs during the Refine Text phase';
       textEl.appendChild(within);
       textEl.appendChild(beyond);
+    }
+  }
+  // Populate refine preview box
+  const refineWrap = document.getElementById('projectGoalModalRefineWrap');
+  const refineText = document.getElementById('projectGoalModalRefineText');
+  if (refineWrap && refineText) {
+    if (goal.length > 300) {
+      refineText.textContent = truncateGoalForRefine(goal);
+      refineWrap.style.display = 'block';
+    } else {
+      refineWrap.style.display = 'none';
     }
   }
   modal.classList.add('active');
@@ -2728,7 +2749,7 @@ async function runBuilderOnly() {
         setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
         setStatus(`✅ Round ${round} complete — Builder applied your instructions`);
         consoleLog(`✅ Round ${round} complete — Builder only (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
-        playRoundCompleteSound();
+        playRosieSound();
       }
     } else if (!builderHadError) {
       builderHadError = true;
@@ -2969,7 +2990,8 @@ async function runRound() {
           setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
           setStatus(`✅ Round ${round} complete — document updated`);
           consoleLog(`✅ Round ${round} complete — document updated (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
-          playRoundCompleteSound();
+          const hasUserConflicts = window._lastConflicts?.userDecisions?.length > 0;
+          if (hasUserConflicts) { playRoundCompleteSound(); } else { playRosieSound(); }
         }
       } else if (!builderHadError) {
         // Extraction failed — keep existing working document unchanged
@@ -3354,6 +3376,11 @@ function renderConflicts() {
             <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
             <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
           </button>
+          <button class="decision-opt-btn decision-opt-bypass" id="dopt-${di}-bypass"
+            onclick="selectBypassDecision(${di}, ${total})">
+            <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✏️</span>
+            <span class="decision-opt-text" style="color:var(--muted);font-style:italic">I edited the document directly — skip this conflict</span>
+          </button>
         </div>
         <div class="decision-custom-wrap" id="dcustom-${di}" style="display:none">
           <textarea class="decision-custom-ta" id="dcustom-ta-${di}"
@@ -3457,6 +3484,23 @@ function selectCustomDecision(decisionIdx, total) {
   checkAllDecisionsMade(total);
 }
 
+function selectBypassDecision(decisionIdx, total) {
+  const card = document.getElementById(`dcard-${decisionIdx}`);
+  const latest = history[history.length - 1];
+  const decisions = latest?.conflicts?.userDecisions || [];
+  const d = decisions[decisionIdx];
+  if (card) {
+    card.querySelectorAll('.decision-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    document.getElementById(`dopt-${decisionIdx}-bypass`)?.classList.add('selected');
+    const customWrap = document.getElementById(`dcustom-${decisionIdx}`);
+    if (customWrap) customWrap.style.display = 'none';
+    card.classList.add('resolved', 'bypassed');
+  }
+  // Store as bypass — applyDecisions will skip prompt injection but still lock it
+  window._decisionChoices[decisionIdx] = { type: 'bypass', text: d?.current || '' };
+  checkAllDecisionsMade(total);
+}
+
 function updateCustomDecision(decisionIdx, total) {
   const ta = document.getElementById(`dcustom-ta-${decisionIdx}`);
   const text = ta?.value.trim() || '';
@@ -3501,13 +3545,18 @@ function applyDecisions() {
     } else if (choice.type === 'custom') {
       chosenText = choice.text;
     }
+    // bypass type: skip prompt injection, but still lock in resolved decisions below
 
     if (d.current && chosenText) {
       lines.push(`Replace "${d.current}" with "${chosenText}"`);
     }
   });
 
-  if (lines.length === 0) {
+  // If ALL decisions are bypassed, skip Builder call but still lock them
+  const allBypassed = Object.keys(window._decisionChoices).length > 0 &&
+    Object.values(window._decisionChoices).every(c => c.type === 'bypass');
+
+  if (lines.length === 0 && !allBypassed) {
     if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = '✅ Apply My Decisions to Document'; }
     return;
   }
@@ -3525,6 +3574,8 @@ function applyDecisions() {
       chosenText = d.options[choice.idx]?.text || '';
     } else if (choice.type === 'custom') {
       chosenText = choice.text;
+    } else if (choice.type === 'bypass') {
+      chosenText = d.current || ''; // lock current text as-is
     }
     if (d.current && chosenText) {
       window._resolvedDecisions.push({ original: d.current, chosen: chosenText });
@@ -3569,6 +3620,16 @@ function applyDecisions() {
   }
 
   toast('📋 Decisions queued — sending to Builder…');
+  if (allBypassed) {
+    if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = '✅ Apply My Decisions to Document'; }
+    toast('✏️ All conflicts bypassed — document edits applied directly. Starting next round…');
+    round++;
+    updateRoundBadge();
+    renderWorkPhaseBar();
+    saveSession();
+    playRosieSound();
+    return;
+  }
   runBuilderOnly();
 }
 
