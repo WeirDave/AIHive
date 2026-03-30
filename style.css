@@ -2225,12 +2225,14 @@ kbd {
 .console-time {
   flex-shrink: 0;
   min-width: 90px;
+  color: #4a5270;
+  margin-right: 6px;
+  user-select: none;
 }
 .console-entry span:last-child {
   flex: 1;
   min-width: 0;
 }
-.console-time { color: #4a5270; margin-right: 6px; user-select: none; }
 .console-info    { color: #9aa3b8; }
 .console-success { color: #34d399; }
 .console-warn    { color: #fbbf24; }
@@ -3371,14 +3373,6 @@ kbd {
   padding-bottom: 1px;
   grid-column: 2;
   grid-row: 2;
-}
-.decision-opt-text {
-  font-size: 12px;
-  color: var(--text);
-  line-height: 1.5;
-  min-width: 0;
-  grid-column: 2;
-  grid-row: 1;
 }
 /* ── APPLY DECISIONS BUTTON ── */
 .btn-apply-decisions {
