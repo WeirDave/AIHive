@@ -546,8 +546,16 @@ function playFlyingCarSound() {
   } catch(e) { /* audio not supported — fail silently */ }
 }
 
-let _roundTimerInterval = null;
-let _roundTimerStart    = null;
+// ── GOAL TRUNCATION — cut at last sentence boundary at or before 300 chars ──
+function truncateGoalForRefine(goal) {
+  if (!goal || goal.length <= 300) return goal;
+  const segment = goal.slice(0, 300);
+  const lastPunct = Math.max(segment.lastIndexOf('.'), segment.lastIndexOf('!'), segment.lastIndexOf('?'));
+  const cutAt = lastPunct > 200 ? lastPunct + 1 : 300; // only use punct boundary if it's not too short
+  return goal.slice(0, cutAt).trimEnd() + '…';
+}
+
+
 let _clockInterval      = null; // reserved for future use
 
 function startRoundTimer(btn, baseLabel) {
@@ -2078,13 +2086,15 @@ function updateGoalCounter() {
   const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
   const lines = ta.value ? ta.value.split('\n').length : 0;
   const truncated = len > 300;
+  const truncated_text = truncated ? truncateGoalForRefine(ta.value) : '';
+  const truncated_len  = truncated ? truncated_text.replace('…','').length : 0;
   el.innerHTML =
     `<span class="goal-stat">${lines} <span class="goal-stat-label">lines</span></span>` +
     `<span class="goal-stat-sep">·</span>` +
     `<span class="goal-stat">${words} <span class="goal-stat-label">words</span></span>` +
     `<span class="goal-stat-sep">·</span>` +
     `<span class="goal-stat ${truncated ? 'goal-stat-warn' : ''}">${len} <span class="goal-stat-label">chars</span></span>` +
-    (truncated ? `<span class="goal-trunc-note"> * truncated to 300 in Refine</span>` : '');
+    (truncated ? `<span class="goal-trunc-note"> * Refine sends first ${truncated_len} chars (to sentence boundary)</span>` : '');
 }
 
 function updateProjLineNums(numsId, ta) {
@@ -2182,6 +2192,18 @@ function showProjectGoalModal() {
       beyond.title = 'This text exceeds the 300-character limit and is not sent to AIs during the Refine Text phase';
       textEl.appendChild(within);
       textEl.appendChild(beyond);
+    }
+  }
+
+  // Show refine preview if goal exceeds 300 chars
+  const refineWrap = document.getElementById('projectGoalModalRefine');
+  const refineText = document.getElementById('projectGoalModalRefineText');
+  if (refineWrap && refineText) {
+    if (goal.length > 300) {
+      refineText.textContent = truncateGoalForRefine(goal);
+      refineWrap.style.display = 'block';
+    } else {
+      refineWrap.style.display = 'none';
     }
   }
   modal.classList.add('active');
@@ -2556,7 +2578,7 @@ function buildPromptForAI(ai, reviewerResponses) {
   let prompt = `${eq}\n  AI HIVE — ${name.toUpperCase()}\n  Round ${round} · Phase: ${PHASES.find(p => p.id === phase)?.label || phase}\n${eq}\n\n`;
 
   if (goal && phase === 'draft') prompt += `PROJECT GOAL:\n${sep}\n${goal}\n\n`;
-  if (goal && phase !== 'draft') prompt += `PROJECT CONTEXT: ${goal.length > 300 ? goal.substring(0, 300) + '…' : goal}\n\n`;
+  if (goal && phase !== 'draft') prompt += `PROJECT CONTEXT: ${truncateGoalForRefine(goal)}\n\n`;
 
   if (isBuilder && hasResponses) {
     prompt += doc ? `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n` : '';
@@ -2683,7 +2705,7 @@ async function runBuilderOnly() {
   const name  = document.getElementById('projectName')?.value.trim() || '';
   const numberedDoc = docText.split('\n').map((line, i) => `${String(i+1).padStart(4,' ')}  ${line}`).join('\n');
   let prompt = `${eq}\n  AI HIVE — ${name.toUpperCase()}\n  Round ${round} · Builder Only · Phase: ${PHASES.find(p=>p.id===phase)?.label||phase}\n${eq}\n\n`;
-  if (goal) prompt += `PROJECT CONTEXT: ${goal.length > 300 ? goal.substring(0,300)+'…' : goal}\n\n`;
+  if (goal) prompt += `PROJECT CONTEXT: ${truncateGoalForRefine(goal)}\n\n`;
   prompt += `USER INSTRUCTIONS FOR THIS BUILD:\n${sep}\n${notes}\n\n`;
   prompt += `CURRENT DOCUMENT (line numbers for reference):\n${sep}\n${numberedDoc}\n\n`;
   prompt += `${sep}\n⚠️ BUILDER: produce the complete updated document\n${sep}\n\n`;
@@ -2725,7 +2747,7 @@ async function runBuilderOnly() {
         setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
         setStatus(`✅ Round ${round} complete — Builder applied your instructions`);
         consoleLog(`✅ Round ${round} complete — Builder only (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
-        playRoundCompleteSound();
+        playRoundCompleteSound(); // builder-only rounds always treated as clean
       }
     } else if (!builderHadError) {
       builderHadError = true;
@@ -2966,7 +2988,9 @@ async function runRound() {
           setBeeStatus(builderAI.id, 'done', 'Document updated ✓');
           setStatus(`✅ Round ${round} complete — document updated`);
           consoleLog(`✅ Round ${round} complete — document updated (${newWords} words${prevWords > 0 ? `, ${bloatPct}% of prior` : ''})`, 'success');
-          playRoundCompleteSound();
+          const _c = window._lastConflicts;
+          const _hasConflicts = (_c && ((_c.userDecisions && _c.userDecisions.length > 0) || (_c.builderDecisions && _c.builderDecisions.length > 0)));
+          if (_hasConflicts) { playRoundCompleteSound(); } else { playRosieSound(); }
         }
       } else if (!builderHadError) {
         // Extraction failed — keep existing working document unchanged
@@ -3351,6 +3375,11 @@ function renderConflicts() {
             <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
             <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
           </button>
+          <button class="decision-opt-btn decision-opt-bypass" id="dopt-${di}-bypass"
+            onclick="selectBypassDecision(${di}, ${total})">
+            <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✏️</span>
+            <span class="decision-opt-text" style="color:var(--muted);font-style:italic">I edited the document directly — skip this conflict</span>
+          </button>
         </div>
         <div class="decision-custom-wrap" id="dcustom-${di}" style="display:none">
           <textarea class="decision-custom-ta" id="dcustom-ta-${di}"
@@ -3454,6 +3483,24 @@ function selectCustomDecision(decisionIdx, total) {
   checkAllDecisionsMade(total);
 }
 
+// ── BYPASS — user edited the document directly, lock conflict as-is ──
+function selectBypassDecision(decisionIdx, total) {
+  const card = document.getElementById(`dcard-${decisionIdx}`);
+  const latest = history[history.length - 1];
+  const decisions = latest?.conflicts?.userDecisions || [];
+  const d = decisions[decisionIdx];
+  if (card) {
+    card.querySelectorAll('.decision-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    document.getElementById(`dopt-${decisionIdx}-bypass`)?.classList.add('selected');
+    const customWrap = document.getElementById(`dcustom-${decisionIdx}`);
+    if (customWrap) customWrap.style.display = 'none';
+    card.classList.add('resolved', 'bypassed');
+  }
+  // Store as bypass — applyDecisions will skip prompt injection but still lock it
+  window._decisionChoices[decisionIdx] = { type: 'bypass', text: d?.current || '' };
+  checkAllDecisionsMade(total);
+}
+
 function updateCustomDecision(decisionIdx, total) {
   const ta = document.getElementById(`dcustom-ta-${decisionIdx}`);
   const text = ta?.value.trim() || '';
@@ -3492,6 +3539,8 @@ function applyDecisions() {
     const choice = window._decisionChoices[di];
     if (!d || !choice) return;
 
+    if (choice.type === 'bypass') return; // user edited document directly — no injection needed
+
     let chosenText = '';
     if (choice.type === 'option') {
       chosenText = d.options[choice.idx]?.text || '';
@@ -3504,7 +3553,9 @@ function applyDecisions() {
     }
   });
 
-  if (lines.length === 0) {
+  // Count bypasses — if ALL decisions are bypassed, skip Builder call but still lock them
+  const allBypassed = Object.values(window._decisionChoices).every(c => c.type === 'bypass');
+  if (lines.length === 0 && !allBypassed) {
     if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = '✅ Apply My Decisions to Document'; }
     return;
   }
@@ -3522,6 +3573,9 @@ function applyDecisions() {
       chosenText = d.options[choice.idx]?.text || '';
     } else if (choice.type === 'custom') {
       chosenText = choice.text;
+    } else if (choice.type === 'bypass') {
+      // Lock with current text — user handled it in the document directly
+      chosenText = d.current || '';
     }
     if (d.current && chosenText) {
       window._resolvedDecisions.push({ original: d.current, chosen: chosenText });
@@ -3560,6 +3614,12 @@ function applyDecisions() {
   });
 
   const notesTa = document.getElementById('workNotes');
+  if (allBypassed) {
+    // All conflicts were handled via direct document edits — no Builder call needed
+    toast('✏️ All conflicts marked as edited — decisions locked in. No Builder pass needed.');
+    if (applyBtn) { applyBtn.disabled = true; applyBtn.textContent = '✅ Done'; }
+    return;
+  }
   if (notesTa) {
     notesTa.value = 'Apply these user decisions:\n' + lines.map((l, i) => `${i + 1}. ${l}`).join('\n');
     saveSession();

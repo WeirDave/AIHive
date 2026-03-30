@@ -692,8 +692,12 @@
 <div class="finish-modal-overlay" id="projectGoalModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="finish-modal" style="max-width:600px;text-align:left;">
     <h2 class="finish-modal-title" style="margin-bottom:6px;">📋 Project Goal</h2>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="projectGoalModalMeta"></div>
-    <div id="projectGoalModalText" style="font-family:var(--font-mono);font-size:13px;line-height:1.7;color:var(--text);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;white-space:pre-wrap;max-height:400px;overflow-y:auto;"></div>
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;" id="projectGoalModalMeta"></div>
+    <div id="projectGoalModalText" style="font-family:var(--font-mono);font-size:13px;line-height:1.7;color:var(--text);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;white-space:pre-wrap;max-height:300px;overflow-y:auto;"></div>
+    <div id="projectGoalModalRefine" style="display:none;margin-top:14px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:6px;">What AIs receive in Refine rounds</div>
+      <div id="projectGoalModalRefineText" style="font-family:var(--font-mono);font-size:12px;line-height:1.6;color:var(--text-dim);background:var(--surface2);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:12px;white-space:pre-wrap;max-height:120px;overflow-y:auto;"></div>
+    </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('projectGoalModal').classList.remove('active')" style="margin-top:16px;">← Close</button>
   </div>
 </div>

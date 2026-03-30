@@ -3310,6 +3310,26 @@ kbd {
   background: rgba(245,166,35,0.15) !important;
   color: var(--amber) !important;
 }
+.decision-opt-bypass {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.decision-opt-bypass:hover { opacity: 1; }
+.decision-opt-bypass.selected {
+  border-color: #7ab8ff !important;
+  background: rgba(59,130,246,0.08) !important;
+  opacity: 1;
+}
+.decision-opt-bypass.selected .decision-opt-num {
+  background: rgba(59,130,246,0.15) !important;
+  color: #7ab8ff !important;
+}
+.decision-card.bypassed {
+  border-color: #7ab8ff;
+}
+.decision-card.bypassed .decision-badge {
+  color: #7ab8ff;
+}
 .decision-custom-wrap {
   margin-top: 8px;
 }
