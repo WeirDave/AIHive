@@ -213,6 +213,7 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Your Project <button class="goal-info-btn" onclick="document.getElementById('goalInfoModal').classList.add('active')" title="About the project goal"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Give your project a name, version, and a detailed goal. The goal frames your project — it tells every AI what this document is, what it's trying to achieve, and what direction to take. It is used when generating the first draft and as context throughout the session. The more specific and detailed your goal, the better your results will be from the very first round.</p>
+              <p class="fs-col-tip">💡 The more specific your goal, the better your first draft will be. Include tone, audience, length, and purpose.</p>
             </div>
 
             <div class="project-fields">
@@ -227,10 +228,7 @@
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;width:100%;">
                 <h3 class="proj-goal-heading">Project Goal</h3>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <button class="btn btn-sm goal-refine-preview-btn" id="goalRefinePreviewBtn" onclick="showProjectGoalModal()" title="Preview what AIs receive in Refine rounds" style="display:none;">🔍 Preview Refine Goal</button>
-                  <span id="goalCounter" style="font-size:11px;font-family:var(--font-mono);"></span>
-                </div>
+                <span id="goalCounter" style="font-size:11px;color:var(--muted);font-family:var(--font-mono);"></span>
               </div>
               <div class="proj-notebook proj-notebook-goal">
                 <div class="proj-notebook-nums" id="projGoalNums"><div>1</div></div>
@@ -239,10 +237,7 @@
             </div>
           </div>
         </div>
-        <div class="setup-col-tip">
-          💡 <strong>Tip:</strong> The more specific your goal, the better your first draft will be. Include tone, audience, length, and purpose.
-        </div>
-      </div>
+        </div><!-- /fs-col-left -->
 
         <!-- ── Divider ── -->
       <div class="fs-divider"></div>
@@ -255,6 +250,7 @@
             <div class="fs-col-header">
               <h2 class="fs-col-title">Starting Document <button class="goal-info-btn" onclick="document.getElementById('infoUploadModal').classList.add('active')" title="About file uploads"><img src="images/AI_Hive_InfoButton_v1.png" alt="ⓘ" style="width:36px;height:36px;display:block;"></button></h2>
               <p class="fs-col-sub">Choose how you want to start. Upload an existing file, paste text, or let the AIs create a first draft from scratch using your goal above.</p>
+              <p class="fs-col-tip">💡 Upload or paste an existing draft to refine it, or start from scratch and let your AIs build it from your goal.</p>
             </div>
 
             <div class="doc-input-tabs">
@@ -303,10 +299,7 @@
 
           </div>
         </div>
-        <div class="setup-col-tip">
-          💡 <strong>Tip:</strong> Upload or paste an existing draft to refine it, or start from scratch and let your AIs build it from your goal.
-        </div>
-      </div>
+        </div><!-- /fs-col-right -->
 
     </div><!-- /fs-body -->
 
