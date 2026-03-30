@@ -2173,11 +2173,11 @@ function renderWorkPhaseBar() {
 function showProjectGoalModal() {
   const modal = document.getElementById('projectGoalModal');
   if (!modal) return;
-  const goal = document.getElementById('projectGoal')?.value.trim() || '';
+  const goal = document.getElementById('projectGoal')?.value || '';
   const name = document.getElementById('projectName')?.value.trim() || '';
   const version = document.getElementById('projectVersion')?.value.trim() || '';
   const metaEl = document.getElementById('projectGoalModalMeta');
-  const textEl = document.getElementById('projectGoalModalText');
+  const editTa = document.getElementById('projectGoalModalEdit');
   if (metaEl) {
     const parts = [name, version].filter(Boolean).join(' · ');
     const charNote = goal.length > 300
@@ -2186,36 +2186,49 @@ function showProjectGoalModal() {
     metaEl.textContent = charNote;
     metaEl.style.color = 'var(--text-dim)';
   }
-  if (textEl) {
-    const LIMIT = 300;
-    if (!goal) {
-      textEl.textContent = '(No project goal set)';
-    } else if (goal.length <= LIMIT) {
-      textEl.textContent = goal;
-    } else {
-      // Render first 300 chars normally, remainder highlighted in amber
-      textEl.innerHTML = '';
-      const within = document.createTextNode(goal.slice(0, LIMIT));
-      const beyond = document.createElement('span');
-      beyond.textContent = goal.slice(LIMIT);
-      beyond.style.color = 'var(--accent)';
-      beyond.title = 'This text exceeds the 300-character limit and is not sent to AIs during the Refine Text phase';
-      textEl.appendChild(within);
-      textEl.appendChild(beyond);
-    }
-  }
-  // Populate refine preview box
+  if (editTa) editTa.value = goal;
+  updateProjectGoalModalPreview();
+  modal.classList.add('active');
+  setTimeout(() => editTa?.focus(), 100);
+}
+
+function updateProjectGoalModalPreview() {
+  const editTa = document.getElementById('projectGoalModalEdit');
   const refineWrap = document.getElementById('projectGoalModalRefineWrap');
   const refineText = document.getElementById('projectGoalModalRefineText');
+  const metaEl = document.getElementById('projectGoalModalMeta');
+  if (!editTa) return;
+  const goal = editTa.value;
+  const truncated = goal.length > 300;
+  if (metaEl) {
+    const name = document.getElementById('projectName')?.value.trim() || '';
+    const version = document.getElementById('projectVersion')?.value.trim() || '';
+    const parts = [name, version].filter(Boolean).join(' · ');
+    metaEl.textContent = truncated
+      ? `${parts ? parts + ' — ' : ''}${goal.length} characters · exceeds 300-character Refine limit`
+      : `${parts}${goal.length ? ' — ' + goal.length + ' characters' : ''}`;
+  }
   if (refineWrap && refineText) {
-    if (goal.length > 300) {
+    if (truncated) {
       refineText.textContent = truncateGoalForRefine(goal);
       refineWrap.style.display = 'block';
     } else {
       refineWrap.style.display = 'none';
     }
   }
-  modal.classList.add('active');
+}
+
+function saveProjectGoalFromModal() {
+  const editTa = document.getElementById('projectGoalModalEdit');
+  const goalTa = document.getElementById('projectGoal');
+  if (editTa && goalTa) {
+    goalTa.value = editTa.value;
+    saveProject();
+    updateGoalCounter();
+    updateProjLineNums('projGoalNums', goalTa);
+  }
+  document.getElementById('projectGoalModal')?.classList.remove('active');
+  toast('✅ Project goal updated');
 }
 
 function showFinishModal() {
