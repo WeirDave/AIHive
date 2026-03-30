@@ -2146,8 +2146,8 @@ kbd {
   flex-shrink: 0;
 }
 .export-mask-input {
-  width: 160px;
-  flex: 0 0 160px;
+  width: 480px;
+  flex: 0 0 480px;
   min-width: 0;
   background: var(--surface);
   border: 1px solid var(--border2);
