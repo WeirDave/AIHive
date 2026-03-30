@@ -2617,7 +2617,7 @@ function buildPromptForAI(ai, reviewerResponses) {
 
     // Inject previously resolved decisions so the Builder doesn't re-raise them
     if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
-      prompt += `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\n${sep}\nThe user has made final decisions on the following. Do NOT re-raise these as conflicts under any circumstances, even if reviewers suggest changes to them. The chosen text is final.\n`;
+      prompt += `${getPrompt('resolved_builder', 'PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\nThe user has made final decisions on the following. Do NOT re-raise these as conflicts under any circumstances, even if reviewers suggest changes to them. The chosen text is final.')}\n${sep}\n`;
       window._resolvedDecisions.forEach((rd, i) => {
         prompt += `${i + 1}. Original: "${rd.original}" → User chose: "${rd.chosen}" — THIS IS FINAL. Do not flag or change.\n`;
       });
@@ -2640,7 +2640,7 @@ function buildPromptForAI(ai, reviewerResponses) {
 
     // Inject previously resolved decisions so reviewers don't re-raise them
     if (window._resolvedDecisions && window._resolvedDecisions.length > 0) {
-      prompt += `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\n${sep}\nThe user has made final decisions on the following. Do NOT suggest any changes to the chosen text or to the same concept, even using different wording. These are closed.\n`;
+      prompt += `${getPrompt('resolved_reviewers', 'PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:\nThe user has made final decisions on the following. Do NOT suggest any changes to the chosen text or to the same concept, even using different wording. These are closed.')}\n${sep}\n`;
       window._resolvedDecisions.forEach((rd, i) => {
         prompt += `${i + 1}. Original: "${rd.original}" → User chose: "${rd.chosen}" — do NOT suggest changing "${rd.chosen}" or any equivalent phrasing.\n`;
       });
@@ -2650,7 +2650,7 @@ function buildPromptForAI(ai, reviewerResponses) {
     // Inject targeted per-AI warnings for repeat offenders
     const aiWarnings = window._aiWarnings?.[ai.id];
     if (aiWarnings && aiWarnings.length > 0) {
-      prompt += `SPECIFIC WARNINGS FOR YOU — REPEATED VIOLATIONS:\n${sep}\nYou have repeatedly raised the following after the user already resolved them. This is your final notice — do NOT raise these again under any circumstances:\n`;
+      prompt += `${getPrompt('ai_warning', 'SPECIFIC WARNINGS FOR YOU — REPEATED VIOLATIONS:\nYou have repeatedly raised the following after the user already resolved them. This is your final notice — do NOT raise these again under any circumstances:')}\n${sep}\n`;
       aiWarnings.forEach((w, i) => {
         prompt += `${i + 1}. "${w.original}" — the user has chosen "${w.chosen}" and this is final. Stop suggesting alternatives to this.\n`;
       });
@@ -4132,8 +4132,10 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSettings(); // always load hive (AI keys) silently
   updateSetupRequirements();
 
-  // Show dev toolbar if dev mode is active
+  // Show dev toolbar and admin nav items if dev mode is active
   if (localStorage.getItem('aihive_dev') === '1') {
+    const navPromptEditor = document.getElementById('navPromptEditor');
+    if (navPromptEditor) navPromptEditor.style.display = '';
     const tb = document.getElementById('devToolbar');
     if (tb) {
       tb.style.display = 'flex';

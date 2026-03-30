@@ -357,7 +357,7 @@
 
       <div class="nav-divider"></div>
       <div class="nav-section-label">Reference</div>
-      <a class="nav-item" href="prompt-editor.html" target="_blank" onclick="closeNavMenu()">✏️ Prompt Editor</a>
+      <a class="nav-item" href="prompt-editor.html" target="_blank" onclick="closeNavMenu()" id="navPromptEditor" style="display:none;">✏️ Prompt Editor</a>
       <button class="nav-item" onclick="closeNavMenu();openSettings()">⚙️ API Keys</button>
       <a class="nav-item" href="know-your-hive.html" target="_blank" onclick="closeNavMenu()">🐝 Know Your Hive</a>
       <a class="nav-item" href="working-with-the-hive.html" target="_blank" onclick="closeNavMenu()">📖 Working with the Hive</a>
@@ -866,7 +866,7 @@
         <span class="goal-info-desc">The AI encountered an error — usually an expired API key, rate limit, or network issue. Check the Live Console for details.</span>
       </div>
       <p>You can toggle individual AIs on or off between rounds using the checkboxes without losing their saved keys. Use <strong>Change Builder</strong> to swap which AI does the building.</p>
-      <p>The <strong>☰ navigation menu</strong> (top left) gives you access to API key setup, the Prompt Editor, and navigation back to project or key setup screens. The <strong>📝 Notes</strong> button in the top bar lets you leave instructions that are passed to the Builder at the start of the next round.</p>
+      <p>The <strong>☰ navigation menu</strong> (top left) gives you access to API key setup and navigation back to project or key setup screens. The <strong>📝 Notes</strong> button in the top bar lets you leave instructions that are passed to the Builder at the start of the next round.</p>
     </div>
     <button class="finish-modal-cancel" onclick="document.getElementById('infoHiveModal').classList.remove('active')">Got it →</button>
   </div>

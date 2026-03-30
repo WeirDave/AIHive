@@ -110,6 +110,51 @@
 
     </div>
 
+    <!-- SYSTEM INJECTIONS -->
+    <div class="prompt-group">
+      <div class="prompt-group-header">
+        <div>
+          <div class="prompt-group-title">System Injections</div>
+          <div class="prompt-group-sub">Added automatically by AI Hive when conditions are met. Edit with care — the format must stay consistent for conflict suppression to work correctly.</div>
+        </div>
+        <span class="prompt-group-badge badge-builder">Admin</span>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <div>
+            <div class="prompt-block-label">Resolved Decisions — Builder <span class="modified-badge" id="badge-resolved_builder">Modified</span></div>
+            <div class="prompt-block-desc">Injected into the Builder prompt when the user has resolved at least one conflict. Prevents the Builder from re-raising settled decisions.</div>
+          </div>
+          <button class="prompt-reset-btn" onclick="resetOne('resolved_builder')">Reset</button>
+        </div>
+        <textarea class="prompt-ta" id="ta-resolved_builder" oninput="markModified('resolved_builder')"></textarea>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <div>
+            <div class="prompt-block-label">Resolved Decisions — Reviewers <span class="modified-badge" id="badge-resolved_reviewers">Modified</span></div>
+            <div class="prompt-block-desc">Injected into every reviewer prompt when conflicts have been resolved. Prevents reviewers from re-raising settled decisions using different wording.</div>
+          </div>
+          <button class="prompt-reset-btn" onclick="resetOne('resolved_reviewers')">Reset</button>
+        </div>
+        <textarea class="prompt-ta" id="ta-resolved_reviewers" oninput="markModified('resolved_reviewers')"></textarea>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-block-header">
+          <div>
+            <div class="prompt-block-label">Per-AI Repeat Offender Warning <span class="modified-badge" id="badge-ai_warning">Modified</span></div>
+            <div class="prompt-block-desc">Injected into a specific AI's prompt when it has re-raised an already-resolved conflict 3 or more times. Targeted to that AI only.</div>
+          </div>
+          <button class="prompt-reset-btn" onclick="resetOne('ai_warning')">Reset</button>
+        </div>
+        <textarea class="prompt-ta" id="ta-ai_warning" oninput="markModified('ai_warning')"></textarea>
+      </div>
+
+    </div>
+
   </div>
 
 </div>
@@ -241,7 +286,16 @@ Rules for USER DECISION format:
 - Do not combine options that are meaningfully different
 
 If there are no conflicts write exactly: NO CONFLICTS
-%%CONFLICTS_END%%`
+%%CONFLICTS_END%%`,
+
+    resolved_builder: `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:
+The user has made final decisions on the following. Do NOT re-raise these as conflicts under any circumstances, even if reviewers suggest changes to them. The chosen text is final.`,
+
+    resolved_reviewers: `PREVIOUSLY RESOLVED DECISIONS — FINAL AND LOCKED:
+The user has made final decisions on the following. Do NOT suggest any changes to the chosen text or to the same concept, even using different wording. These are closed.`,
+
+    ai_warning: `SPECIFIC WARNINGS FOR YOU — REPEATED VIOLATIONS:
+You have repeatedly raised the following after the user already resolved them. This is your final notice — do NOT raise these again under any circumstances:`
   };
 
   // ── Load saved prompts or defaults ──
