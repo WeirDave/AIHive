@@ -2410,12 +2410,8 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
-  playFlyingCarSound();
-  showHiveFinish({ duration: 4000, smokeBursts: 10 });
-  setTimeout(() => {
-    clearProject();
-    goToScreen('screen-project');
-  }, 4200);
+  clearProject();
+  goToScreen('screen-project');
 }
 
 /* =========================================
@@ -3048,8 +3044,40 @@ async function runRound() {
   const failedCount = allReviewers.length - successfulReviews.length;
   if (failedCount > 0) consoleLog(`⚠️ ${failedCount} AI${failedCount!==1?'s':''} failed — continuing with ${successfulReviews.length} response${successfulReviews.length!==1?'s':''}`, 'warn');
   if (noChangesCount > 0 && noChangesCount === successfulReviews.length) {
-    consoleLog(`🏁 All AIs agree — no further changes needed. Consider finishing the project.`, 'success');
-    toast(`🏁 All AIs agree the document is ready — consider finishing`, 5000);
+    consoleLog(`🏁 All AIs agree — no further changes needed.`, 'success');
+    toast(`🏁 All ${noChangesCount} AIs agree the document is done!`, 5000);
+
+    history.push({
+      round, phase,
+      projectName:    document.getElementById('projectName')?.value.trim()    || '',
+      projectVersion: document.getElementById('projectVersion')?.value.trim() || '',
+      doc:            docText,
+      notes:          document.getElementById('workNotes')?.value.trim()       || '',
+      conflicts:      { converged: true, holdouts: [] },
+      responses:      Object.fromEntries(reviewerResponses.map(r => [r.id, r.response])),
+      timestamp:      new Date().toLocaleTimeString()
+    });
+    window._lastConflicts = null;
+    round++;
+    if (phase === 'draft') { phase = 'refine'; consoleLog(`📍 Phase advanced to Refine Text`, 'info'); }
+    updateRoundBadge();
+    renderRoundHistory();
+    renderWorkPhaseBar();
+    renderConflicts();
+    saveSession();
+    if (!isLicensed()) { const used = incrementTrialRound(); updateLicenseBadge(); }
+    activeAIs.forEach(a => setBeeStatus(a.id, 'idle', ''));
+    setStatus(`🏁 Unanimous — all AIs agree the document is ready`);
+    const runBtnU = document.getElementById('runRoundBtn');
+    runBtnU?.classList.remove('running');
+    if (runBtnU) runBtnU.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
+    stopRoundTimer();
+    hideSmokerOverlay();
+    // 🎉 Full unanimous agreement — biggest moment, show the overlay then the finish modal
+    playFlyingCarSound();
+    showHiveFinish({ duration: 5000, smokeBursts: 14 });
+    setTimeout(() => showFinishModal(), 1800);
+    return;
   } else if (noChangesCount > 0) {
     consoleLog(`✓ ${noChangesCount} of ${successfulReviews.length} AIs had no further changes`, 'info');
   }
@@ -3085,6 +3113,9 @@ async function runRound() {
     if (runBtn) runBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
     stopRoundTimer();
     hideSmokerOverlay();
+    // 🎉 Hive Approved — majority convergence earns the fanfare
+    playFlyingCarSound();
+    showHiveFinish({ duration: 4000, smokeBursts: 10 });
     return;
   }
 
