@@ -2410,12 +2410,8 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
-  playFlyingCarSound();
-  showHiveFinish({ duration: 4000, smokeBursts: 10 });
-  setTimeout(() => {
-    clearProject();
-    goToScreen('screen-project');
-  }, 4200);
+  clearProject();
+  goToScreen('screen-project');
 }
 
 /* =========================================
@@ -3085,6 +3081,9 @@ async function runRound() {
     if (runBtn) runBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
     stopRoundTimer();
     hideSmokerOverlay();
+    // 🎉 Hive Approved — majority convergence is the moment that earns the fanfare
+    playFlyingCarSound();
+    showHiveFinish({ duration: 4000, smokeBursts: 10 });
     return;
   }
 
@@ -3399,20 +3398,6 @@ function getLedgerEntry(d) {
   return window._conflictLedger.find(e => e.fingerprint === fingerprintConflict(d));
 }
 
-// Strip stale line number references from Builder-generated conflict questions.
-// The Builder writes "Line 26: ..." referencing the input doc, but after rewriting
-// the document those line numbers may no longer match. We remove them at display
-// time only — the underlying data is untouched.
-function stripLineRefs(text) {
-  if (!text) return text;
-  return text
-    .replace(/^Lines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/i, '')  // "Lines 12-14: " or "Lines 12–14 — "
-    .replace(/^Lines?\s+\d+\s*[:\-–—]\s*/i, '')            // "Line 26: " or "Line 26 — "
-    .replace(/\bLines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/gi, '')  // inline "Line 12-14: "
-    .replace(/\bLines?\s+\d+\s*[:\-–—]\s*/gi, '')           // inline "Line 26: "
-    .trim();
-}
-
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
   if (!el) return;
@@ -3523,7 +3508,7 @@ function renderConflicts() {
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
           ${repeatBadge}
         </div>
-        <div class="decision-question">${esc(stripLineRefs(d.question))}</div>
+        <div class="decision-question">${esc(d.question)}</div>
         ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
         <div class="decision-options">
           ${d.options.map((opt, oi) => `
