@@ -3430,6 +3430,38 @@ function getLedgerEntry(d) {
   return window._conflictLedger.find(e => e.fingerprint === fingerprintConflict(d));
 }
 
+function scrollToCurrentText(currentText) {
+  const ta = document.getElementById('workDocument');
+  if (!ta || !currentText) return;
+  const text = ta.value;
+  const idx  = text.indexOf(currentText);
+  if (idx === -1) {
+    toast('⚠️ Text not found in document — it may have changed');
+    return;
+  }
+  const before     = text.substring(0, idx);
+  const lineNumber = before.split('\n').length - 1;
+  const lineHeight = parseFloat(getComputedStyle(ta).lineHeight) || 20;
+  const scrollTop  = lineNumber * lineHeight - ta.clientHeight / 3;
+  ta.scrollTop = Math.max(0, scrollTop);
+  ta.focus();
+  ta.setSelectionRange(idx, idx + currentText.length);
+  toast('📍 Scrolled to text in document', 2000);
+}
+
+// Strip stale line number references from Builder-generated conflict questions.
+// The Builder writes "Line 26: ..." referencing the input doc, but after rewriting
+// the document those line numbers may no longer match. Removed at display time only.
+function stripLineRefs(text) {
+  if (!text) return text;
+  return text
+    .replace(/^Lines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/i, '')
+    .replace(/^Lines?\s+\d+\s*[:\-–—]\s*/i, '')
+    .replace(/\bLines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/gi, '')
+    .replace(/\bLines?\s+\d+\s*[:\-–—]\s*/gi, '')
+    .trim();
+}
+
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
   if (!el) return;
@@ -3449,35 +3481,52 @@ function renderConflicts() {
 
   // ── CONVERGENCE PATH: majority agreed, show holdouts for optional review ──
   if (conflicts.converged && conflicts.holdouts) {
-    const count = conflicts.holdouts.length;
-    // per-holdout state: 'apply' | 'decline' | 'custom'
     window._holdoutChoices = window._holdoutChoices || {};
 
+    // Split each AI's response into individual numbered suggestions
+    const flatSuggestions = [];
+    conflicts.holdouts.forEach(h => {
+      const parts = h.response.split(/\n(?=\d+\.\s)/);
+      if (parts.length > 1) {
+        parts.forEach(part => {
+          const trimmed = part.trim();
+          if (trimmed) flatSuggestions.push({ name: h.name, text: trimmed });
+        });
+      } else {
+        flatSuggestions.push({ name: h.name, text: h.response.trim() });
+      }
+    });
+
+    window._flatHoldoutSuggestions = flatSuggestions;
+
+    const total    = flatSuggestions.length;
+    const aiCount  = conflicts.holdouts.length;
+
     let html = `<div class="conflicts-section-header convergence-header">
-      🏁 Hive Converged — ${count > 0 ? `${count} holdout${count!==1?' still had suggestions':'still had a suggestion'} — review below:` : 'document is ready.'}
+      🏁 Hive Converged — ${total > 0 ? `${total} suggestion${total!==1?'s':''} from ${aiCount} AI${aiCount!==1?'s':''} — review each one below:` : 'document is ready.'}
     </div>`;
 
-    if (count > 0) {
-      conflicts.holdouts.forEach((h, i) => {
+    if (total > 0) {
+      flatSuggestions.forEach((s, i) => {
         html += `<div class="decision-card convergence-card" id="hcard-${i}">
           <div class="decision-card-header">
-            <span class="convergence-ai-badge">🐝 ${esc(h.name)}</span>
-            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Their suggestion:</span>
+            <span class="convergence-ai-badge">🐝 ${esc(s.name)}</span>
+            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Suggestion ${i + 1} of ${total}</span>
           </div>
-          <div class="convergence-suggestion">${esc(h.response)}</div>
+          <div class="convergence-suggestion">${esc(s.text)}</div>
           <div class="decision-options">
             <button class="decision-opt-btn" id="hopt-${i}-apply"
-              onclick="selectHoldout(${i}, 'apply', ${count})">
+              onclick="selectHoldout(${i}, 'apply', ${total})">
               <span class="decision-opt-num" style="background:rgba(52,211,153,0.15);color:#34d399">✓</span>
               <span class="decision-opt-text">Apply this suggestion</span>
             </button>
             <button class="decision-opt-btn decline-btn" id="hopt-${i}-decline"
-              onclick="selectHoldout(${i}, 'decline', ${count})">
+              onclick="selectHoldout(${i}, 'decline', ${total})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✕</span>
               <span class="decision-opt-text">Decline — skip this one</span>
             </button>
             <button class="decision-opt-btn decision-opt-custom custom-btn" id="hopt-${i}-custom"
-              onclick="selectHoldout(${i}, 'custom', ${count})">
+              onclick="selectHoldout(${i}, 'custom', ${total})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
               <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
             </button>
@@ -3485,7 +3534,7 @@ function renderConflicts() {
           <div class="decision-custom-wrap" id="hcustom-${i}" style="display:none">
             <textarea class="decision-custom-ta" id="hcustom-ta-${i}"
               placeholder="Type your custom text here..."
-              oninput="updateHoldoutCustom(${i}, ${count})"></textarea>
+              oninput="updateHoldoutCustom(${i}, ${total})"></textarea>
           </div>
         </div>`;
       });
@@ -3497,7 +3546,7 @@ function renderConflicts() {
     }
 
     html += `<div class="convergence-footer">
-      The hive is satisfied. Make your selections above, or hit <strong>Finish</strong> to finalize the document as-is.
+      The hive is satisfied. Review each suggestion above — apply, decline, or customise individually. Or hit <strong>Finish</strong> to finalise the document as-is.
     </div>`;
     el.innerHTML = html;
     return;
@@ -3540,8 +3589,8 @@ function renderConflicts() {
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
           ${repeatBadge}
         </div>
-        <div class="decision-question">${esc(d.question)}</div>
-        ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
+        <div class="decision-question">${esc(stripLineRefs(d.question))}</div>
+        ${d.current ? `<div class="decision-current decision-current-clickable" title="Click to scroll document to this text" onclick="scrollToCurrentText(${JSON.stringify(d.current)})"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
         <div class="decision-options">
           ${d.options.map((opt, oi) => `
             <button class="decision-opt-btn" id="dopt-${di}-${oi}"
@@ -3871,19 +3920,17 @@ function checkAllHoldoutsDone(total) {
 }
 
 function applyHoldouts() {
-  const latest = history.length > 0 ? history[history.length - 1] : null;
-  if (!latest?.conflicts?.holdouts) return;
-  const holdouts = latest.conflicts.holdouts;
+  const suggestions = window._flatHoldoutSuggestions || [];
   const choices = window._holdoutChoices || {};
   const lines = [];
 
   Object.keys(choices).forEach(i => {
-    const h = holdouts[parseInt(i)];
+    const s = suggestions[parseInt(i)];
     const c = choices[i];
-    if (!h || !c) return;
+    if (!s || !c) return;
     if (c.type === 'decline') return; // skip declined
-    const text = c.type === 'custom' ? c.text : h.response;
-    if (text) lines.push(`From ${h.name}: ${text}`);
+    const text = c.type === 'custom' ? c.text : s.text;
+    if (text) lines.push(`From ${s.name}: ${text}`);
   });
 
   if (lines.length === 0) {
@@ -4207,42 +4254,49 @@ function exportSession() {
   const name    = document.getElementById('projectName')?.value.trim()    || 'AI-Hive';
   const doc     = document.getElementById('workDocument')?.value.trim()   || '';
   const filename = buildExportName();
-  const eq = '═'.repeat(30);
+  const eq  = '═'.repeat(60);
+  const sep = '─'.repeat(60);
 
   if (history.length === 0 && !doc) { toast('⚠️ Nothing to export'); return; }
 
-  let out = `${eq}\nAI HIVE v2 — SESSION TRANSCRIPT\nBuild: ${BUILD}\nProject: ${name}\nExported: ${new Date().toLocaleString()}\n${eq}\n\n`;
-  history.forEach(h => {
-    const phaseLabel = PHASES.find(p => p.id === h.phase)?.label || h.phase || '';
-    out += `${eq}\nROUND ${h.round} · ${phaseLabel} — ${h.timestamp}\n${eq}\n\n`;
-    if (h.doc) out += `DOCUMENT:\n${'─'.repeat(30)}\n${h.doc}\n\n`;
-    Object.keys(h.responses || {}).forEach(id => {
-      if (h.responses[id]) {
-        const ai = activeAIs.find(a => a.id === id);
-        out += `${(ai ? ai.name : id).toUpperCase()}:\n${'─'.repeat(30)}\n${h.responses[id]}\n\n`;
-      }
+  const totalRounds = round - 1;
+  const totalMins   = Math.round(_projClockSeconds / 60);
+  const timeStr     = totalMins < 1 ? 'less than a minute' : `${totalMins} minute${totalMins !== 1 ? 's' : ''}`;
+
+  let out = `${eq}\nAI HIVE v2 — SESSION TRANSCRIPT\nBuild: ${BUILD}\nProject: ${name}\nRounds completed: ${totalRounds}\nSession duration: ${timeStr}\nExported: ${new Date().toLocaleString()}\n${eq}\n\n`;
+
+  if (history.length === 0) {
+    out += `(No rounds recorded — document exported as-is)\n\n`;
+  } else {
+    history.forEach(h => {
+      const phaseLabel = PHASES.find(p => p.id === h.phase)?.label || h.phase || '';
+      const roundLabel = h.round === 0 ? 'Original Document' : (h.label || `Round ${h.round} · ${phaseLabel}`);
+      out += `${eq}\n${roundLabel} — ${h.timestamp}\n${eq}\n\n`;
+      if (h.doc) out += `DOCUMENT:\n${sep}\n${h.doc}\n\n`;
+      Object.keys(h.responses || {}).forEach(id => {
+        if (h.responses[id]) {
+          const ai = activeAIs.find(a => a.id === id);
+          out += `${(ai ? ai.name : id).toUpperCase()}:\n${sep}\n${h.responses[id]}\n\n`;
+        }
+      });
     });
-  });
+  }
+
+  if (doc) {
+    out += `${eq}\nFINAL DOCUMENT\n${eq}\n\n${doc}\n\n`;
+    out += `${sep}\nProduced by AI Hive in ${totalRounds} round${totalRounds !== 1 ? 's' : ''} and ${timeStr}.\nweirdave.github.io/AIHive\n`;
+  }
 
   const blob = new Blob([out], { type: 'text/plain' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url; a.download = `${filename}_Transcript.txt`;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 
-  if (doc) {
-    setTimeout(() => {
-      const b2 = new Blob([doc], { type: 'text/plain' });
-      const u2 = URL.createObjectURL(b2);
-      const a2 = document.createElement('a');
-      a2.href = u2; a2.download = `${filename}_Document.txt`;
-      a2.click();
-      URL.revokeObjectURL(u2);
-    }, 400);
-  }
-
-  toast('💾 Exported transcript + document');
+  toast('💾 Full transcript exported');
 }
 
 function copyDocument() {
