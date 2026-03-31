@@ -108,7 +108,7 @@ RULES:
 - Focus on clarity, precision, internal consistency, tone, and logical flow only.
 - Do not suggest formatting, structural layout, or markup changes.
 - Do not introduce new content that changes the intended meaning of the document.
-- Keep each suggestion concise — one to two sentences maximum.
+- Keep each suggestion to one sentence maximum — no explanations, no justifications.
 - If you believe the text needs no further changes, return exactly this and nothing else: NO CHANGES NEEDED
 
 ⚠️ IMPORTANT: Any response that contains a full rewritten document, large continuous blocks of revised text, or anything other than a numbered suggestion list will be considered non-compliant and discarded.
@@ -184,7 +184,7 @@ A valid suggestion is one that improves clarity, accuracy, consistency, logic, o
 
 MAJORITY RULES — CONFLICT DECISION LOGIC:
 Before deciding whether to apply or flag a suggestion, count how many reviewers independently suggested the same change (or substantially the same change):
-- 4 or more reviewers agree → apply it automatically. Do not flag this as a conflict.
+- A strict majority of reviewers agree (more than half) → apply it automatically. Do not flag this as a conflict.
 - Exactly 3 reviewers agree vs 3 who disagree or suggest an alternative → flag it as a USER DECISION conflict.
 - 2 or fewer reviewers suggest something that conflicts with another suggestion → use your best judgment, apply the stronger choice, flag it as a BUILDER DECISION conflict.
 - Only 1 reviewer suggests something → apply it if valid, skip it if not. Do not flag solo suggestions as conflicts.
@@ -206,10 +206,19 @@ RULES:
 %%DOCUMENT_END%%
 
 %%CONFLICTS_START%%
-For each conflict, state: the vote count, what each side proposed, which you chose (or that the user must decide), and why — in one to two sentences.
-Format each conflict as: [USER DECISION] or [BUILDER DECISION] followed by the explanation.
-Example: [USER DECISION] 3 reviewers preferred "conclude" while 3 preferred "summarise" — user should decide which tone fits the document.
-Example: [BUILDER DECISION] 2 reviewers wanted a new section added, 2 said remove it — applied the removal as it keeps the document concise.
+For BUILDER DECISION conflicts: quote the affected text, name the specific AIs on each side, state which you chose and why in one to two sentences.
+Format: [BUILDER DECISION] "quoted text" — explanation naming AIs.
+
+For USER DECISION conflicts: use EXACTLY this structured format so the app can present it as a choice to the user:
+
+[USER DECISION]
+QUESTION: A plain-English question describing what the user needs to decide — one sentence.
+CURRENT: "the exact current text in the document as it stands"
+OPTION_1: "exact proposed text" — AI names who suggested this
+OPTION_2: "exact proposed text" — AI names who suggested this
+OPTION_3: "exact proposed text" — AI names who suggested this (add more options if needed, up to 6)
+END_DECISION
+
 If there are no conflicts write exactly: NO CONFLICTS
 %%CONFLICTS_END%%
 
@@ -244,7 +253,7 @@ Document growth: Despite the explicit rule in builder_refine, some Builder respo
 
 No-rewrite compliance: Some AIs ignore the no-rewrite rule in Reviewer prompts and return partial or full revised documents. The compliance warning in Prompt 3 (refine) was added to address this. Gemini is the most frequently observed non-compliant AI — this is inconsistent rather than systematic.
 
-Conflicts block missing: Occasionally the Builder omits the %%CONFLICTS_START%% / %%CONFLICTS_END%% block entirely. The application detects this, logs a console warning, and marks the Builder as error without advancing the round.
+Conflicts block missing: Occasionally the Builder omits the %%CONFLICTS_START%% / %%CONFLICTS_END%% block entirely. The application detects this and treats it as a hard error — the round is rejected, the document is not updated, and the Builder's bee status is set to error. The console logs a red error entry. If this keeps happening, switching to a different Builder usually resolves it.
 
 Delimiter leakage: Some AIs echo the %%DOCUMENT_START%% and %%DOCUMENT_END%% delimiters in their Reviewer responses, which they should not be generating at all. This does not break the round but may confuse the Builder when it processes the Reviewer list.
 

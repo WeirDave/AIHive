@@ -44,7 +44,7 @@
     <div class="card amber">
       <h3>Why does this matter for your Builder?</h3>
       <p>Free-tier AI accounts have token limits — a cap on how much they can read and write per minute, per hour, or per day. If your Builder hits that limit mid-session, it will either fail or make you wait before it can continue.</p>
-      <p><strong>Reviewers</strong> only send numbered suggestions, so they use far fewer tokens. Free-tier AIs work fine as Reviewers. The Builder is the one that needs headroom.</p>
+      <p><strong>Worker Bees</strong> only send numbered suggestions, so they use far fewer tokens. Free-tier AIs work fine as Worker Bees. The Builder is the one that needs headroom.</p>
     </div>
 
     <div class="info-card green card-push-bottom helper-note-card">
@@ -101,7 +101,7 @@
           <td><strong>Perplexity</strong></td>
           <td>Smaller context, search-focused model</td>
           <td>Pay-as-you-go</td>
-          <td><span class="badge badge-amber">Better as a Reviewer</span></td>
+          <td><span class="badge badge-amber">Better as a Worker Bee</span></td>
         </tr>
       </table>
     </div>
@@ -110,14 +110,14 @@
       <h3>A practical example</h3>
       <p>Say you are working on a 2,000-word report. That is roughly 2,700 tokens. Your Builder reads the full document plus the prompt (~500 tokens) = about 3,200 tokens in, then writes back the updated version at roughly the same length. That is <strong>~6,000 tokens per round</strong>.</p>
       <p>Over 5 rounds, that is ~30,000 tokens from your Builder alone. With a paid API key this costs a few cents. On a free tier with strict limits, this could hit the cap by round 2 or 3.</p>
-      <p><strong>Bottom line:</strong> use a paid API key for your Builder, or use Gemini's free tier which is genuinely generous. Keep cost-conscious or free-tier AIs as Reviewers where the token load is light.</p>
+      <p><strong>Bottom line:</strong> use a paid API key for your Builder, or use Gemini's free tier which is genuinely generous. Keep cost-conscious or free-tier AIs as Worker Bees where the token load is light.</p>
     </div>
 
     <div class="card">
       <h3>Tips for managing token costs</h3>
       <p><strong>Keep your document focused.</strong> The longer your document, the more tokens your Builder uses every round. Trim content that is no longer relevant as the document improves.</p>
       <p><strong>Switch Builders if a round fails.</strong> DeepSeek is the best value for most documents. If a round fails with a missing output structure error — especially on a large or complex document — try switching to ChatGPT or Gemini as your Builder and retrying. Some AIs are less consistent at following strict formatting instructions under heavy load. This is a behavioral difference between models, not a hard size limit.</p>
-      <p><strong>Use Reviewers wisely.</strong> You can disable individual AIs per session from the work screen. If an AI is consistently unhelpful, turn it off — fewer reviewers means less input for the Builder to process.</p>
+      <p><strong>Use Worker Bees wisely.</strong> You can disable individual AIs per session from the work screen. If an AI is consistently unhelpful, turn it off — fewer Worker Bees means less input for the Builder to process.</p>
       <p><strong>Start small.</strong> For your first session, try a shorter document or a simpler goal. Once you understand how the rounds work you can take on larger projects confidently.</p>
     </div>
 

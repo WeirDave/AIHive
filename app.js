@@ -4114,11 +4114,17 @@ function viewRoundDoc(idx) {
   const aiNames = Object.keys(responses);
   const hasResponses = aiNames.length > 0;
 
-  const tabButtons = hasResponses ? aiNames.map((id, i) =>
-    `<button class="work-phase-pill hist-resp-tab" onclick="switchHistTab('${id}',this)">${id}</button>`
+  // Look up friendly name for each AI id — fall back to capitalised id if not found
+  const getFriendlyName = id => {
+    const ai = activeAIs.find(a => a.id === id) || aiList.find(a => a.id === id);
+    return ai ? ai.name : id.charAt(0).toUpperCase() + id.slice(1);
+  };
+
+  const tabButtons = hasResponses ? aiNames.map((id) =>
+    `<button class="work-phase-pill hist-resp-tab" onclick="switchHistTab('${id}',this)">${esc(getFriendlyName(id))}</button>`
   ).join('') : '';
 
-  const tabPanels = hasResponses ? aiNames.map((id, i) =>
+  const tabPanels = hasResponses ? aiNames.map((id) =>
     `<div class="hist-resp-panel" id="histresp-${id}">
       <textarea class="hist-doc-modal-ta" readonly>${esc(responses[id] || '(no response)')}</textarea>
     </div>`
@@ -4180,11 +4186,6 @@ function toggleHistItem(idx) {
 function restoreRound(idx) {
   const h = history[idx];
   if (!h) return;
-
-  // Truncate history to this point — rounds after idx are discarded.
-  // Prevents duplicate round numbers if the user runs a new round after restoring.
-  history = history.slice(0, idx + 1);
-
   round = h.round;
   phase = h.phase || 'draft';
   docText = h.doc || '';
@@ -4195,7 +4196,6 @@ function restoreRound(idx) {
   const ps = document.getElementById('phaseSelect');
   if (ps) ps.value = phase;
   updateRoundBadge();
-  renderRoundHistory();
   renderWorkPhaseBar();
   renderConflicts();
   saveSession();
@@ -4203,7 +4203,7 @@ function restoreRound(idx) {
   closeRoundHistoryModal();
   const viewModal = document.getElementById('histDocModal');
   if (viewModal) viewModal.remove();
-  toast(`↩ Restored to Round ${h.round} — ${history.length - 1} later round${history.length - 1 !== 1 ? 's' : ''} discarded`);
+  toast(`↩ Restored Round ${h.round}`);
 }
 
 // ── EXPORT ──
