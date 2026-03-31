@@ -3399,6 +3399,20 @@ function getLedgerEntry(d) {
   return window._conflictLedger.find(e => e.fingerprint === fingerprintConflict(d));
 }
 
+// Strip stale line number references from Builder-generated conflict questions.
+// The Builder writes "Line 26: ..." referencing the input doc, but after rewriting
+// the document those line numbers may no longer match. We remove them at display
+// time only — the underlying data is untouched.
+function stripLineRefs(text) {
+  if (!text) return text;
+  return text
+    .replace(/^Lines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/i, '')  // "Lines 12-14: " or "Lines 12–14 — "
+    .replace(/^Lines?\s+\d+\s*[:\-–—]\s*/i, '')            // "Line 26: " or "Line 26 — "
+    .replace(/\bLines?\s+\d+[\-–]\d+\s*[:\-–—]\s*/gi, '')  // inline "Line 12-14: "
+    .replace(/\bLines?\s+\d+\s*[:\-–—]\s*/gi, '')           // inline "Line 26: "
+    .trim();
+}
+
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
   if (!el) return;
@@ -3418,57 +3432,35 @@ function renderConflicts() {
 
   // ── CONVERGENCE PATH: majority agreed, show holdouts for optional review ──
   if (conflicts.converged && conflicts.holdouts) {
+    const count = conflicts.holdouts.length;
     // per-holdout state: 'apply' | 'decline' | 'custom'
     window._holdoutChoices = window._holdoutChoices || {};
 
-    // Split each AI's response into individual numbered suggestions
-    // so each suggestion gets its own card that can be accepted/declined independently
-    const flatSuggestions = [];
-    conflicts.holdouts.forEach(h => {
-      // Split on numbered list pattern: "1. ", "2. " etc at start of line
-      const parts = h.response.split(/\n(?=\d+\.\s)/);
-      if (parts.length > 1) {
-        parts.forEach(part => {
-          const trimmed = part.trim();
-          if (trimmed) flatSuggestions.push({ name: h.name, text: trimmed });
-        });
-      } else {
-        // Single suggestion or unparseable — keep as one card
-        flatSuggestions.push({ name: h.name, text: h.response.trim() });
-      }
-    });
-
-    // Store flat list so applyHoldouts can access it
-    window._flatHoldoutSuggestions = flatSuggestions;
-
-    const total = flatSuggestions.length;
-    const aiCount = conflicts.holdouts.length;
-
     let html = `<div class="conflicts-section-header convergence-header">
-      🏁 Hive Converged — ${total > 0 ? `${total} suggestion${total!==1?'s':''} from ${aiCount} AI${aiCount!==1?'s':''} — review each one below:` : 'document is ready.'}
+      🏁 Hive Converged — ${count > 0 ? `${count} holdout${count!==1?' still had suggestions':'still had a suggestion'} — review below:` : 'document is ready.'}
     </div>`;
 
-    if (total > 0) {
-      flatSuggestions.forEach((s, i) => {
+    if (count > 0) {
+      conflicts.holdouts.forEach((h, i) => {
         html += `<div class="decision-card convergence-card" id="hcard-${i}">
           <div class="decision-card-header">
-            <span class="convergence-ai-badge">🐝 ${esc(s.name)}</span>
-            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Suggestion ${i + 1} of ${total}</span>
+            <span class="convergence-ai-badge">🐝 ${esc(h.name)}</span>
+            <span class="decision-badge" style="margin-left:8px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Their suggestion:</span>
           </div>
-          <div class="convergence-suggestion">${esc(s.text)}</div>
+          <div class="convergence-suggestion">${esc(h.response)}</div>
           <div class="decision-options">
             <button class="decision-opt-btn" id="hopt-${i}-apply"
-              onclick="selectHoldout(${i}, 'apply', ${total})">
+              onclick="selectHoldout(${i}, 'apply', ${count})">
               <span class="decision-opt-num" style="background:rgba(52,211,153,0.15);color:#34d399">✓</span>
               <span class="decision-opt-text">Apply this suggestion</span>
             </button>
             <button class="decision-opt-btn decline-btn" id="hopt-${i}-decline"
-              onclick="selectHoldout(${i}, 'decline', ${total})">
+              onclick="selectHoldout(${i}, 'decline', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✕</span>
               <span class="decision-opt-text">Decline — skip this one</span>
             </button>
             <button class="decision-opt-btn decision-opt-custom custom-btn" id="hopt-${i}-custom"
-              onclick="selectHoldout(${i}, 'custom', ${total})">
+              onclick="selectHoldout(${i}, 'custom', ${count})">
               <span class="decision-opt-num" style="background:var(--surface3);color:var(--muted)">✎</span>
               <span class="decision-opt-text" style="color:var(--muted);font-style:italic">Custom — type your own</span>
             </button>
@@ -3476,7 +3468,7 @@ function renderConflicts() {
           <div class="decision-custom-wrap" id="hcustom-${i}" style="display:none">
             <textarea class="decision-custom-ta" id="hcustom-ta-${i}"
               placeholder="Type your custom text here..."
-              oninput="updateHoldoutCustom(${i}, ${total})"></textarea>
+              oninput="updateHoldoutCustom(${i}, ${count})"></textarea>
           </div>
         </div>`;
       });
@@ -3488,7 +3480,7 @@ function renderConflicts() {
     }
 
     html += `<div class="convergence-footer">
-      The hive is satisfied. Review each suggestion above — apply, decline, or customise individually. Or hit <strong>Finish</strong> to finalise the document as-is.
+      The hive is satisfied. Make your selections above, or hit <strong>Finish</strong> to finalize the document as-is.
     </div>`;
     el.innerHTML = html;
     return;
@@ -3531,7 +3523,7 @@ function renderConflicts() {
           <span class="decision-badge">⚡ USER DECISION ${di + 1} of ${total}</span>
           ${repeatBadge}
         </div>
-        <div class="decision-question">${esc(d.question)}</div>
+        <div class="decision-question">${esc(stripLineRefs(d.question))}</div>
         ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
         <div class="decision-options">
           ${d.options.map((opt, oi) => `
@@ -3862,17 +3854,19 @@ function checkAllHoldoutsDone(total) {
 }
 
 function applyHoldouts() {
-  const suggestions = window._flatHoldoutSuggestions || [];
+  const latest = history.length > 0 ? history[history.length - 1] : null;
+  if (!latest?.conflicts?.holdouts) return;
+  const holdouts = latest.conflicts.holdouts;
   const choices = window._holdoutChoices || {};
   const lines = [];
 
   Object.keys(choices).forEach(i => {
-    const s = suggestions[parseInt(i)];
+    const h = holdouts[parseInt(i)];
     const c = choices[i];
-    if (!s || !c) return;
+    if (!h || !c) return;
     if (c.type === 'decline') return; // skip declined
-    const text = c.type === 'custom' ? c.text : s.text;
-    if (text) lines.push(`From ${s.name}: ${text}`);
+    const text = c.type === 'custom' ? c.text : h.response;
+    if (text) lines.push(`From ${h.name}: ${text}`);
   });
 
   if (lines.length === 0) {
