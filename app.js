@@ -3399,6 +3399,29 @@ function getLedgerEntry(d) {
   return window._conflictLedger.find(e => e.fingerprint === fingerprintConflict(d));
 }
 
+function scrollToCurrentText(currentText) {
+  const ta = document.getElementById('workDocument');
+  if (!ta || !currentText) return;
+  const text = ta.value;
+  const idx  = text.indexOf(currentText);
+  if (idx === -1) {
+    toast('⚠️ Text not found in document — it may have changed');
+    return;
+  }
+  // Calculate the line number and scroll position
+  const before     = text.substring(0, idx);
+  const lineNumber = before.split('\n').length - 1;
+  const lineHeight = parseFloat(getComputedStyle(ta).lineHeight) || 20;
+  const scrollTop  = lineNumber * lineHeight - ta.clientHeight / 3;
+  ta.scrollTop = Math.max(0, scrollTop);
+  // Briefly highlight by selecting the text
+  ta.focus();
+  ta.setSelectionRange(idx, idx + currentText.length);
+  // Switch to the document panel if it's not visible
+  const docPanel = ta.closest('.panel') || ta.closest('[id]');
+  toast('📍 Scrolled to text in document', 2000);
+}
+
 function renderConflicts() {
   const el = document.getElementById('conflictsPanel');
   if (!el) return;
@@ -3510,7 +3533,7 @@ function renderConflicts() {
           ${repeatBadge}
         </div>
         <div class="decision-question">${esc(d.question)}</div>
-        ${d.current ? `<div class="decision-current"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
+        ${d.current ? `<div class="decision-current decision-current-clickable" title="Click to scroll document to this text" onclick="scrollToCurrentText(${JSON.stringify(d.current)})"><span class="decision-label">Current:</span> "${esc(d.current)}"</div>` : ''}
         <div class="decision-options">
           ${d.options.map((opt, oi) => `
             <button class="decision-opt-btn" id="dopt-${di}-${oi}"
