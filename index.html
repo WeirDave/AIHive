@@ -283,8 +283,8 @@
                    ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)">
                 <div class="drop-zone-icon">📄</div>
                 <div class="drop-zone-text">Drag & drop or click to browse</div>
-                <div class="drop-zone-sub">Supports Word (.docx), PDF, PowerPoint (.pptx), or plain text (.txt)</div>
-                <input type="file" id="fileInput" accept=".docx,.pdf,.pptx,.txt" style="display:none" onchange="handleFileSelect(event)">
+                <div class="drop-zone-sub">Supports Word (.docx), PDF, PowerPoint (.pptx), plain text (.txt), or Markdown (.md)</div>
+                <input type="file" id="fileInput" accept=".docx,.pdf,.pptx,.txt,.md" style="display:none" onchange="handleFileSelect(event)">
               </div>
               <div id="fileStatus" class="file-status" style="display:none;"></div>
               <div id="fileClearRow" style="display:none; margin-top:6px;">
@@ -1008,7 +1008,7 @@
       <p>Choose how to give the hive its starting point. There are three ways:</p>
       <div class="goal-info-row">
         <span class="goal-info-phase draft">Upload File</span>
-        <span class="goal-info-desc">Upload an existing document and the hive will refine it. Supported formats: Word (.docx), PDF (.pdf), PowerPoint (.pptx), and plain text (.txt). The file's text is extracted and loaded into the working document automatically.</span>
+        <span class="goal-info-desc">Upload an existing document and the hive will refine it. Supported formats: Word (.docx), PDF (.pdf), PowerPoint (.pptx), plain text (.txt), and Markdown (.md). The file's text is extracted and loaded into the working document automatically.</span>
       </div>
       <div class="goal-info-row">
         <span class="goal-info-phase refine">Paste Text</span>

@@ -1721,7 +1721,7 @@ async function processFile(file) {
   try {
     let result = { text: '', warnings: [], sourceType: ext };
 
-    if (ext === 'txt') {
+    if (ext === 'txt' || ext === 'md') {
       result.text = await file.text();
     } else if (ext === 'pdf') {
       result = await extractPDF(file);
@@ -2410,8 +2410,12 @@ function finishAndExport() {
 
 function finishAndNew() {
   hideFinishModal();
-  clearProject();
-  goToScreen('screen-project');
+  playFlyingCarSound();
+  showHiveFinish({ duration: 4000, smokeBursts: 10 });
+  setTimeout(() => {
+    clearProject();
+    goToScreen('screen-project');
+  }, 4200);
 }
 
 /* =========================================
@@ -3081,9 +3085,6 @@ async function runRound() {
     if (runBtn) runBtn.querySelector('.shake-wide-label').textContent = 'Smoke the Hive';
     stopRoundTimer();
     hideSmokerOverlay();
-    // 🎉 Hive Approved — majority convergence is the moment that earns the fanfare
-    playFlyingCarSound();
-    showHiveFinish({ duration: 4000, smokeBursts: 10 });
     return;
   }
 
