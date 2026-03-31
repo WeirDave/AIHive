@@ -4186,6 +4186,11 @@ function toggleHistItem(idx) {
 function restoreRound(idx) {
   const h = history[idx];
   if (!h) return;
+
+  // Truncate history to this point — rounds after idx are discarded.
+  // Prevents duplicate round numbers if the user runs a new round after restoring.
+  history = history.slice(0, idx + 1);
+
   round = h.round;
   phase = h.phase || 'draft';
   docText = h.doc || '';
@@ -4196,6 +4201,7 @@ function restoreRound(idx) {
   const ps = document.getElementById('phaseSelect');
   if (ps) ps.value = phase;
   updateRoundBadge();
+  renderRoundHistory();
   renderWorkPhaseBar();
   renderConflicts();
   saveSession();
@@ -4203,7 +4209,7 @@ function restoreRound(idx) {
   closeRoundHistoryModal();
   const viewModal = document.getElementById('histDocModal');
   if (viewModal) viewModal.remove();
-  toast(`↩ Restored Round ${h.round}`);
+  toast(`↩ Restored to Round ${h.round} — ${history.length - 1} later round${history.length - 1 !== 1 ? 's' : ''} discarded`);
 }
 
 // ── EXPORT ──
