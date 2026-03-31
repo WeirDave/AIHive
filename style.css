@@ -4764,3 +4764,78 @@ kbd {
   border-color: var(--accent);
 }
 
+
+/* ══════════════════════════════════════
+   MOBILE NOT SUPPORTED OVERLAY
+   Hidden on desktop, shown on small screens.
+   No JS required — pure CSS media query.
+══════════════════════════════════════ */
+.mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--bg, #0d0f17);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  /* Hide everything else behind the overlay */
+  body > *:not(.mobile-overlay) {
+    display: none !important;
+  }
+}
+
+.mobile-overlay-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  max-width: 320px;
+}
+.mobile-overlay-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+.mobile-overlay-title {
+  font-family: var(--font, sans-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text, #e8eaf0);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+.mobile-overlay-msg {
+  font-family: var(--font, sans-serif);
+  font-size: 16px;
+  color: var(--text, #e8eaf0);
+  margin: 0;
+  line-height: 1.5;
+}
+.mobile-overlay-sub {
+  font-family: var(--font, sans-serif);
+  font-size: 14px;
+  color: var(--text-dim, #8b90a0);
+  margin: 0;
+  line-height: 1.5;
+}
+.mobile-overlay-link {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 12px;
+  color: var(--accent, #f5a623);
+  text-decoration: none;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+.mobile-overlay-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

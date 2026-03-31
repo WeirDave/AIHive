@@ -165,6 +165,8 @@ Any AI can act as either a Worker Bee or Builder. Mix and match however you like
 
 AI Hive runs entirely in your browser — no install, no server, no account required.
 
+> ⚠️ **Desktop only.** AI Hive is designed for desktop and laptop computers. Mobile phones are not currently supported.
+
 **Option 1 — Hosted version (easiest):**
 👉 [weirdave.github.io/AIHive](https://weirdave.github.io/AIHive/)
 
