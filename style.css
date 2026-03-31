@@ -241,6 +241,11 @@ html, body {
   border-color: var(--accent);
   color: var(--accent);
 }
+.theme-toggle {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
 
 /* ══════════════════════════════════════
    SCREEN 1 — WELCOME
@@ -514,6 +519,10 @@ html, body {
 .ai-setup-row:hover {
   border-color: var(--accent);
   background: var(--accent-dim);
+}
+.ai-setup-row.checked {
+  border-color: rgba(52,211,153,0.4);
+  background: rgba(52,211,153,0.06);
 }
 
 .ai-setup-icon {
@@ -1431,6 +1440,9 @@ html, body {
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
+.project-clock-wrap {
+  border-color: rgba(255,170,0,0.2);
+}
 .clock-bezel {
   background: linear-gradient(145deg, #0a0c12, #151820);
   border-radius: 8px;
@@ -2264,6 +2276,12 @@ kbd {
   align-items: center;
   gap: 3px;
   line-height: 1;
+}
+.legend-label {
+  font-weight: 700;
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-right: 4px;
 }
 
 /* ── SECTION TITLES (larger headers) ── */

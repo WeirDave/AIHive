@@ -25,7 +25,7 @@ AI Hive orchestrates a team of AIs around your document — every round, all of 
 
 AI Hive is a browser-based multi-AI document collaboration tool. You bring the AIs — AI Hive coordinates them.
 
-One AI acts as the **Builder**, rewriting your document each round based on numbered suggestions from your **Reviewer** AIs. The Builder reads every suggestion, resolves disagreements, flags conflicts for your review, and produces the updated document. Round by round, your document converges on something great.
+One AI acts as the **Builder**, rewriting your document each round based on numbered suggestions from your **Worker Bees**. The Builder reads every suggestion, resolves disagreements, flags conflicts for your review, and produces the updated document. Round by round, your document converges on something great.
 
 No install. No server. No account. No data leaves your machine. Just open it and go.
 
@@ -42,10 +42,10 @@ Add API keys for the AIs you want to use and pick your Builder. You need at leas
 Give it a name, version, and a detailed goal. The more specific your goal, the better your results from round one.
 
 **3. Start your document**
-Upload an existing file (Word, PDF, PowerPoint, or plain text), paste text directly, or let the hive generate a first draft from your goal. If you upload or paste, AI Hive drops you straight into refinement — no draft phase needed.
+Upload an existing file (Word, PDF, PowerPoint, plain text, or Markdown), paste text directly, or let the hive generate a first draft from your goal. If you upload or paste, AI Hive drops you straight into refinement — no draft phase needed.
 
 **4. Smoke the Hive**
-Hit **Smoke the Hive** to run a round. Every reviewer AI reads the document simultaneously and returns numbered suggestions. Your Builder reads all of them, applies the best ones, resolves disagreements, and rewrites the full document. The whole thing is automatic.
+Hit **Smoke the Hive** to run a round. Every Worker Bee reads the document simultaneously and returns numbered suggestions. Your Builder reads all of them, applies the best ones, resolves disagreements, and rewrites the full document. The whole thing is automatic.
 
 **5. Review conflicts**
 When AIs disagree on something, the Builder flags it in the **Conflicts panel** rather than guessing. You pick the direction — or type your own — and the Builder applies your decision immediately.
@@ -74,7 +74,7 @@ One button does everything. Each AI needs its own API key. AI Hive sends every p
 
 ![Setup Step 1 — Worker Bees and Builder](screenshots/screenshot_setup1_dark.png)
 
-Add API keys for each AI you want to use. Every AI with a saved key becomes a **Worker Bee** — a reviewer that reads the document and sends numbered suggestions each round.
+Add API keys for each AI you want to use. Every AI with a saved key becomes a **Worker Bee** — reading the document and sending numbered suggestions each round.
 
 Then pick your **Builder** — the AI that rewrites the document every round. The Builder does the heavy lifting: it reads the full document plus every suggestion and produces the updated version. Your Builder needs a paid API subscription with enough token capacity for your document size. You can change your Builder any time from the work screen without losing anything.
 
@@ -92,7 +92,7 @@ Then choose how to start:
 
 | Option | When to use it |
 |---|---|
-| **Upload a file** | You have an existing document — Word, PDF, PowerPoint, or plain text |
+| **Upload a file** | You have an existing document — Word, PDF, PowerPoint, plain text, or Markdown |
 | **Paste text** | You have content elsewhere and want to copy it in directly |
 | **Start from Scratch** | You have a goal but no document yet — the hive builds the first draft |
 
@@ -157,7 +157,7 @@ Two clocks sit above the Live Console:
 | Copilot | Microsoft | `gpt-4o` — OpenAI-compatible endpoint |
 | Custom | Any | Add any AI with an OpenAI-compatible API endpoint |
 
-Any AI can act as either a reviewer or Builder. Mix and match however you like. If a round fails with a missing output structure error, try switching to a different Builder — some AIs are less consistent at following strict formatting instructions on large or complex documents.
+Any AI can act as either a Worker Bee or Builder. Mix and match however you like. If a round fails with a missing output structure error, try switching to a different Builder — some AIs are less consistent at following strict formatting instructions on large or complex documents.
 
 ---
 
@@ -200,7 +200,7 @@ For step-by-step instructions and direct billing links, open the **API Key Guide
 
 ## Understanding Tokens
 
-If you're using Pro mode, tokens matter — especially for your Builder. Every round, your Builder reads the entire document plus all reviewer suggestions and rewrites the full document. On a 2,000-word document with 5 reviewers that's roughly **8,000–12,000 tokens per Builder call**.
+If you're using Pro mode, tokens matter — especially for your Builder. Every round, your Builder reads the entire document plus all Worker Bee suggestions and rewrites the full document. On a 2,000-word document with 5 Worker Bees that's roughly **8,000–12,000 tokens per Builder call**.
 
 **Gemini's free tier is genuinely generous** and a great way to get started with zero cost. For paid options, DeepSeek is the most cost-effective Builder by a wide margin.
 
